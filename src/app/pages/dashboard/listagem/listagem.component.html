@@ -1,0 +1,102 @@
+<section class="pt-[88px] rounded-2xl px-[5.5dvw] max-w-[1920px] mx-auto">
+  <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
+    <div *ngFor="let campanha of campanhas" class="bg-white rounded-2xl shadow p-4 flex flex-col justify-between">
+      <h3 class="text-lg font-semibold mb-2">{{ campanha.title }}</h3>
+
+      <p-progressBar
+        [value]="campanha.progress_percentage"
+        [showValue]="true"
+        [pTooltip]="
+          'A campanha ' +
+          (campanha?.title ?? '') +
+          ' já arrecadou R$ ' +
+          (campanha?.value_donated ?? 0 | number: '1.0-0') +
+          ' de R$ ' +
+          (campanha?.value_required | number: '1.0-0') +
+          ' (' +
+          (campanha?.progress_percentage ?? 0) +
+          '% do objetivo)'
+        "
+        class="w-full mb-3"
+      >
+      </p-progressBar>
+
+      <div class="text-sm text-gray-600 space-y-1 mb-4">
+        <p>Meta: R$ {{ campanha.value_required | number: '1.0-0' }}</p>
+        <p>Arrecadado: R$ {{ campanha?.value_donated ?? 0 | number: '1.0-0' }}</p>
+      </div>
+
+      <div class="flex justify-between gap-2 mt-auto">
+        <p-button
+          [outlined]="true"
+          size="small"
+          label="Editar"
+          icon="pi pi-pencil"
+          (click)="onEdit(campanha.campanha_id)"
+        >
+        </p-button>
+
+        <p-button
+          [outlined]="true"
+          size="small"
+          label="Relatório"
+          icon="pi pi-file"
+          (click)="openDialog('relatorio', campanha)"
+        >
+        </p-button>
+
+        <p-button
+          [outlined]="true"
+          size="small"
+          label="Comentários"
+          icon="pi pi-comment"
+          (click)="openDialog('comentarios', campanha)"
+        >
+        </p-button>
+
+        <p-button
+          size="small"
+          label="Solicitar Depósito"
+          severity="success"
+          icon="pi pi-wallet"
+          (click)="openDialog('deposito', campanha)"
+        >
+        </p-button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p-dialog
+  [(visible)]="dialogVisible"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  [header]="getDialogHeader()"
+  [style]="{ width: '40vw' }"
+>
+  <ng-container [ngSwitch]="dialog">
+    <div *ngSwitchCase="'relatorio'">
+      <p>
+        📊 Relatório da campanha <strong>{{ selectedCampanha?.title }}</strong>
+      </p>
+    </div>
+
+    <div *ngSwitchCase="'comentarios'">
+      <p>
+        💬 Comentários da campanha <strong>{{ selectedCampanha?.title }}</strong>
+      </p>
+    </div>
+
+    <div *ngSwitchCase="'deposito'">
+      <p>
+        💸 Solicitar depósito da campanha <strong>{{ selectedCampanha?.title }}</strong>
+      </p>
+    </div>
+
+    <div *ngSwitchDefault>
+      <p>Selecione uma ação.</p>
+    </div>
+  </ng-container>
+</p-dialog>
+

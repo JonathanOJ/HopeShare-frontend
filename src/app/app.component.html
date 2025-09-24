@@ -1,0 +1,15 @@
+<p-toast></p-toast>
+<p-confirmDialog />
+
+@if (!loginRoute) {
+  <app-header></app-header>
+  <main class="flex flex-col h-dvh">
+    <div class="flex-1">
+      <router-outlet></router-outlet>
+    </div>
+    <app-footer></app-footer>
+  </main>
+} @else {
+  <router-outlet />
+}
+

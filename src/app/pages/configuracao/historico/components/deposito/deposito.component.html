@@ -1,0 +1,31 @@
+<p-table [value]="depositos" class="shadow-lg rounded-lg overflow-hidden">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Campanha</th>
+      <th>Valor</th>
+      <th>Status</th>
+      <th>Data</th>
+      <th>Observação</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-deposito>
+    <tr>
+      <td>{{ deposito.nomeCampanha }}</td>
+      <td>R$ {{ deposito.valor | number: '1.2-2' }}</td>
+      <td>
+        <span
+          class="px-3 py-1 rounded-full text-white text-sm"
+          [ngClass]="{
+            'bg-green-500': deposito.status === 'Concluído',
+            'bg-yellow-500': deposito.status === 'Em Análise',
+            'bg-red-500': deposito.status === 'Cancelado',
+          }"
+        >
+          {{ deposito.status }}
+        </span>
+      </td>
+      <td>{{ deposito.data | date: 'dd/MM/yyyy' }}</td>
+      <td>{{ deposito.observacao || '-' }}</td>
+    </tr>
+  </ng-template>
+</p-table>

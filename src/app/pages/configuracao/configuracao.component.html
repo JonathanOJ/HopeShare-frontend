@@ -1,0 +1,30 @@
+<section class="mx-[5dvw] pt-[80px] bg-white">
+  <p-tabMenu [model]="items" [activeItem]="activeItem" (activeItemChange)="onActiveItemChange($event)" />
+
+  <span [ngSwitch]="activeItem?.label">
+    <div *ngSwitchCase="'Conta Bancária'">
+      <ng-container *ngIf="userIsCompany; else noPermission">
+        <app-recebimento></app-recebimento>
+      </ng-container>
+    </div>
+
+    <div *ngSwitchCase="'Documentos'">
+      <ng-container *ngIf="userIsCompany; else noPermission">
+        <app-documentos></app-documentos>
+      </ng-container>
+    </div>
+
+    <div *ngSwitchCase="'Histórico'">
+      <app-historico [userIsCompany]="userIsCompany"></app-historico>
+    </div>
+
+    <div *ngSwitchDefault>
+      <app-recebimento></app-recebimento>
+    </div>
+  </span>
+
+  <ng-template #noPermission>
+    <p class="text-red-500 font-semibold">Você não tem permissão para acessar esta seção.</p>
+  </ng-template>
+</section>
+

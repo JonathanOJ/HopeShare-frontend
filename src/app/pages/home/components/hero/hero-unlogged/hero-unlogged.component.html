@@ -1,0 +1,41 @@
+<section
+  id="home"
+  class="flex md:flex-row flex-col md:gap-0 gap-6 md:gap-12 justify-between w-full items-center pb-[50px] px-[5.5dvw] relative"
+>
+  <section class="flex flex-col gap-4 justify-center w-full md:w-1/2">
+    <div
+      [style.animation]="isMobile ? 'slide-infinite 10s linear infinite' : ''"
+      class="md:bg-white/40 py-4 px-3.5 w-fit rounded-3xl whitespace-nowrap md:whitespace-normal flex gap-5 md:gap-3 flex-nowrap"
+      [class]="isMobile ? 'marquee-container' : ''"
+    >
+      @for (item of tagsMessages; track item; let index = $index) {
+        <span class="bg-white/40 md:bg-transparent rounded-3xl py-2 md:py-3 px-2 text-[#5D5D5D]">
+          <i
+            class="pi pi-check text-white bg-[#3b82f6] rounded-full w-[18px] h-[18px] inline-flex items-center justify-center"
+          ></i>
+          {{ item.title }}
+        </span>
+      }
+    </div>
+    <section class="flex flex-col gap-8">
+      <div class="text-[#454545] flex flex-col gap-5">
+        <span class="text-[32px] leading-[44px] md:text-5xl md:leading-[64px]"
+          >Faça a diferença com apenas <strong class="text-[#3b82f6]"> uma doação </strong></span
+        >
+        <span class="md:text-2xl"
+          >As doações podem parecer pequenas, mas juntos fazem a
+          <strong class="text-[#3b82f6]"> diferença na vida de todos </strong></span
+        >
+      </div>
+      <p-button size="small" [rounded]="true" label="Registre-se grátis" (click)="redirectToRegister()" />
+    </section>
+  </section>
+  <section class="md:w-1/2 md:flex items-end justify-center hidden">
+    <img
+      src="./../../../../../../assets/images/charity-animate.svg"
+      alt="SVG Animado da tela de home, no qual aparece duas pessoas e uma esta realizando uma doação para a outra"
+      class="max-w-[650px] w-full"
+    />
+  </section>
+</section>
+

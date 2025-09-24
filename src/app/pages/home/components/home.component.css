@@ -1,0 +1,28 @@
+::ng-deep .p-button.p-button-rounded {
+  border-radius: 16px;
+  padding: 12px 20px;
+}
+
+::ng-deep .p-button-label {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.marquee-container {
+  width: 100%;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.spacer {
+  aspect-ratio: 1920/600;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.layer {
+  background-image: url('./../../../../assets/images/waves.svg');
+}
+

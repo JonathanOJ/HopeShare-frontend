@@ -1,0 +1,27 @@
+<section class="pt-[88px] rounded-2xl px-[5.5dvw] max-w-[1920px] mx-auto">
+  <p-card>
+    <section class="flex flex-col">
+      <p-button class="self-end" size="small" label="Solicitar Relatório" [outlined]="true"></p-button>
+      <p-tabView>
+        <p-tabPanel header="Financeiro">
+          <div *ngIf="relatoriosFinanceiros?.length; else semRelatorioFinanceiro" class="grid gap-6">
+            <app-financeiro [relatorios]="relatoriosFinanceiros"></app-financeiro>
+          </div>
+          <ng-template #semRelatorioFinanceiro>
+            <p class="text-center text-gray-500 italic mt-4">Nenhum Relatório Financeiro encontrado.</p>
+          </ng-template>
+        </p-tabPanel>
+
+        <p-tabPanel header="Contábil">
+          <div *ngIf="relatoriosContabeis?.length; else semRelatorioContabil" class="grid gap-6">
+            <app-contabil [relatorios]="relatoriosContabeis"></app-contabil>
+          </div>
+          <ng-template #semRelatorioContabil>
+            <p class="text-center text-gray-500 italic mt-4">Nenhuma Relatório Contábil encontrada.</p>
+          </ng-template>
+        </p-tabPanel>
+      </p-tabView>
+    </section>
+  </p-card>
+</section>
+

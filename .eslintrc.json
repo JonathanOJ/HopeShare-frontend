@@ -1,0 +1,81 @@
+{
+  "root": true,
+  "ignorePatterns": ["projects/**/*"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json",
+    "createDefaultProgram": true,
+    "extraFileExtensions": [".html"]
+  },
+  "overrides": [
+    {
+      "files": ["src/app/admin/**/*.ts"],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:prettier/recommended"
+      ],
+      "rules": {
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
+          }
+        ],
+        "max-len": [
+          "error",
+          {
+            "code": 120,
+            "ignoreComments": true,
+            "ignoreUrls": true,
+            "ignoreStrings": true,
+            "ignoreTemplateLiterals": true
+          }
+        ],
+        "padding-line-between-statements": [
+          "error",
+          {
+            "blankLine": "always",
+            "prev": "*",
+            "next": "class"
+          },
+          {
+            "blankLine": "any",
+            "prev": "class",
+            "next": "*"
+          }
+        ],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
+        "eqeqeq": ["error", "always"],
+        "no-console": "warn"
+      }
+    },
+    {
+      "files": ["**/*.html"],
+      "parser": "@angular-eslint/template-parser",
+      "plugins": ["@angular-eslint/template"],
+      "extends": ["plugin:@angular-eslint/template/recommended", "plugin:@angular-eslint/template/accessibility"],
+      "rules": {
+        "@angular-eslint/template/elements-content": "off",
+        "@angular-eslint/template/click-events-have-key-events": "off",
+        "@angular-eslint/template/interactive-supports-focus": "off",
+        "quotes": ["error", "double"]
+      }
+    }
+  ]
+}

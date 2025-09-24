@@ -1,0 +1,39 @@
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 rounded-2xl shadow-lg w-full rounded-t-none">
+  <div>
+    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Cadastro e Validação da Empresa</h2>
+
+    <form [formGroup]="empresaForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+      <div class="flex flex-col gap-1">
+        <label for="razaoSocial" class="text-sm font-medium text-gray-700">Razão Social</label>
+        <input pInputText id="razaoSocial" formControlName="razaoSocial" placeholder="Digite a razão social" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="cnpj" class="text-sm font-medium text-gray-700">CNPJ</label>
+        <input pInputText id="cnpj" formControlName="cnpj" placeholder="Digite o CNPJ (apenas números)" />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="upload" class="text-sm font-medium text-gray-700">Documentos da Empresa</label>
+        <p-fileUpload
+          id="upload"
+          mode="basic"
+          chooseLabel="Selecionar Arquivos"
+          (onSelect)="onUpload($event)"
+          class="w-full"
+        >
+        </p-fileUpload>
+        <small class="text-gray-500 text-xs">Envie o CNPJ, contrato social e comprovante de endereço.</small>
+      </div>
+
+      <div class="flex justify-end">
+        <button pButton type="submit" label="Enviar para Validação"></button>
+      </div>
+    </form>
+  </div>
+
+  <div class="flex items-center justify-center">
+    <img src="./../../../../assets/images/document.png" alt="Validação de Empresa" class="w-3/4 md:w-full max-w-sm" />
+  </div>
+</section>
+

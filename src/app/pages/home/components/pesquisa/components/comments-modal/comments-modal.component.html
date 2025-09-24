@@ -1,0 +1,125 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  header="Comentários da Campanha"
+  styleClass="w-full max-w-2xl"
+  (onHide)="closeModal()"
+>
+  <div class="flex flex-col gap-4 max-h-[70vh]">
+    <div class="bg-gray-50 p-3 rounded-lg">
+      <h4 class="font-medium text-sm text-gray-700 mb-1">Campanha:</h4>
+      <p class="text-sm text-gray-600 truncate">{{ campanha?.title }}</p>
+    </div>
+
+    <!-- Restrição de comentário para não doadores -->
+    <div *ngIf="!canComment()" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+      <div class="flex items-center gap-3">
+        <i class="pi pi-info-circle text-yellow-600"></i>
+        <div>
+          <p class="text-sm font-medium text-yellow-800">{{ getCommentRestrictionMessage() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <form [formGroup]="commentForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3" *ngIf="canComment()">
+      <div class="flex flex-col gap-2">
+        <span class="text-sm font-medium text-gray-700">Adicionar Comentário</span>
+        <textarea
+          formControlName="content"
+          pInputTextarea
+          rows="3"
+          placeholder="Escreva seu comentário sobre esta campanha..."
+          class="w-full"
+        ></textarea>
+        <div class="flex justify-between items-center">
+          <small class="text-red-500" *ngIf="getFieldError('content')">
+            {{ getFieldError('content') }}
+          </small>
+          <small class="text-gray-500"> {{ commentForm.get('content')?.value?.length || 0 }}/500 </small>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <p-button
+          type="submit"
+          label="Comentar"
+          [loading]="loading"
+          [disabled]="commentForm.invalid"
+          icon="pi pi-send"
+          size="small"
+        ></p-button>
+      </div>
+    </form>
+
+    <div class="border-t border-gray-200"></div>
+
+    <div class="flex flex-col gap-3 overflow-y-auto max-h-96">
+      <div class="flex justify-between items-center">
+        <h4 class="font-medium text-gray-700">Comentários ({{ comments.length }})</h4>
+        <button
+          type="button"
+          class="text-sm text-blue-600 hover:text-blue-800"
+          (click)="loadComments()"
+          [disabled]="loadingComments"
+        >
+          <mat-icon class="text-sm mr-1" svgIcon="refresh"></mat-icon>
+          Atualizar
+        </button>
+      </div>
+
+      <div *ngIf="loadingComments" class="flex justify-center py-4">
+        <p-progressSpinner styleClass="w-8 h-8"></p-progressSpinner>
+      </div>
+
+      <div *ngIf="!loadingComments && comments.length > 0" class="space-y-3">
+        <div
+          *ngFor="let comment of comments"
+          class="bg-white border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-shadow"
+        >
+          <div class="flex justify-between items-start mb-2">
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2">
+                @if (comment.user.image) {
+                  <img [src]="comment.user.image" [alt]="comment.user.username" class="w-6 h-6 rounded-full" />
+                } @else {
+                  <span class="w-6 h-6 flex justify-center items-center bg-[#3b82f6] text-white rounded-full text-xs">
+                    {{ comment.user.username[0].toUpperCase() }}
+                  </span>
+                }
+                <span class="font-medium text-sm text-gray-700">{{ comment.user.username }}</span>
+              </div>
+              <span class="text-xs text-gray-500">{{ formatDate(comment.created_at) }}</span>
+            </div>
+
+            @if (canDeleteComment(comment)) {
+              <button
+                type="button"
+                class="text-gray-400 hover:text-red-500 transition-colors"
+                (click)="deleteComment(comment)"
+                title="Remover comentário"
+              >
+                <mat-icon class="text-sm" svgIcon="delete-outline"></mat-icon>
+              </button>
+            }
+          </div>
+
+          <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ comment.content }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="!loadingComments && comments.length === 0" class="text-center py-8">
+        <mat-icon class="text-gray-400 text-4xl mb-2" svgIcon="chat-outline"></mat-icon>
+        <p class="text-gray-500">Nenhum comentário ainda</p>
+        <p class="text-sm text-gray-400">Seja o primeiro a comentar!</p>
+      </div>
+    </div>
+
+    <div class="flex justify-end pt-3 border-t border-gray-200">
+      <p-button type="button" label="Fechar" severity="secondary" [text]="true" (onClick)="closeModal()"></p-button>
+    </div>
+  </div>
+</p-dialog>
+

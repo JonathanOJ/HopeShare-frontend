@@ -1,0 +1,7 @@
+:host ::ng-deep .p-stepper .p-stepper-panels {
+  border-radius: 8px;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-header .p-stepper-action {
+  background-color: #f9fafb;
+}

@@ -1,0 +1,345 @@
+<ng-template #header pTemplate="header" let-onClick="onClick" let-index="index">
+  <section class="flex gap-3">
+    <div
+      class="w-[48px] h-[48px] flex items-center justify-center rounded-full"
+      [ngClass]="{
+        'text-white': activeStep === index,
+        'text-[#D1D1D1]': activeStep !== index,
+        'bg-[#3b82f6]': activeStep === index,
+        'bg-[#F6F6F6]': activeStep !== index,
+      }"
+    >
+      <mat-icon svgIcon="map"></mat-icon>
+    </div>
+    @if (activeStep === index) {
+      <div class="flex flex-col justify-center">
+        <span class="text-xs text-[#3b82f6] font-bold"> Passo {{ index + 1 }}/{{ totalSteps }} </span>
+        <span class="text-[#454545]">Informando endereço</span>
+      </div>
+    }
+  </section>
+</ng-template>
+
+<ng-template
+  #content
+  pTemplate="content"
+  let-prevCallback="prevCallback"
+  let-nextCallback="nextCallback"
+  let-index="index"
+>
+  <form *ngIf="stepEnderecoForm" [formGroup]="stepEnderecoForm" class="flex flex-col h-fit p-6 gap-6 pb-0">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-xl text-[#3d3d3d] font-bold">Endereço</h1>
+      <span class="text-[#4F4F4F] max-w-[400px]">Preencha o local no qual a campanha será realizada</span>
+    </div>
+
+    <div class="flex gap-6 h-fit">
+      <section class="w-1/2 flex flex-col gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label for="address_zipcode" class="text-sm text-[#4F4F4F]">CEP</label>
+          <p-inputMask
+            mask="99999-999"
+            id="address_zipcode"
+            formControlName="address_zipcode"
+            (onBlur)="address_zipcode?.invalid && address_zipcode?.markAsDirty()"
+            placeholder="12345-678"
+          ></p-inputMask>
+
+          <div
+            class="flex align-items-end text-xs"
+            [ngClass]="
+              address_zipcode?.invalid && (address_zipcode?.dirty || address_zipcode?.touched)
+                ? 'justify-between'
+                : 'justify-end'
+            "
+          >
+            <span
+              [ngClass]="
+                address_zipcode?.invalid && (address_zipcode?.dirty || address_zipcode?.touched)
+                  ? 'visible text-[#ff2637]'
+                  : 'invisible text-[#ff2637]'
+              "
+            >
+              <ng-container *ngIf="address_zipcode?.errors as errors">
+                <ng-container *ngIf="errors['required']">CEP é obrigatório.</ng-container>
+                <ng-container *ngIf="errors['pattern']">CEP deve ter o formato 99999-999.</ng-container>
+              </ng-container>
+            </span>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="address_street" class="text-sm text-[#4F4F4F]">Rua</label>
+          <input
+            type="text"
+            pInputText
+            id="address_street"
+            formControlName="address_street"
+            (blur)="address_street?.invalid && address_street?.markAsDirty()"
+            placeholder="Rua das Flores"
+          />
+
+          <div
+            class="flex align-items-end text-xs"
+            [ngClass]="
+              address_street?.invalid && (address_street?.dirty || address_street?.touched)
+                ? 'justify-between'
+                : 'justify-end'
+            "
+          >
+            <span
+              [ngClass]="
+                address_street?.invalid && (address_street?.dirty || address_street?.touched)
+                  ? 'visible text-[#ff2637]'
+                  : 'invisible text-[#ff2637]'
+              "
+            >
+              <ng-container *ngIf="address_street?.errors as errors">
+                <ng-container *ngIf="errors['required']">Rua é obrigatória.</ng-container>
+                <ng-container *ngIf="errors['minlength']">Mínimo de 3 caracteres.</ng-container>
+                <ng-container *ngIf="errors['maxlength']">Máximo de 100 caracteres.</ng-container>
+              </ng-container>
+            </span>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <div class="flex flex-col gap-1.5 w-1/3">
+            <label for="address_number" class="text-sm text-[#4F4F4F]">Número</label>
+            <input
+              type="text"
+              pInputText
+              id="address_number"
+              formControlName="address_number"
+              (blur)="address_number?.invalid && address_number?.markAsDirty()"
+              placeholder="123"
+            />
+
+            <div
+              class="flex align-items-end text-xs"
+              [ngClass]="
+                address_number?.invalid && (address_number?.dirty || address_number?.touched)
+                  ? 'justify-between'
+                  : 'justify-end'
+              "
+            >
+              <span
+                [ngClass]="
+                  address_number?.invalid && (address_number?.dirty || address_number?.touched)
+                    ? 'visible text-[#ff2637]'
+                    : 'invisible text-[#ff2637]'
+                "
+              >
+                <ng-container *ngIf="address_number?.errors as errors">
+                  <ng-container *ngIf="errors['required']">Número é obrigatório.</ng-container>
+                  <ng-container *ngIf="errors['minlength']">Mínimo de 1 caractere.</ng-container>
+                  <ng-container *ngIf="errors['maxlength']">Máximo de 10 caracteres.</ng-container>
+                </ng-container>
+              </span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5 w-2/3">
+            <label for="address_complement" class="text-sm text-[#4F4F4F]">Complemento</label>
+            <input
+              type="text"
+              pInputText
+              id="address_complement"
+              formControlName="address_complement"
+              (blur)="address_complement?.invalid && address_complement?.markAsDirty()"
+              placeholder="Apto 123"
+            />
+
+            <div
+              class="flex align-items-end text-xs"
+              [ngClass]="
+                address_complement?.invalid && (address_complement?.dirty || address_complement?.touched)
+                  ? 'justify-between'
+                  : 'justify-end'
+              "
+            >
+              <span
+                [ngClass]="
+                  address_complement?.invalid && (address_complement?.dirty || address_complement?.touched)
+                    ? 'visible text-[#ff2637]'
+                    : 'invisible text-[#ff2637]'
+                "
+              >
+                <ng-container *ngIf="address_complement?.errors as errors">
+                  <ng-container *ngIf="errors['maxlength']">Máximo de 50 caracteres.</ng-container>
+                </ng-container>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="address_neighborhood" class="text-sm text-[#4F4F4F]">Bairro</label>
+          <input
+            type="text"
+            pInputText
+            id="address_neighborhood"
+            formControlName="address_neighborhood"
+            (blur)="address_neighborhood?.invalid && address_neighborhood?.markAsDirty()"
+            placeholder="Centro"
+          />
+
+          <div
+            class="flex align-items-end text-xs"
+            [ngClass]="
+              address_neighborhood?.invalid && (address_neighborhood?.dirty || address_neighborhood?.touched)
+                ? 'justify-between'
+                : 'justify-end'
+            "
+          >
+            <span
+              [ngClass]="
+                address_neighborhood?.invalid && (address_neighborhood?.dirty || address_neighborhood?.touched)
+                  ? 'visible text-[#ff2637]'
+                  : 'invisible text-[#ff2637]'
+              "
+            >
+              <ng-container *ngIf="address_neighborhood?.errors as errors">
+                <ng-container *ngIf="errors['required']">Bairro é obrigatório.</ng-container>
+                <ng-container *ngIf="errors['minlength']">Mínimo de 2 caracteres.</ng-container>
+                <ng-container *ngIf="errors['maxlength']">Máximo de 50 caracteres.</ng-container>
+              </ng-container>
+            </span>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <div class="flex flex-col gap-1.5 w-2/3">
+            <label for="address_city" class="text-sm text-[#4F4F4F]">Cidade</label>
+            <input
+              type="text"
+              pInputText
+              id="address_city"
+              formControlName="address_city"
+              (blur)="address_city?.invalid && address_city?.markAsDirty()"
+              placeholder="São Paulo"
+            />
+
+            <div
+              class="flex align-items-end text-xs"
+              [ngClass]="
+                address_city?.invalid && (address_city?.dirty || address_city?.touched)
+                  ? 'justify-between'
+                  : 'justify-end'
+              "
+            >
+              <span
+                [ngClass]="
+                  address_city?.invalid && (address_city?.dirty || address_city?.touched)
+                    ? 'visible text-[#ff2637]'
+                    : 'invisible text-[#ff2637]'
+                "
+              >
+                <ng-container *ngIf="address_city?.errors as errors">
+                  <ng-container *ngIf="errors['required']">Cidade é obrigatória.</ng-container>
+                  <ng-container *ngIf="errors['minlength']">Mínimo de 2 caracteres.</ng-container>
+                  <ng-container *ngIf="errors['maxlength']">Máximo de 50 caracteres.</ng-container>
+                </ng-container>
+              </span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5 w-1/3">
+            <label for="address_state" class="text-sm text-[#4F4F4F]">Estado</label>
+            <input
+              type="text"
+              pInputText
+              id="address_state"
+              formControlName="address_state"
+              (blur)="address_state?.invalid && address_state?.markAsDirty()"
+              placeholder="SP"
+            />
+
+            <div
+              class="flex align-items-end text-xs"
+              [ngClass]="
+                address_state?.invalid && (address_state?.dirty || address_state?.touched)
+                  ? 'justify-between'
+                  : 'justify-end'
+              "
+            >
+              <span
+                [ngClass]="
+                  address_state?.invalid && (address_state?.dirty || address_state?.touched)
+                    ? 'visible text-[#ff2637]'
+                    : 'invisible text-[#ff2637]'
+                "
+              >
+                <ng-container *ngIf="address_state?.errors as errors">
+                  <ng-container *ngIf="errors['required']">Estado é obrigatório.</ng-container>
+                  <ng-container *ngIf="errors['minlength']">Mínimo de 2 caracteres.</ng-container>
+                  <ng-container *ngIf="errors['maxlength']">Máximo de 50 caracteres.</ng-container>
+                </ng-container>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="w-1/2 flex flex-col gap-2">
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-[#4F4F4F]">Localização no Mapa</span>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              (click)="updateMap()"
+              class="text-xs text-[#3b82f6] hover:underline flex items-center gap-1 bg-transparent border-none cursor-pointer"
+            >
+              <mat-icon class="text-sm" svgIcon="refresh"></mat-icon>
+              Atualizar Mapa
+            </button>
+            @if (getGoogleMapsLink()) {
+              <a
+                [href]="getGoogleMapsLink()"
+                target="_blank"
+                class="text-xs text-[#3b82f6] hover:underline flex items-center gap-1"
+              >
+                <mat-icon class="text-sm" svgIcon="open-in-new"></mat-icon>
+                Abrir no Google Maps
+              </a>
+            }
+          </div>
+        </div>
+        <div
+          class="h-full border rounded-lg overflow-hidden bg-gray-50 flex items-center justify-center relative min-h-[400px]"
+        >
+          @if (mapUrl) {
+            <iframe
+              [src]="mapUrl"
+              width="100%"
+              height="100%"
+              style="border: 0; min-height: 400px"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Localização do endereço"
+              class="rounded-lg"
+            >
+            </iframe>
+          } @else {
+            <div class="text-center text-gray-500 p-8">
+              <mat-icon class="text-5xl mb-3 text-gray-400" svgIcon="map-marker-outline"></mat-icon>
+              <p class="font-medium text-base mb-1">Mapa não disponível</p>
+              <p class="text-sm text-gray-400">Preencha o endereço para visualizar o mapa</p>
+              <p class="text-xs text-gray-400 mt-2">O mapa será atualizado automaticamente ao preencher o CEP</p>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+
+    <section class="flex justify-between mt-4">
+      <p-button label="Cancelar" [outlined]="true" severity="secondary" (onClick)="onCancel.emit()"> </p-button>
+      <div class="flex gap-2">
+        <p-button label="Voltar" [outlined]="true" (onClick)="(prevCallback.emit)" [disabled]="false"> </p-button>
+        <p-button label="Próximo" (onClick)="nextCallback.emit()" [disabled]="stepEnderecoForm.invalid"> </p-button>
+      </div>
+    </section>
+  </form>
+</ng-template>
+

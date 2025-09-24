@@ -1,0 +1,66 @@
+//.background {
+//
+//
+//  top: 0;
+//  left: 0;
+//  bottom: 0;
+//  right: 0;
+//
+//
+//
+//  > div {
+//    margin-top: 20%;
+//  }
+//}
+//
+//.titulo-loading {
+
+//}
+
+.background {
+  display: flex;
+  outline: none;
+  position: fixed;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 999999;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.loading-icon {
+  font-size: 48px;
+  color: #007bff;
+}
+
+.titulo-loading {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 1em;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  margin: 20px auto;
+  border-radius: 50%;
+  border: 5px solid rgba(0, 123, 255, 0.1); /* You can change the color */
+  border-top-color: #007bff; /* You can change the color */
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

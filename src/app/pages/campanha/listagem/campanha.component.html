@@ -1,0 +1,112 @@
+<section class="pt-[88px] rounded-2xl px-[5.5dvw] max-w-[1920px] mx-auto">
+  <p-card>
+    <section class="shadow-lg rounded-2xl bg-white">
+      <p-table
+        #dt2
+        [paginator]="true"
+        [rows]="5"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [value]="campanhas"
+        [tableStyle]="{ 'min-width': '60rem', height: 'calc(100dvh - 300px)' }"
+        [globalFilterFields]="['title', 'description', 'category', 'value']"
+      >
+        <ng-template pTemplate="caption">
+          <section class="flex items-center justify-between">
+            <p-button size="small" label="Clear" [outlined]="true" icon="pi pi-filter-slash" (onClick)="clear(dt2)" />
+            <div class="flex gap-3 items-center">
+              <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="searchValue"
+                  (input)="onInput($event)"
+                  placeholder="Pesquisar..."
+                />
+              </span>
+              <p-button
+                size="small"
+                severity="secondary"
+                icon="pi pi-refresh"
+                [loading]="loading"
+                (click)="getCampanhas()"
+              />
+              <p-button size="small" icon="pi pi-plus" (click)="handleCreateMode()" />
+            </div>
+          </section>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr class="mx-[5dvw]">
+            <th pSortableColumn="title">Título <p-sortIcon field="code" /></th>
+            <th pSortableColumn="description">Descrição <p-sortIcon field="code" /></th>
+            <th>Imagem</th>
+            <th pSortableColumn="value">Valor <p-sortIcon field="code" /></th>
+            <th>% Arrecadado</th>
+            <th pSortableColumn="category">Categoria <p-sortIcon field="code" /></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-campanha>
+          <tr class="mx-[5dvw]">
+            <td>{{ campanha.title }}</td>
+            <td ptoolt [pTooltip]="campanha.description" tooltipPosition="left" class="max-w-[300px]">
+              {{
+                campanha.description.length > 300
+                  ? campanha.description.substring(0, 297) + '...'
+                  : campanha.description
+              }}
+            </td>
+            <td>
+              @if (campanha.image) {
+                <img
+                  [src]="campanha.image ? campanha.image : './../../../assets/images/icone-hopeshare.png'"
+                  [alt]="campanha.name"
+                  class="rounded-2xl w-[100px] h-[100px]"
+                />
+              } @else {
+                <div class="w-[100px] h-[100px] flex items-center justify-center rounded-3xl bg-[#c8c8c8]">
+                  <mat-icon class="text-[grey] w-6 h-6" svgIcon="camera-off"></mat-icon>
+                </div>
+              }
+            </td>
+            <td>{{ campanha.value_required | currency: 'R$ ' }}</td>
+            <td>
+              <p-progressBar [value]="campanha.progress_percentage"> </p-progressBar>
+            </td>
+            <td>
+              <div class="flex gap-2 flex-wrap">
+                <p-tag [value]="campanha.category[0]" />
+              </div>
+            </td>
+            <td>
+              <div class="flex flex-nowrap">
+                <p-button size="small" icon="pi pi-pencil" (click)="onEdit(campanha.campanha_id)" />
+                <p-button
+                  size="small"
+                  icon="pi pi-trash"
+                  class="ml-2"
+                  severity="danger"
+                  (click)="selectedItem = campanha; visible = true"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+  </p-card>
+
+  <p-dialog header="Excluir Campanha" [(visible)]="visible" [style]="{ width: '25rem' }">
+    <section class="flex flex-col items-end gap-3">
+      <span class="font-semibold w-6rem"
+        >Tem certeza que deseja excluir o item "{{ selectedItem?.title }}"? Só será possível excluí-lo caso ainda não
+        tenha sido feita nenhuma doação!
+      </span>
+      <div class="flex justify-content-end gap-2">
+        <p-button size="small" label="Não" severity="secondary" (onClick)="visible = false" />
+        <p-button size="small" label="Sim" (onClick)="onDelete(selectedItem!.campanha_id); visible = false" />
+      </div>
+    </section>
+  </p-dialog>
+</section>
+

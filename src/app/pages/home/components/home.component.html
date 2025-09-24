@@ -1,0 +1,35 @@
+<section class="h-full">
+  <section
+    class="flex overflow-hidden md:overflow-visible spacer layer justify-center"
+    [ngClass]="[isMobile ? 'h-[680px]' : 'h-[100dvh]', userSession?.user_id ? 'pt-[8%]' : '']"
+  >
+    <section
+      class="flex flex-col md:flex-row flex-col justify-between md:justify-center md:mb-[100px] mb-0 max-w-[1920px] w-full"
+      [class]="userSession?.user_id ? 'h-[400px]' : 'h-[700px]'"
+    >
+      @if (!userSession) {
+        <app-hero-unlogged class="w-full flex" [isMobile]="isMobile"></app-hero-unlogged>
+      } @else {
+        <app-hero-logged class="w-full flex" [isMobile]="isMobile" [userSession]="userSession"></app-hero-logged>
+      }
+    </section>
+  </section>
+  <section id="pesquisa" class="flex flex-col gap-5 pt-12 md:pt-[50px] px-2 md:px-16 pb-[64px] max-w-[1920px] mx-auto">
+    <section class="flex gap-2 justify-center flex-col md:flex-row">
+      @for (item of messagesInicialHome; track item; let index = $index) {
+        <div
+          [style.padding-left]="isMobile ? (index > 0 ? index * 20 + 25 + 'px' : '') : ''"
+          class="flex justify-end p-[25px] w-[300px] md:w-[276px] gap-5"
+        >
+          <span class="text-[40px] text-[#3b82f6] font-bold leading-[50px]">{{ index + 1 }}.</span>
+          <div>
+            <span class="font-semibold text-[#530020] text-sm">{{ item.title }}</span>
+            <p class="text-[#888888] text-sm" [innerHtml]="item.detail"></p>
+          </div>
+        </div>
+      }
+    </section>
+    <app-pesquisa-campanha-list></app-pesquisa-campanha-list>
+  </section>
+</section>
+

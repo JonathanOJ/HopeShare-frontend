@@ -1,0 +1,184 @@
+<section class="flex flex-col md:flex-row w-dvw md:h-dvh h-fit p-6 gap-4">
+  <section class="md:w-1/2 w-full h-full flex flex-col items-center justify-between gap-6">
+    <img
+      class="md:self-start self-center w-[200px]"
+      src="./../../../assets/images/logo-marca.png"
+      alt="Logo HopeShare"
+    />
+    <section class="h-fit flex flex-col justify-between md:w-[450px] w-full gap-8">
+      <div [class]="!createUser ? 'text-center' : 'text-start'" class="flex flex-col gap-2">
+        <h1 class="md:text-3xl text-2xl font-semibold text-[#3D3D3D]">
+          {{ !createUser ? 'Bem vindo de volta!' : 'Registre-se grátis' }}
+        </h1>
+        <span class="text-base text-[#4F4F4F]">{{
+          !createUser
+            ? 'Entre e ajude as campanhas de hoje'
+            : 'Seja bem vindo! Estamos felizes em te-lo na nossa rede de apoio'
+        }}</span>
+      </div>
+      <form *ngIf="userForm" [formGroup]="userForm">
+        <section class="flex flex-col gap-3">
+          @if (createUser) {
+            <div class="flex flex-col gap-1.5">
+              <label for="username" class="text-sm text-[#4F4F4F]">Nome</label>
+              <input
+                type="text"
+                pInputText
+                id="username"
+                formControlName="username"
+                (blur)="username?.invalid && username?.markAsDirty()"
+                required
+                placeholder="Como podemos lhe chamar"
+              />
+
+              @if (username?.invalid && (username?.dirty || username?.touched)) {
+                <small class="text-[#ff2637]"> Nome é obrigatório! </small>
+              }
+            </div>
+          }
+          <div class="flex flex-col gap-1.5">
+            <label for="email" class="text-sm text-[#4F4F4F]">E-mail</label>
+            <input
+              type="text"
+              pInputText
+              id="email"
+              formControlName="email"
+              (blur)="email?.invalid && email?.markAsDirty()"
+              required
+              placeholder="Seu melhor e-mail"
+            />
+
+            @if (email?.invalid && (email?.dirty || email?.touched)) {
+              @if (email?.errors?.['required']) {
+                <small class="text-[#ff2637]"> E-mail é obrigatório! </small>
+              } @else if (email?.errors?.['pattern']) {
+                <small class="text-[#ff2637]"> Insira um e-mail válido! </small>
+              }
+            }
+          </div>
+          @if (createUser) {
+            <div class="card flex justify-content-center">
+              <p-selectButton
+                [options]="type_users"
+                formControlName="type_user"
+                optionLabel="label"
+                optionValue="value"
+                (onChange)="setValidatorsFortype_user()"
+              />
+            </div>
+            <div class="flex flex-col md:flex-row gap-1.5 w-full">
+              <ng-container *ngIf="type_user?.value === 1; else userTemplate">
+                <div class="w-full">
+                  <label for="cnpj" class="text-sm text-[#4F4F4F]">CNPJ</label>
+                  <p-inputMask
+                    id="cnpj"
+                    mask="99.999.999/9999-99"
+                    formControlName="cnpj"
+                    (blur)="cnpj?.invalid && cnpj?.markAsDirty()"
+                    placeholder="00.000.000/0000-00"
+                    inputStyleClass="p-inputtext-sm"
+                  />
+
+                  @if (cnpj?.invalid && (cnpj?.dirty || cnpj?.touched)) {
+                    <small class="text-[#ff2637]"> CNPJ é obrigatório! </small>
+                  }
+                </div>
+              </ng-container>
+              <ng-template #userTemplate>
+                <div class="w-full md:w-2/3">
+                  <label for="cpf" class="text-sm text-[#4F4F4F]">CPF</label>
+                  <p-inputMask
+                    id="cpf"
+                    mask="999.999.999-99"
+                    formControlName="cpf"
+                    (blur)="cpf?.invalid && cpf?.markAsDirty()"
+                    placeholder="000.000.000-00"
+                  />
+
+                  @if (cpf?.invalid && (cpf?.dirty || cpf?.touched)) {
+                    <small class="text-[#ff2637]"> CPF é obrigatório! </small>
+                  }
+                </div>
+                <div class="w-full md:w-1/3">
+                  <label for="birthdate" class="text-sm text-[#4F4F4F]">Data de nascimento</label>
+                  <p-calendar
+                    id="birthdate"
+                    [readonlyInput]="true"
+                    formControlName="birthdate"
+                    (blur)="birthdate?.invalid && birthdate?.markAsDirty()"
+                    dateFormat="dd/mm/yy"
+                  />
+
+                  @if (birthdate?.invalid && (birthdate?.dirty || birthdate?.touched)) {
+                    <small class="text-[#ff2637]"> Insira uma data válida! </small>
+                  }
+                </div>
+              </ng-template>
+            </div>
+          }
+          <div class="flex flex-col gap-1.5">
+            <label for="password" class="text-sm text-[#4F4F4F]">Senha</label>
+
+            <p-password
+              id="password"
+              formControlName="password"
+              placeholder="********"
+              [toggleMask]="true"
+              promptLabel="Escolha uma senha"
+              weakLabel="Fraca"
+              mediumLabel="Média"
+              strongLabel="Forte"
+              styleClass="w-full"
+              [feedback]="createUser"
+              (blur)="password?.invalid && password?.markAsDirty()"
+            >
+              <ng-template pTemplate="footer">
+                <p-divider />
+                <p class="mt-2">Sugestões</p>
+                <ul class="pl-2 ml-2 mt-0 list-disc" style="line-height: 1.5">
+                  <li>Pelo menos uma letra maiúscula</li>
+                  <li>Pelo menos um número</li>
+                  <li>Mínimo 8 caracteres</li>
+                </ul>
+              </ng-template>
+            </p-password>
+            @if (password?.invalid && (password?.dirty || password?.touched)) {
+              <small class="text-[#ff2637]"> Senha é obrigatória! </small>
+            }
+          </div>
+
+          <div class="flex justify-between text-sm items-center text-[#4F4F4F]">
+            <p-checkbox formControlName="rememberUser" value="true" label="Lembrar conta" inputId="remember" />
+            <strong class="text-[#3b82f6] cursor-pointer">Esqueceu sua senha ?</strong>
+          </div>
+
+          <div class="flex flex-col gap-4">
+            <p-button
+              size="small"
+              [label]="createUser ? 'Criar' : 'Entrar'"
+              [disabled]="loading"
+              (click)="handleLogin()"
+            />
+          </div>
+        </section>
+      </form>
+      <span class="text-sm text-[#4F4F4F] text-center"
+        >{{ createUser ? 'Já tem uma conta?' : 'Ainda não conhece o HopeShare?' }}
+        <strong class="text-[#3b82f6] cursor-pointer" (click)="handleCreateUser()">{{
+          createUser ? 'Faça login' : 'Registre-se grátis.'
+        }}</strong></span
+      >
+    </section>
+    <div></div>
+  </section>
+  <section class="md:w-1/2 w-full md:flex items-center justify-end hidden">
+    <img
+      [src]="
+        createUser ? './../../assets/images/sign-up-animate.svg' : './../../assets/images/secure-login-animate.svg'
+      "
+      alt="SVG Animado de login"
+      class="w-[60dvw] h-[60dvh]"
+    />
+  </section>
+</section>
+

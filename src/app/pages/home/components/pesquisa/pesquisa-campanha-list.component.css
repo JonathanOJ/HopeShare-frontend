@@ -1,0 +1,26 @@
+::ng-deep .p-icon-field-left > .p-inputtext {
+  width: 800px;
+}
+
+::ng-deep .p-dropdown {
+  width: 250px;
+}
+
+::ng-deep .p-inputnumber {
+  width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  ::ng-deep .p-icon-field-left > .p-inputtext {
+    width: 80dvw;
+  }
+
+  ::ng-deep .p-dropdown {
+    width: 80dvw;
+  }
+}
+
+:host ::ng-deep .p-progressbar-determinate .p-progressbar-value {
+  max-width: 100% !important;
+}
+

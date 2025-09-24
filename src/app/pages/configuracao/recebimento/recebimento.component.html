@@ -1,0 +1,53 @@
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 rounded-2xl shadow-lg w-full rounded-t-none">
+  <div>
+    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Configuração de Recebimento</h2>
+
+    <form [formGroup]="recebimentoForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+      <div class="flex flex-col gap-1">
+        <label for="banco" class="text-sm font-medium text-gray-700">Banco</label>
+        <input pInputText id="banco" formControlName="banco" placeholder="Nome do banco" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="agencia" class="text-sm font-medium text-gray-700">Agência</label>
+        <input pInputText id="agencia" formControlName="agencia" placeholder="Número da agência" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="contaBancaria" class="text-sm font-medium text-gray-700">Conta Bancária</label>
+        <input pInputText id="contaBancaria" formControlName="contaBancaria" placeholder="Número da conta" />
+      </div>
+
+      <div class="flex gap-2">
+        <div class="flex flex-col gap-1 w-full">
+          <label for="cnpj" class="text-sm font-medium text-gray-700">CNPJ</label>
+          <input pInputText id="cnpj" formControlName="cnpj" placeholder="Apenas números (14 dígitos)" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label for="tipoConta" class="text-sm font-medium text-gray-700">Tipo de Conta</label>
+          <p-dropdown
+            id="tipoConta"
+            [options]="tiposConta"
+            formControlName="tipoConta"
+            placeholder="Selecione o tipo de conta"
+          >
+          </p-dropdown>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button pButton type="submit" label="Salvar Configuração"></button>
+      </div>
+    </form>
+  </div>
+
+  <div class="flex items-center justify-center">
+    <img
+      src="./../../../../assets/images/wallet.png"
+      alt="Ilustração de carteira digital"
+      class="w-3/4 md:w-full max-w-sm"
+    />
+  </div>
+</section>
+

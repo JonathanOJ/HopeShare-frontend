@@ -1,0 +1,149 @@
+<section *ngIf="!reload" class="pt-[80px] px-[5.5dvw] max-w-[1920px] mx-auto mt-[24px]">
+  <p-stepper [linear]="true" [(activeStep)]="activeStep">
+    <p-stepperPanel header="Categoria da campanha">
+      <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
+        <ng-container
+          *ngTemplateOutlet="stepCategoria.headerTemplate; context: { onClick: onClick, index: index }"
+        ></ng-container>
+      </ng-template>
+      <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+        <ng-container
+          *ngTemplateOutlet="stepCategoria.contentTemplate; context: { nextCallback: nextCallback, index: index }"
+        ></ng-container>
+      </ng-template>
+    </p-stepperPanel>
+
+    <p-stepperPanel header="Conhecendo a Campanha">
+      <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
+        <ng-container
+          *ngTemplateOutlet="stepDescricao.headerTemplate; context: { onClick: onClick, index: index }"
+        ></ng-container>
+      </ng-template>
+      <ng-template
+        pTemplate="content"
+        let-nextCallback="nextCallback"
+        let-prevCallback="prevCallback"
+        let-index="index"
+      >
+        <ng-container
+          *ngTemplateOutlet="
+            stepDescricao.contentTemplate;
+            context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
+          "
+        ></ng-container>
+      </ng-template>
+    </p-stepperPanel>
+
+    @if (have_address) {
+      <p-stepperPanel header="Endereço">
+        <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
+          <ng-container
+            *ngTemplateOutlet="stepEndereco.headerTemplate; context: { onClick: onClick, index: index }"
+          ></ng-container>
+        </ng-template>
+        <ng-template
+          pTemplate="content"
+          let-nextCallback="nextCallback"
+          let-prevCallback="prevCallback"
+          let-index="index"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              stepEndereco.contentTemplate;
+              context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
+            "
+          ></ng-container>
+        </ng-template>
+      </p-stepperPanel>
+    }
+
+    <p-stepperPanel header="Metas do campanha">
+      <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
+        <ng-container
+          *ngTemplateOutlet="stepMeta.headerTemplate; context: { onClick: onClick, index: index }"
+        ></ng-container>
+      </ng-template>
+      <ng-template
+        pTemplate="content"
+        let-nextCallback="nextCallback"
+        let-prevCallback="prevCallback"
+        let-index="index"
+      >
+        <ng-container
+          *ngTemplateOutlet="
+            stepMeta.contentTemplate;
+            context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
+          "
+        ></ng-container>
+      </ng-template>
+    </p-stepperPanel>
+
+    <p-stepperPanel header="Revisando">
+      <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
+        <ng-container
+          *ngTemplateOutlet="stepRevisao.headerTemplate; context: { onClick: onClick, index: index }"
+        ></ng-container>
+      </ng-template>
+      <ng-template
+        pTemplate="content"
+        let-nextCallback="nextCallback"
+        let-prevCallback="prevCallback"
+        let-index="index"
+      >
+        <ng-container
+          *ngTemplateOutlet="
+            stepRevisao.contentTemplate;
+            context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
+          "
+        ></ng-container>
+      </ng-template>
+    </p-stepperPanel>
+  </p-stepper>
+</section>
+
+<app-step-categoria
+  #stepCategoria
+  [activeStep]="activeStep"
+  [totalSteps]="totalSteps"
+  [campanha]="campanha"
+  (formUpdate)="updateForm('stepCategoria', $event)"
+  (onCancel)="onCancel()"
+></app-step-categoria>
+
+<app-step-descricao
+  #stepDescricao
+  [activeStep]="activeStep"
+  [totalSteps]="totalSteps"
+  [campanha]="campanha"
+  (formUpdate)="updateForm('stepDescricao', $event)"
+  (onCancel)="onCancel()"
+  (haveAddressChange)="haveAddressChange()"
+></app-step-descricao>
+
+<app-step-endereco
+  #stepEndereco
+  [activeStep]="activeStep"
+  [totalSteps]="totalSteps"
+  [campanha]="campanha"
+  (formUpdate)="updateForm('stepEndereco', $event)"
+  (onCancel)="onCancel()"
+></app-step-endereco>
+
+<app-step-meta
+  #stepMeta
+  [activeStep]="activeStep"
+  [totalSteps]="totalSteps"
+  (onCancel)="onCancel()"
+  (formUpdate)="updateForm('stepMeta', $event)"
+  [campanha]="campanha"
+></app-step-meta>
+
+<app-step-revisao
+  #stepRevisao
+  [campanha]="campanha!"
+  [activeStep]="activeStep"
+  [totalSteps]="totalSteps"
+  (onCancel)="onCancel()"
+  (onSave)="onSave()"
+></app-step-revisao>
+

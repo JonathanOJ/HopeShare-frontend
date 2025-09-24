@@ -1,0 +1,31 @@
+:host ::ng-deep .p-button {
+  width: 100%;
+  padding: 8px;
+}
+
+:host ::ng-deep .p-inputtext {
+  width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  ::ng-deep .p-carousel .p-carousel-content .p-carousel-prev {
+    width: 0;
+    height: 0;
+    margin: 0;
+  }
+
+  ::ng-deep .p-carousel .p-carousel-content .p-carousel-next {
+    width: 0;
+    height: 0;
+    margin: 0;
+  }
+}
+
+:host ::ng-deep .p-selectbutton {
+  display: flex;
+}
+
+:host ::ng-deep .p-calendar {
+  width: 100%;
+}
+
