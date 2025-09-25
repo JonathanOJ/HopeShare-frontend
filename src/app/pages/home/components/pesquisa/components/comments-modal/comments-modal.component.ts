@@ -35,7 +35,6 @@ export class CommentsModalComponent implements OnInit, OnChanges {
       content: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
     });
 
-    // Obter usuário atual
     this.currentUser = this.authService.getAuthResponse();
   }
 
@@ -64,7 +63,6 @@ export class CommentsModalComponent implements OnInit, OnChanges {
   onSubmit() {
     if (this.commentForm.invalid || !this.campanha) return;
 
-    // Verificar se o usuário pode comentar
     if (!this.canComment()) {
       this.messageService.showWarning('Restrição', this.getCommentRestrictionMessage());
       return;
@@ -75,7 +73,7 @@ export class CommentsModalComponent implements OnInit, OnChanges {
 
     this.campanhaService.addComment(this.campanha.campanha_id, commentData).subscribe({
       next: (newComment) => {
-        this.comments.unshift(newComment); // Adiciona no início da lista
+        this.comments.unshift(newComment);
         this.commentForm.reset();
         this.messageService.showMessage('Comentário', 'Comentário adicionado com sucesso!');
         this.loading = false;
@@ -126,30 +124,24 @@ export class CommentsModalComponent implements OnInit, OnChanges {
   canDeleteComment(comment: Comentario): boolean {
     if (!this.currentUser) return false;
 
-    // Admin pode deletar qualquer comentário
     if (this.currentUser.is_admin) return true;
 
-    // Usuário pode deletar apenas seus próprios comentários
     return comment.user.id === this.currentUser.user_id;
   }
 
   canComment(): boolean {
     if (!this.currentUser || !this.campanha) return false;
 
-    // Admin pode sempre comentar
     if (this.currentUser.is_admin) return true;
 
-    // Responsável pela campanha pode sempre comentar
     if (this.campanha.user_responsable.user_id === this.currentUser.user_id) return true;
 
-    // Verificar se o usuário fez doação para esta campanha
     return this.campanha.users_donated.some((donor) => donor.user_id === this.currentUser!.user_id);
   }
 
   getCommentRestrictionMessage(): string {
     if (!this.currentUser || !this.campanha) return '';
 
-    // Se não pode comentar, mostrar mensagem apropriada
     if (!this.canComment()) {
       return 'Você precisa fazer uma doação para esta campanha para poder comentar.';
     }

@@ -37,6 +37,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
         label: 'Configurações',
         items: [
           {
+            label: this.actualTheme === 'light' ? 'Modo Escuro' : 'Modo Claro',
+            icon: 'pi pi-palette',
+            command: () => {
+              this.actualTheme = this.actualTheme === 'light' ? 'dark' : 'light';
+              document.body.classList.toggle('dark-theme');
+              document.body.classList.toggle('light-theme');
+              localStorage.setItem('theme', this.actualTheme);
+            },
+          },
+          {
             label: 'Histórico',
             icon: 'pi pi-history',
             command: () => {
@@ -106,6 +116,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         return 3;
       case '/hopeshare/admin/denuncias':
         return this.userSession?.is_admin ? 4 : 0;
+      case '/hopeshare/admin/solicitacoes-deposito':
+        return this.userSession?.is_admin ? 5 : 0;
       default:
         return 0;
     }
@@ -128,6 +140,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       case 4:
         if (this.userSession?.is_admin) {
           this.router.navigate([`hopeshare/admin/denuncias`]);
+        }
+        break;
+      case 5:
+        if (this.userSession?.is_admin) {
+          this.router.navigate([`hopeshare/admin/solicitacoes-deposito`]);
         }
         break;
     }

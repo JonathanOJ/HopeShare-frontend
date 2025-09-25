@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { Subject, take, takeUntil } from 'rxjs';
 import { AuthUser, TipoUsuario, TipoUsuarioList } from '../shared/models/auth';
 import { AuthService } from '../shared/services/auth.service';
+import { LoadingService } from '../shared/services/loading.service';
 import { MessageConfirmationService } from '../shared/services/message-confirmation.service';
 import { UsuarioService } from '../shared/services/usuario.service';
 
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private usuarioService = inject(UsuarioService);
   private authService = inject(AuthService);
+  private loadingService = inject(LoadingService);
   private messageConfirmationService = inject(MessageConfirmationService);
 
   private destroy$ = new Subject();
@@ -109,6 +111,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   signIn() {
     this.loading = true;
+    this.loadingService.start();
 
     this.usuarioService
       .signIn(this.userForm.value)
@@ -116,7 +119,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: AuthUser) => {
           this.authService.setAuthResponse(response);
-
           this.router.navigate(['hopeshare/home']);
         },
         error: () => {
@@ -125,11 +127,13 @@ export class LoginComponent implements OnInit, OnDestroy {
       })
       .add(() => {
         this.loading = false;
+        this.loadingService.done();
       });
   }
 
   createUserAccount() {
     this.loading = true;
+    this.loadingService.start();
 
     this.usuarioService
       .saveUser(this.userForm!.value)
@@ -137,7 +141,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.authService.setAuthResponse(response);
-
           this.router.navigate(['hopeshare/home']);
         },
         error: () => {
@@ -149,6 +152,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       })
       .add(() => {
         this.loading = false;
+        this.loadingService.done();
       });
   }
 

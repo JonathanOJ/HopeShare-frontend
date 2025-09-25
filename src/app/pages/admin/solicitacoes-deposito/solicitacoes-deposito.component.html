@@ -1,0 +1,270 @@
+<div class="container mx-auto p-6 mt-[70px]">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Gerenciar Solicitações de Depósito</h1>
+      <p class="text-gray-600">Gerencie solicitações de saque das campanhas finalizadas</p>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-medium text-gray-700">Status:</span>
+        <p-dropdown
+          [(ngModel)]="selectedStatus"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Todas"
+          styleClass="w-40"
+        ></p-dropdown>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center py-8">
+    <p-progressSpinner styleClass="w-12 h-12"></p-progressSpinner>
+  </div>
+
+  <!-- Tabela de Solicitações -->
+  <div *ngIf="!loading" class="bg-white rounded-lg shadow overflow-hidden">
+    <!-- Empty State -->
+    <div *ngIf="getFilteredSolicitacoes().length === 0" class="p-8 text-center">
+      <div class="flex flex-col items-center">
+        <i class="pi pi-info-circle text-gray-400 text-4xl mb-4"></i>
+        <p class="text-gray-500 text-lg mb-2">Nenhuma solicitação encontrada</p>
+        <p class="text-gray-400 text-sm">Tente ajustar os filtros para ver mais resultados</p>
+      </div>
+    </div>
+
+    <!-- Tabela -->
+    <div *ngIf="getFilteredSolicitacoes().length > 0" class="overflow-x-auto">
+      <table class="min-w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campanha</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solicitante</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Valor Solicitado
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Data Solicitação
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let solicitacao of getFilteredSolicitacoes()" class="hover:bg-gray-50">
+            <td class="px-6 py-4">
+              <div>
+                <div class="font-medium text-gray-900">{{ solicitacao.campanha?.title }}</div>
+                <div class="text-sm text-gray-500">ID: {{ solicitacao.campanha_id }}</div>
+                <div class="text-xs text-gray-400 mt-1">
+                  Meta: {{ formatCurrency(solicitacao.campanha?.value_required || 0) }} | Arrecadado:
+                  {{ formatCurrency(solicitacao.campanha?.value_donated || 0) }}
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <div>
+                <div class="font-medium text-gray-900">{{ solicitacao.user?.username }}</div>
+                <div class="text-sm text-gray-500">{{ solicitacao.user?.email }}</div>
+              </div>
+            </td>
+            <td class="px-6 py-4 font-semibold text-green-600">
+              {{ formatCurrency(solicitacao.value_requested) }}
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-600">
+              {{ formatDate(solicitacao.created_at!) }}
+            </td>
+            <td class="px-6 py-4">
+              <p-tag [value]="solicitacao.status" [severity]="getStatusSeverity(solicitacao.status)"></p-tag>
+            </td>
+            <td class="px-6 py-4">
+              <p-button
+                icon="pi pi-ellipsis-v"
+                size="small"
+                severity="secondary"
+                [text]="true"
+                pTooltip="Ações"
+                (onClick)="menu.toggle($event)"
+              ></p-button>
+              <p-menu #menu [model]="getActionItems(solicitacao)" [popup]="true" [appendTo]="'body'"></p-menu>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Detalhes -->
+<p-dialog
+  [(visible)]="modalDetalhes"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  header="Detalhes da Solicitação"
+  styleClass="w-full max-w-2xl"
+>
+  <div *ngIf="selectedSolicitacao" class="space-y-4">
+    <!-- Informações da Campanha -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <h4 class="font-semibold text-gray-800 mb-2">Informações da Campanha</h4>
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <span class="text-gray-500">Título:</span>
+          <p class="font-medium">{{ selectedSolicitacao.campanha?.title }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500">Status da Campanha:</span>
+          <p class="font-medium">{{ selectedSolicitacao.campanha?.status }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500">Meta:</span>
+          <p class="font-medium">{{ formatCurrency(selectedSolicitacao.campanha?.value_required || 0) }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500">Arrecadado:</span>
+          <p class="font-medium">{{ formatCurrency(selectedSolicitacao.campanha?.value_donated || 0) }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informações da Solicitação -->
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+      <h4 class="font-semibold text-gray-800 mb-2">Detalhes da Solicitação</h4>
+      <div class="space-y-3 text-sm">
+        <div>
+          <span class="text-gray-500">Solicitante:</span>
+          <p class="font-medium">{{ selectedSolicitacao.user?.username }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500">Valor Solicitado:</span>
+          <p class="font-medium text-green-600">{{ formatCurrency(selectedSolicitacao.value_requested) }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500">Data da Solicitação:</span>
+          <p class="font-medium">{{ formatDate(selectedSolicitacao.created_at!) }}</p>
+        </div>
+        <div>
+          <span class="text-gray-500">Status:</span>
+          <div class="mt-1">
+            <p-tag
+              [value]="selectedSolicitacao.status"
+              [severity]="getStatusSeverity(selectedSolicitacao.status)"
+            ></p-tag>
+          </div>
+        </div>
+        <div *ngIf="selectedSolicitacao.request_message">
+          <span class="text-gray-500">Mensagem do Solicitante:</span>
+          <p class="mt-1 p-3 bg-white border rounded">{{ selectedSolicitacao.request_message }}</p>
+        </div>
+        <div *ngIf="selectedSolicitacao.admin_message">
+          <span class="text-gray-500">Resposta do Administrador:</span>
+          <p class="mt-1 p-3 bg-white border rounded">{{ selectedSolicitacao.admin_message }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-4 border-t">
+    <p-button label="Fechar" severity="secondary" [text]="true" (onClick)="modalDetalhes = false"></p-button>
+  </div>
+</p-dialog>
+
+<!-- Modal de Aprovar -->
+<p-dialog
+  [(visible)]="modalAprovar"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  header="Aprovar Solicitação"
+  styleClass="w-full max-w-lg"
+>
+  <div *ngIf="selectedSolicitacao" class="space-y-4">
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+      <div class="flex items-start gap-3">
+        <i class="pi pi-check-circle text-green-600 mt-1"></i>
+        <div>
+          <h4 class="font-semibold text-green-800">Aprovar Solicitação de Depósito</h4>
+          <p class="text-sm text-green-700 mt-1">
+            Ao aprovar, a campanha será marcada como finalizada e não poderá mais receber doações.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p><strong>Campanha:</strong> {{ selectedSolicitacao.campanha?.title }}</p>
+      <p><strong>Valor:</strong> {{ formatCurrency(selectedSolicitacao.value_requested) }}</p>
+    </div>
+
+    <div>
+      <label for="admin-message-approve" class="block text-sm font-medium text-gray-700 mb-2">
+        Mensagem para o solicitante (opcional)
+      </label>
+      <textarea
+        id="admin-message-approve"
+        [(ngModel)]="adminMessage"
+        rows="3"
+        placeholder="Digite uma mensagem..."
+        class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-4 border-t">
+    <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="modalAprovar = false"></p-button>
+    <p-button label="Aprovar" severity="success" icon="pi pi-check" (onClick)="aprovarSolicitacao()"></p-button>
+  </div>
+</p-dialog>
+
+<!-- Modal de Rejeitar -->
+<p-dialog
+  [(visible)]="modalRejeitar"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  header="Rejeitar Solicitação"
+  styleClass="w-full max-w-lg"
+>
+  <div *ngIf="selectedSolicitacao" class="space-y-4">
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex items-start gap-3">
+        <i class="pi pi-times-circle text-red-600 mt-1"></i>
+        <div>
+          <h4 class="font-semibold text-red-800">Rejeitar Solicitação de Depósito</h4>
+          <p class="text-sm text-red-700 mt-1">Informe o motivo da rejeição para o solicitante.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p><strong>Campanha:</strong> {{ selectedSolicitacao.campanha?.title }}</p>
+      <p><strong>Valor:</strong> {{ formatCurrency(selectedSolicitacao.value_requested) }}</p>
+    </div>
+
+    <div>
+      <label for="admin-message-reject" class="block text-sm font-medium text-gray-700 mb-2">
+        Motivo da rejeição *
+      </label>
+      <textarea
+        id="admin-message-reject"
+        [(ngModel)]="adminMessage"
+        rows="3"
+        placeholder="Digite o motivo da rejeição..."
+        class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
+        required
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-4 border-t">
+    <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="modalRejeitar = false"></p-button>
+    <p-button label="Rejeitar" severity="danger" icon="pi pi-times" (onClick)="rejeitarSolicitacao()"></p-button>
+  </div>
+</p-dialog>

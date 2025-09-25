@@ -1,60 +1,72 @@
-//.background {
-//
-//
-//  top: 0;
-//  left: 0;
-//  bottom: 0;
-//  right: 0;
-//
-//
-//
-//  > div {
-//    margin-top: 20%;
-//  }
-//}
-//
-//.titulo-loading {
-
-//}
-
 .background {
   display: flex;
-  outline: none;
-  position: fixed;
   flex-direction: column;
+  position: fixed;
   top: 0;
   left: 0;
-  bottom: 0;
   right: 0;
+  bottom: 0;
   z-index: 999999;
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.7);
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.loading-icon {
-  font-size: 48px;
-  color: #007bff;
+.logo-container {
+  margin-bottom: 1.5rem;
 }
 
-.titulo-loading {
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 1em;
-  font-weight: 500;
-  color: #ffffff;
+.loading-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  animation: pulse 2s infinite;
 }
 
 .loading-spinner {
-  width: 60px;
-  height: 60px;
-  margin: 20px auto;
+  width: 50px;
+  height: 50px;
+  margin: 1rem auto;
+  border: 3px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border: 5px solid rgba(0, 123, 255, 0.1); /* You can change the color */
-  border-top-color: #007bff; /* You can change the color */
+  border-top-color: #ffffff;
   animation: spin 1s linear infinite;
 }
+
+.loading-text {
+  margin: 1rem 0;
+}
+
+.titulo-loading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle-loading {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  font-weight: 400;
+}
+
+// Removed progress container and bar styles
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Removed slideUp animation
 
 @keyframes spin {
   0% {
@@ -62,5 +74,36 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+// Removed progressMove animation
+
+// Responsividade
+@media (max-width: 768px) {
+  .loading-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .titulo-loading {
+    font-size: 1.25rem;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
   }
 }

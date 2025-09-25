@@ -4,6 +4,7 @@ import { AuthUser } from '../../../shared/models/auth';
 import { Subject, takeUntil, take } from 'rxjs';
 import { AuthService } from '../../../shared/services/auth.service';
 import { CampanhaService } from '../../../shared/services/campanha.service';
+import { LoadingService } from '../../../shared/services/loading.service';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
 import { Router } from '@angular/router';
 
@@ -22,6 +23,7 @@ export class ListagemComponent implements OnInit {
 
   campanhaService = inject(CampanhaService);
   authService = inject(AuthService);
+  loadingService = inject(LoadingService);
   messageConfirmationService = inject(MessageConfirmationService);
   router = inject(Router);
 
@@ -38,6 +40,7 @@ export class ListagemComponent implements OnInit {
   }
   getCampanhas() {
     this.loading = true;
+    this.loadingService.start();
 
     this.campanhaService
       .findCampanhaByUser(this.userSession!.user_id)
@@ -56,7 +59,10 @@ export class ListagemComponent implements OnInit {
           this.messageConfirmationService.showError('Erro', 'Erro ao carregar campanhas!');
         },
       })
-      .add(() => (this.loading = false));
+      .add(() => {
+        this.loading = false;
+        this.loadingService.done();
+      });
   }
 
   getProgress(campanha: Campanha): number {

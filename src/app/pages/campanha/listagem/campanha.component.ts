@@ -4,6 +4,7 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { Campanha } from '../../../shared/models/campanha.model';
 import { CampanhaService } from '../../../shared/services/campanha.service';
+import { LoadingService } from '../../../shared/services/loading.service';
 import { AuthService } from '../../../shared/services/auth.service';
 import { AuthUser } from '../../../shared/models/auth';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
@@ -29,6 +30,7 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private campanhaService = inject(CampanhaService);
   private authService = inject(AuthService);
+  private loadingService = inject(LoadingService);
   private router = inject(Router);
   private messageConfirmationService = inject(MessageConfirmationService);
 
@@ -50,6 +52,7 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getCampanhas() {
     this.loading = true;
+    this.loadingService.start();
 
     this.campanhaService
       .findCampanhaByUser(this.userSession!.user_id)
@@ -66,7 +69,10 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
           this.messageConfirmationService.showError('Erro', 'Erro ao carregar campanhas!');
         },
       })
-      .add(() => (this.loading = false));
+      .add(() => {
+        this.loading = false;
+        this.loadingService.done();
+      });
   }
 
   onInput(event: Event): void {
@@ -88,6 +94,7 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onDelete(id: string) {
+    this.loadingService.start();
     this.campanhaService
       .deleteCampanha(id)
       .pipe(takeUntil(this.destroy$), take(1))
@@ -102,6 +109,9 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
           error.status == 400 ? (errorMessage = error.error.error) : (errorMessage = 'Erro ao deletar campanha!');
           this.messageConfirmationService.showError('Erro', errorMessage);
         },
+      })
+      .add(() => {
+        this.loadingService.done();
       });
   }
 
@@ -113,6 +123,49 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     return 0;
+  }
+
+  canRequestDeposit(campanha: Campanha): boolean {
+    return (
+      campanha.status === 'ACTIVE' && campanha.value_donated >= campanha.value_required && campanha.value_donated > 0
+    );
+  }
+
+  solicitarDeposito(campanha: Campanha) {
+    this.messageConfirmationService.confirmWarning({
+      message: `Deseja solicitar o depósito da campanha "${campanha.title}"? 
+                Valor disponível: R$ ${campanha.value_donated?.toFixed(2)}
+                
+                Após aprovação, a campanha será finalizada e não poderá mais receber doações.`,
+      accept: () => {
+        this.loading = true;
+        this.loadingService.start();
+        this.campanhaService
+          .createSolicitacaoDeposito(campanha.campanha_id, 'Solicitação de depósito da campanha.')
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: () => {
+              this.messageConfirmationService.showMessage(
+                'Sucesso',
+                'Solicitação de depósito enviada com sucesso! Aguarde a análise do administrador.'
+              );
+              this.getCampanhas();
+            },
+            error: (error) => {
+              console.error('Erro ao solicitar depósito:', error);
+              let errorMessage = 'Erro ao solicitar depósito.';
+              if (error.status === 400) {
+                errorMessage = error.error.error || errorMessage;
+              }
+              this.messageConfirmationService.showError('Erro', errorMessage);
+            },
+          })
+          .add(() => {
+            this.loading = false;
+            this.loadingService.done();
+          });
+      },
+    });
   }
 }
 

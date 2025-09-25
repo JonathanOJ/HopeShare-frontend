@@ -33,6 +33,11 @@
       >
       </p-progressBar>
       <p-tag [rounded]="true" class="absolute right-2.5 bottom-2.5 z-10" [value]="campanha!.category[0]" />
+
+      <!-- Status da campanha -->
+      @if (campanha?.status === 'FINALIZADA') {
+        <p-tag [rounded]="true" class="absolute left-2.5 top-2.5 z-10" value="Finalizada" severity="secondary" />
+      }
     </div>
   }
   <section class="flex flex-col py-5 px-7 gap-4 md:gap-4">

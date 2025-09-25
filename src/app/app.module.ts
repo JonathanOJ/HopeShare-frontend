@@ -14,6 +14,7 @@ import { SharedModule } from './shared/shared.module';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { HttpIntercept } from './shared/interceptors/http.intercept';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { LoadingService } from './shared/services/loading.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,6 +32,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
   providers: [
     provideAnimationsAsync(),
     MessageService,
+    LoadingService,
     ConfirmationService,
     { provide: HTTP_INTERCEPTORS, useClass: HttpIntercept, multi: true },
   ],

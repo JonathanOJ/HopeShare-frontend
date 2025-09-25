@@ -7,6 +7,7 @@ import { AuthService } from '../../../../shared/services/auth.service';
 import { CampanhaService } from '../../../../shared/services/campanha.service';
 import { Subject, take, takeUntil } from 'rxjs';
 import { MessageConfirmationService } from '../../../../shared/services/message-confirmation.service';
+import { LoadingService } from '../../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-pesquisa-campanha-list',
@@ -57,6 +58,7 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
   private breakpointObserver = inject(BreakpointObserver);
   private messageConfirmationService = inject(MessageConfirmationService);
   private destroy$ = new Subject();
+  private loadingService = inject(LoadingService);
 
   ngOnInit(): void {
     this.searchItens();
@@ -65,7 +67,10 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
     this.userSession = this.authService.getAuthResponse() || null;
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
 
   handleWindowSize() {
     this.breakpointObserver.observe([Breakpoints.XSmall, Breakpoints.Small]).subscribe((result) => {
@@ -104,7 +109,7 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
     };
 
     this.showMoreCampanhas = true;
-
+    this.loadingService.start();
     this.camapanhaService
       .searchCampanha(body)
       .pipe(takeUntil(this.destroy$), take(1))
@@ -115,6 +120,13 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
 
             items.forEach((campanha) => {
               campanha.progress_percentage = this.getProgress(campanha);
+              campanha.have_address = true;
+              campanha.address_street = 'Rua Exemplo';
+              campanha.address_number = '123';
+              campanha.address_complement = 'Apto 456';
+              campanha.address_city = 'São Paulo';
+              campanha.address_state = 'SP';
+              campanha.address_zipcode = '01234-567';
             });
 
             if (items.length > 0) {
@@ -125,16 +137,14 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
               body.page == 1 ? (this.campanhaSearchResults = []) : '';
             }
           }
-
-          this.showMoreCampanhas = false;
         },
         error: () => {
           this.campanhaSearchResults = [];
-          this.showMoreCampanhas = false;
         },
       })
       .add(() => {
         this.showMoreCampanhas = false;
+        this.loadingService.done();
         this.loading = false;
       });
   }
@@ -178,6 +188,105 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
     this.modalComments = true;
   }
 
+  canDonate(): boolean {
+    return this.campanhaSelected?.status !== 'FINALIZADA';
+  }
+
+  hasValidAddress(): boolean {
+    if (!this.campanhaSelected || !this.campanhaSelected.have_address) return false;
+
+    const campanha = this.campanhaSelected;
+    return !!(campanha.address_street?.trim() && campanha.address_city?.trim());
+  }
+
+  getFormattedAddress(): string {
+    if (!this.campanhaSelected) return '';
+
+    const campanha = this.campanhaSelected;
+    const parts: string[] = [];
+
+    if (campanha.address_street?.trim()) {
+      let streetWithNumber = campanha.address_street.trim();
+
+      if (campanha.address_number?.trim()) {
+        streetWithNumber += `, nº ${campanha.address_number.trim()}`;
+      }
+
+      parts.push(streetWithNumber);
+    }
+
+    if (campanha.address_complement?.trim()) {
+      parts.push(campanha.address_complement.trim());
+    }
+
+    return parts.join(' - ');
+  }
+
+  getCityStateFormatted(): string {
+    if (!this.campanhaSelected) return '';
+
+    const campanha = this.campanhaSelected;
+    const parts: string[] = [];
+
+    if (campanha.address_city?.trim()) {
+      parts.push(campanha.address_city.trim());
+    }
+
+    if (campanha.address_state?.trim()) {
+      parts.push(campanha.address_state.trim());
+    }
+
+    let location = parts.join(' - ');
+
+    if (campanha.address_zipcode?.trim()) {
+      location += ` • CEP: ${campanha.address_zipcode.trim()}`;
+    }
+
+    return location;
+  }
+
+  openGoogleMaps(): void {
+    if (!this.campanhaSelected) return;
+
+    const campanha = this.campanhaSelected;
+    let searchQuery = '';
+
+    const addressParts: string[] = [];
+
+    if (campanha.address_street?.trim()) {
+      let street = campanha.address_street.trim();
+      if (campanha.address_number?.trim()) {
+        street += `, ${campanha.address_number.trim()}`;
+      }
+      addressParts.push(street);
+    }
+
+    if (campanha.address_neighborhood?.trim()) {
+      addressParts.push(campanha.address_neighborhood.trim());
+    }
+
+    if (campanha.address_city?.trim()) {
+      addressParts.push(campanha.address_city.trim());
+    }
+
+    if (campanha.address_state?.trim()) {
+      addressParts.push(campanha.address_state.trim());
+    }
+
+    if (campanha.address_zipcode?.trim()) {
+      addressParts.push(campanha.address_zipcode.trim());
+    }
+
+    searchQuery = addressParts.join(', ');
+
+    if (searchQuery) {
+      const encodedQuery = encodeURIComponent(searchQuery);
+      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`;
+
+      window.open(googleMapsUrl, '_blank');
+    }
+  }
+
   donate() {
     if (!this.userSession) {
       this.modalLogin = true;
@@ -186,7 +295,16 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
 
     if (this.loading) return;
 
+    if (!this.canDonate()) {
+      this.messageConfirmationService.showWarning(
+        'Campanha Finalizada',
+        'Esta campanha já foi finalizada e não aceita mais doações.'
+      );
+      return;
+    }
+
     this.loading = true;
+    this.loadingService.start();
 
     const body = {
       campanha_id: this.campanhaSelected!.campanha_id,
@@ -213,6 +331,7 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
         this.modalDonate = false;
         this.loading = false;
         this.modalCampanha = false;
+        this.loadingService.done();
       });
   }
 }

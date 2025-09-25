@@ -7,6 +7,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthUser } from '../../../shared/models/auth';
+import { LoadingService } from '../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-campanha-create',
@@ -28,8 +29,8 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
   private messageConfirmationService = inject(MessageConfirmationService);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private loadingService = inject(LoadingService);
 
   userSession: AuthUser | null = this.authService.getAuthResponse();
 
@@ -55,9 +56,12 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
 
   onSave() {
     this.loading = true;
+    this.loadingService.start();
+
     if (this.stepCategoriaForm.invalid || this.stepDescricaoForm.invalid || this.stepMetaForm.invalid) {
       this.messageConfirmationService.showError('Erro', 'Revisar campos obrigatórios!');
       this.loading = false;
+      this.loadingService.done();
       return;
     }
 
@@ -69,15 +73,17 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
       .subscribe({
         next: (resp: any) => {
           this.campanha = null;
-
+          this.loading = false;
+          // this.loadingService.done();
           this.router.navigate(['hopeshare/campanha/listagem']);
-          this.messageConfirmationService.showMessage('Erro', ' Campanha salva com sucesso!');
+          this.messageConfirmationService.showMessage('Sucesso', 'Campanha salva com sucesso!');
         },
         error: () => {
+          this.loading = false;
+          // this.loadingService.done();
           this.messageConfirmationService.showError('Erro', 'Erro ao salvar campanha!');
         },
-      })
-      .add(() => (this.loading = false));
+      });
   }
 
   getPayloadToSave(): Campanha {
@@ -105,6 +111,7 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
   }
 
   onEdit(id: string) {
+    this.loadingService.start();
     this.campanhaService
       .findCampanhaById(id)
       .pipe(takeUntil(this.destroy$), take(1))
@@ -116,6 +123,9 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
           this.messageConfirmationService.showError('Erro', 'Erro ao carregar campanha!');
           this.router.navigate(['hopeshare/campanha/listagem']);
         },
+      })
+      .add(() => {
+        this.loadingService.done();
       });
   }
 

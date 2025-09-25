@@ -40,6 +40,12 @@ export class HomeComponent implements OnInit {
     this.handleWindowSize();
 
     this.userSession = this.authService.getAuthResponse() || null;
+
+    if (this.userSession) {
+      this.userSession.is_admin = true;
+
+      this.authService.setAuthResponse(this.userSession);
+    }
   }
 
   handleWindowSize() {

@@ -3,6 +3,7 @@ export enum StatusCampanha {
   FINISHED = 'FINISHED',
   CANCELLED = 'CANCELLED',
   SUSPENDED = 'SUSPENDED',
+  FINALIZADA = 'FINALIZADA',
 }
 
 export const StatusCampanhaList = [
@@ -10,5 +11,6 @@ export const StatusCampanhaList = [
   { label: 'Finalizada', value: StatusCampanha.FINISHED },
   { label: 'Cancelada', value: StatusCampanha.CANCELLED },
   { label: 'Suspensa', value: StatusCampanha.SUSPENDED },
+  { label: 'Finalizada com Depósito', value: StatusCampanha.FINALIZADA },
 ];
 

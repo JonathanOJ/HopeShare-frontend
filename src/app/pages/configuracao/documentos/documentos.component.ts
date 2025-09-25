@@ -28,7 +28,6 @@ export class DocumentosComponent implements OnInit {
   onSubmit() {
     if (this.empresaForm.valid) {
       console.log('Dados da empresa:', this.empresaForm.value);
-      // Aqui você pode enviar os dados e documentos para o backend
     } else {
       this.empresaForm.markAllAsTouched();
     }

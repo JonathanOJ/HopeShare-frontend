@@ -87,7 +87,7 @@ export class StepMetaComponent implements OnInit, OnChanges {
   initializeForm() {
     this.stepMetaForm = this.fb.group({
       value_required: [this.campanha?.value_required || null, Validators.required],
-      custom_value: [null, [Validators.min(1)]], // Campo para valor customizado
+      custom_value: [null, [Validators.min(1)]],
     });
 
     if (this.campanha?.value_required) {

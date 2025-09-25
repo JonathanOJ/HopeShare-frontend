@@ -4,6 +4,7 @@ import { Subject, takeUntil, take } from 'rxjs';
 import { AuthUser } from '../../../shared/models/auth';
 import { Relatorio } from '../../../shared/models/relatorio.model';
 import { AuthService } from '../../../shared/services/auth.service';
+import { LoadingService } from '../../../shared/services/loading.service';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
 import { RelatorioService } from '../../../shared/services/relatorio.service';
 
@@ -21,6 +22,7 @@ export class ListagemComponent implements OnInit, OnDestroy {
 
   private relatorioService = inject(RelatorioService);
   private authService = inject(AuthService);
+  private loadingService = inject(LoadingService);
   private router = inject(Router);
   private messageConfirmationService = inject(MessageConfirmationService);
 
@@ -49,6 +51,7 @@ export class ListagemComponent implements OnInit, OnDestroy {
 
   getRelatorios() {
     this.loading = true;
+    this.loadingService.start();
 
     this.relatorioService
       .getRelatoriosByUser(this.userSession!.user_id)
@@ -56,14 +59,16 @@ export class ListagemComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (resp: Relatorio[]) => {
           this.relatoriosContabeis = resp.filter((r) => r.type === 'CONTABIL');
-
           this.relatoriosFinanceiros = resp.filter((r) => r.type === 'FINANCEIRO');
         },
         error: () => {
           this.messageConfirmationService.showError('Erro', 'Erro ao carregar relatórios!');
         },
       })
-      .add(() => (this.loading = false));
+      .add(() => {
+        this.loading = false;
+        this.loadingService.done();
+      });
   }
 }
 

@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CampanhaService } from '../../../shared/services/campanha.service';
+import { LoadingService } from '../../../shared/services/loading.service';
 import { Denuncia } from '../../../shared/models/denuncia.model';
 import { MenuItem } from 'primeng/api';
 import { Subject, takeUntil } from 'rxjs';
@@ -58,6 +59,7 @@ export class DenunciasComponent implements OnInit, OnDestroy {
 
   constructor(
     private campanhaService: CampanhaService,
+    private loadingService: LoadingService,
     private messageService: MessageConfirmationService
   ) {}
 
@@ -86,7 +88,6 @@ export class DenunciasComponent implements OnInit, OnDestroy {
     //       this.messageService.showError('Erro', 'Erro ao carregar denúncias. Tente novamente.');
     //       this.loading = false;
 
-    // Dados de exemplo em caso de erro
     this.denuncias = [
       {
         id: '1',
@@ -200,7 +201,6 @@ export class DenunciasComponent implements OnInit, OnDestroy {
       },
     ];
 
-    // Agrupar denúncias por campanha
     this.groupDenunciasByCampanha();
     //     },
     //   });
@@ -251,7 +251,6 @@ export class DenunciasComponent implements OnInit, OnDestroy {
   getFilteredCampanhas() {
     let filtered = [...this.campanhasGrouped];
 
-    // Filtrar por status da campanha
     if (this.selectedCampanhaStatus) {
       filtered = filtered.filter((campanha) => {
         if (this.selectedCampanhaStatus === 'ACTIVE') return !campanha.is_suspended;
@@ -260,7 +259,6 @@ export class DenunciasComponent implements OnInit, OnDestroy {
       });
     }
 
-    // Filtrar por status das denúncias
     if (this.selectedStatus) {
       filtered = filtered.filter((campanha) => campanha.denuncias.some((d) => d.status === this.selectedStatus));
     }
@@ -280,6 +278,7 @@ export class DenunciasComponent implements OnInit, OnDestroy {
   updateStatus(denuncia: DenunciaExtended, newStatus: string) {
     if (!denuncia.id) return;
 
+    this.loadingService.start();
     this.campanhaService
       .updateDenunciaStatus(denuncia.id, newStatus)
       .pipe(takeUntil(this.destroy$))
@@ -292,6 +291,9 @@ export class DenunciasComponent implements OnInit, OnDestroy {
           console.error('Erro ao atualizar status:', error);
           this.messageService.showError('Erro', 'Erro ao atualizar status da denúncia.');
         },
+      })
+      .add(() => {
+        this.loadingService.done();
       });
   }
 
@@ -374,6 +376,7 @@ export class DenunciasComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.loadingService.start();
     this.campanhaService
       .suspendCampanha(this.selectedCampanha.campanha_id, this.suspensaoReason)
       .pipe(takeUntil(this.destroy$))
@@ -387,10 +390,14 @@ export class DenunciasComponent implements OnInit, OnDestroy {
           console.error('Erro ao suspender campanha:', error);
           this.messageService.showError('Erro', 'Erro ao suspender campanha.');
         },
+      })
+      .add(() => {
+        this.loadingService.done();
       });
   }
 
   reactivateCampanha(campanha: CampanhaGrouped) {
+    this.loadingService.start();
     this.campanhaService
       .reactivateCampanha(campanha.campanha_id)
       .pipe(takeUntil(this.destroy$))
@@ -403,11 +410,13 @@ export class DenunciasComponent implements OnInit, OnDestroy {
           console.error('Erro ao reativar campanha:', error);
           this.messageService.showError('Erro', 'Erro ao reativar campanha.');
         },
+      })
+      .add(() => {
+        this.loadingService.done();
       });
   }
 
   viewCampanha(campanha: CampanhaGrouped) {
-    // Abrir campanha em nova aba ou navegar para ela
     window.open(`/campanha/${campanha.campanha_id}`, '_blank');
   }
 }

@@ -56,7 +56,6 @@ export class CampanhaService {
     return this.httpClient.delete(`${this.URL_API}/${campanhaId}/comments/${commentId}`);
   }
 
-  // Admin - Gerenciar denúncias
   getDenuncias(): Observable<any[]> {
     return this.httpClient.get<any[]>(`${this.URL_API}/admin/reports`);
   }
@@ -71,6 +70,27 @@ export class CampanhaService {
 
   reactivateCampanha(campanhaId: string): Observable<any> {
     return this.httpClient.patch(`${this.URL_API}/admin/campanhas/${campanhaId}/reactivate`, {});
+  }
+
+  createSolicitacaoDeposito(campanhaId: string, message?: string): Observable<any> {
+    return this.httpClient.post(`${this.URL_API}/${campanhaId}/deposito/request`, {
+      request_message: message,
+    });
+  }
+
+  getSolicitacoesDeposito(): Observable<any[]> {
+    return this.httpClient.get<any[]>(`${this.URL_API}/admin/depositos`);
+  }
+
+  updateSolicitacaoDeposito(solicitacaoId: string, status: string, adminMessage?: string): Observable<any> {
+    return this.httpClient.patch(`${this.URL_API}/admin/depositos/${solicitacaoId}`, {
+      status,
+      admin_message: adminMessage,
+    });
+  }
+
+  getMySolicitacoesDeposito(): Observable<any[]> {
+    return this.httpClient.get<any[]>(`${this.URL_API}/depositos/my-requests`);
   }
 }
 

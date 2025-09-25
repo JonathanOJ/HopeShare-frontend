@@ -2,7 +2,7 @@
   <section class="container">
     <img
       (click)="redirectTo('hopeshare/home')"
-      class="hidden md:flex w-[200px] cursor-pointer"
+      class="hidden md:flex w-[190px] cursor-pointer"
       src="./../../../assets/images/logo-marca.png"
       alt="Logo HopeShare"
     />
@@ -21,6 +21,7 @@
       }
       @if (userSession?.is_admin) {
         <p-tabPanel header="Denúncias"> </p-tabPanel>
+        <p-tabPanel header="Depósitos"> </p-tabPanel>
       }
     </p-tabView>
     @if (!userSession) {
@@ -37,23 +38,21 @@
     } @else {
       <section class="flex items-center gap-2 cursor-pointer">
         @if (userSession.image) {
-          <img class="w-10 h-10" [src]="userSession.image" alt="User profile image of {{ userSession.username }}" />
+          <img
+            (click)="menu.toggle($event)"
+            class="w-10 h-10"
+            [src]="userSession.image"
+            alt="User profile image of {{ userSession.username }}"
+          />
         } @else {
-          <span class="w-10 h-10 flex justify-center items-center bg-[#3b82f6] text-white rounded-full">{{
-            userSession.username[0].toUpperCase()
-          }}</span>
+          <span
+            (click)="menu.toggle($event)"
+            class="w-10 h-10 flex justify-center items-center bg-[#3b82f6] text-white rounded-full"
+            >{{ userSession.username[0].toUpperCase() }}</span
+          >
         }
-        <div class="hidden md:flex flex-col">
-          <span class="text-sm font-semibold text-[#4F4F4F]">
-            {{ userSession.username }}
-          </span>
-          <span class="text-[#5D5D5D] text-xs">{{ userSession.email }}</span>
-        </div>
 
-        <div class="card flex justify-content-center">
-          <p-button icon="pi pi-cog" [rounded]="true" (onClick)="menu.toggle($event)" />
-          <p-menu #menu [model]="settings" [popup]="true" />
-        </div>
+        <p-menu #menu [model]="settings" [popup]="true" />
       </section>
     }
   </section>

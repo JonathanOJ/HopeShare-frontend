@@ -12,14 +12,14 @@ export class CampanhaCardComponent {
   @Output() onComment = new EventEmitter<Campanha>();
 
   onReportClick(event: Event) {
-    event.stopPropagation(); // Evita que o click no card seja acionado
+    event.stopPropagation();
     if (this.campanha) {
       this.onReport.emit(this.campanha);
     }
   }
 
   onCommentClick(event: Event) {
-    event.stopPropagation(); // Evita que o click no card seja acionado
+    event.stopPropagation();
     if (this.campanha) {
       this.onComment.emit(this.campanha);
     }

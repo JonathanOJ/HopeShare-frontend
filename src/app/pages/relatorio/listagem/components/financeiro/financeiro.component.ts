@@ -10,7 +10,6 @@ export class FinanceiroComponent {
   @Input() relatorios: Relatorio[] = [];
 
   visualizarRelatorio(relatorio: Relatorio) {
-    // Lógica para visualizar o relatório financeiro
     window.open(relatorio.url, '_blank');
   }
 }

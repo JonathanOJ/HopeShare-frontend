@@ -29,7 +29,6 @@ export class RecebimentoComponent implements OnInit {
   onSubmit() {
     if (this.recebimentoForm.valid) {
       console.log('Dados do formulário:', this.recebimentoForm.value);
-      // aqui pode chamar um service para salvar
     } else {
       this.recebimentoForm.markAllAsTouched();
     }

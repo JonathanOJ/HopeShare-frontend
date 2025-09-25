@@ -79,12 +79,22 @@
               </div>
             </td>
             <td>
-              <div class="flex flex-nowrap">
+              <div class="flex flex-nowrap gap-1">
                 <p-button size="small" icon="pi pi-pencil" (click)="onEdit(campanha.campanha_id)" />
+
+                <!-- Botão Solicitar Depósito - apenas para campanhas ativas com meta atingida -->
+                <p-button
+                  *ngIf="canRequestDeposit(campanha)"
+                  size="small"
+                  icon="pi pi-money-bill"
+                  severity="success"
+                  pTooltip="Solicitar Depósito"
+                  (click)="solicitarDeposito(campanha)"
+                />
+
                 <p-button
                   size="small"
                   icon="pi pi-trash"
-                  class="ml-2"
                   severity="danger"
                   (click)="selectedItem = campanha; visible = true"
                 />

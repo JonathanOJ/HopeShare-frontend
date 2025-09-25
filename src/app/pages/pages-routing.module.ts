@@ -45,6 +45,15 @@ const routes: Routes = [
         // data: { adminOnly: true },
         loadChildren: () => import('./admin/denuncias/denuncias.module').then((m) => m.DenunciasModule),
       },
+      {
+        path: 'admin/solicitacoes-deposito',
+        // canActivate: [AuthGuard],
+        // data: { adminOnly: true },
+        loadChildren: () =>
+          import('./admin/solicitacoes-deposito/solicitacoes-deposito.module').then(
+            (m) => m.SolicitacoesDepositoModule
+          ),
+      },
     ],
   },
   {
