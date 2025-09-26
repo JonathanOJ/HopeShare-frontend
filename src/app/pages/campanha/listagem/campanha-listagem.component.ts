@@ -10,11 +10,11 @@ import { AuthUser } from '../../../shared/models/auth';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
 
 @Component({
-  selector: 'app-campanha',
-  templateUrl: './campanha.component.html',
-  styleUrl: './campanha.component.css',
+  selector: 'app-campanha-listagem',
+  templateUrl: './campanha-listagem.component.html',
+  styleUrl: './campanha-listagem.component.css',
 })
-export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CampanhaListagemComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('dt2') dt2: Table | undefined;
 
   isMobile: boolean = window.innerWidth < 768;
@@ -25,6 +25,23 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedItem: Campanha | null = null;
   userSession: AuthUser | null = null;
   loading: boolean = false;
+
+  categoryOptions = [
+    { label: 'Todas as categorias', value: null },
+    { label: 'Alimentação', value: 'Alimentação' },
+    { label: 'Saúde', value: 'Saúde' },
+    { label: 'Vestuário', value: 'Vestuário' },
+    { label: 'Educação', value: 'Educação' },
+    { label: 'Moradia', value: 'Moradia' },
+    { label: 'Transporte', value: 'Transporte' },
+    { label: 'Trabalho', value: 'Trabalho' },
+    { label: 'Dinheiro', value: 'Dinheiro' },
+    { label: 'Esporte', value: 'Esporte' },
+    { label: 'Justiça', value: 'Justiça' },
+    { label: 'Tecnologia', value: 'Tecnologia' },
+    { label: 'Outros', value: 'Outros' },
+  ];
+  selectedCategory: string | null = null;
 
   private destroy$ = new Subject();
 
@@ -55,7 +72,7 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loadingService.start();
 
     this.campanhaService
-      .findCampanhaByUser(this.userSession!.user_id)
+      .findCampanhaByUser('1743966788918')
       .pipe(takeUntil(this.destroy$), take(1))
       .subscribe({
         next: (resp: Campanha[]) => {
@@ -80,9 +97,21 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dt2 ? this.dt2.filterGlobal(inputElement.value || '', 'contains') : '';
   }
 
+  filterByCategory(event: any) {
+    const selectedCategory = event.value;
+    if (this.dt2) {
+      if (selectedCategory) {
+        this.dt2.filter(selectedCategory, 'category', 'contains');
+      } else {
+        this.dt2.filter('', 'category', 'contains');
+      }
+    }
+  }
+
   clear(table: Table) {
     table.clear();
     this.searchValue = '';
+    this.selectedCategory = null;
   }
 
   handleCreateMode() {
@@ -126,9 +155,7 @@ export class CampanhaComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   canRequestDeposit(campanha: Campanha): boolean {
-    return (
-      campanha.status === 'ACTIVE' && campanha.value_donated >= campanha.value_required && campanha.value_donated > 0
-    );
+    return campanha.status === 'ACTIVE' && campanha.value_donated > 0;
   }
 
   solicitarDeposito(campanha: Campanha) {

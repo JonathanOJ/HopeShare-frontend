@@ -1,44 +1,28 @@
-<section *ngIf="!reload" class="pt-[80px] px-[5.5dvw] max-w-[1920px] mx-auto mt-[24px]">
-  <p-stepper [linear]="true" [(activeStep)]="activeStep">
-    <p-stepperPanel header="Categoria da campanha">
-      <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
-        <ng-container
-          *ngTemplateOutlet="stepCategoria.headerTemplate; context: { onClick: onClick, index: index }"
-        ></ng-container>
-      </ng-template>
-      <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
-        <ng-container
-          *ngTemplateOutlet="stepCategoria.contentTemplate; context: { nextCallback: nextCallback, index: index }"
-        ></ng-container>
-      </ng-template>
-    </p-stepperPanel>
+<section *ngIf="!reload" class="pt-[88px] px-[5.5dvw] max-w-[1920px] mx-auto bg-surface min-h-screen">
+  <div class="pb-8">
+    <h1 class="text-3xl font-bold text-primary mb-2">Nova Campanha</h1>
+    <p class="text-secondary">Crie uma nova campanha seguindo os passos abaixo</p>
+  </div>
 
-    <p-stepperPanel header="Conhecendo a Campanha">
-      <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
-        <ng-container
-          *ngTemplateOutlet="stepDescricao.headerTemplate; context: { onClick: onClick, index: index }"
-        ></ng-container>
-      </ng-template>
-      <ng-template
-        pTemplate="content"
-        let-nextCallback="nextCallback"
-        let-prevCallback="prevCallback"
-        let-index="index"
-      >
-        <ng-container
-          *ngTemplateOutlet="
-            stepDescricao.contentTemplate;
-            context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
-          "
-        ></ng-container>
-      </ng-template>
-    </p-stepperPanel>
-
-    @if (have_address) {
-      <p-stepperPanel header="Endereço">
+  <div class="bg-card rounded-2xl shadow-sm border border-theme overflow-hidden">
+    <p-stepper [linear]="true" [(activeStep)]="activeStep" styleClass="bg-transparent">
+      <p-stepperPanel header="Categoria da campanha">
         <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
           <ng-container
-            *ngTemplateOutlet="stepEndereco.headerTemplate; context: { onClick: onClick, index: index }"
+            *ngTemplateOutlet="stepCategoria.headerTemplate; context: { onClick: onClick, index: index }"
+          ></ng-container>
+        </ng-template>
+        <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+          <ng-container
+            *ngTemplateOutlet="stepCategoria.contentTemplate; context: { nextCallback: nextCallback, index: index }"
+          ></ng-container>
+        </ng-template>
+      </p-stepperPanel>
+
+      <p-stepperPanel header="Conhecendo a Campanha">
+        <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
+          <ng-container
+            *ngTemplateOutlet="stepDescricao.headerTemplate; context: { onClick: onClick, index: index }"
           ></ng-container>
         </ng-template>
         <ng-template
@@ -49,56 +33,79 @@
         >
           <ng-container
             *ngTemplateOutlet="
-              stepEndereco.contentTemplate;
+              stepDescricao.contentTemplate;
               context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
             "
           ></ng-container>
         </ng-template>
       </p-stepperPanel>
-    }
 
-    <p-stepperPanel header="Metas do campanha">
-      <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
-        <ng-container
-          *ngTemplateOutlet="stepMeta.headerTemplate; context: { onClick: onClick, index: index }"
-        ></ng-container>
-      </ng-template>
-      <ng-template
-        pTemplate="content"
-        let-nextCallback="nextCallback"
-        let-prevCallback="prevCallback"
-        let-index="index"
-      >
-        <ng-container
-          *ngTemplateOutlet="
-            stepMeta.contentTemplate;
-            context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
-          "
-        ></ng-container>
-      </ng-template>
-    </p-stepperPanel>
+      @if (have_address) {
+        <p-stepperPanel header="Endereço">
+          <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
+            <ng-container
+              *ngTemplateOutlet="stepEndereco.headerTemplate; context: { onClick: onClick, index: index }"
+            ></ng-container>
+          </ng-template>
+          <ng-template
+            pTemplate="content"
+            let-nextCallback="nextCallback"
+            let-prevCallback="prevCallback"
+            let-index="index"
+          >
+            <ng-container
+              *ngTemplateOutlet="
+                stepEndereco.contentTemplate;
+                context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
+              "
+            ></ng-container>
+          </ng-template>
+        </p-stepperPanel>
+      }
 
-    <p-stepperPanel header="Revisando">
-      <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
-        <ng-container
-          *ngTemplateOutlet="stepRevisao.headerTemplate; context: { onClick: onClick, index: index }"
-        ></ng-container>
-      </ng-template>
-      <ng-template
-        pTemplate="content"
-        let-nextCallback="nextCallback"
-        let-prevCallback="prevCallback"
-        let-index="index"
-      >
-        <ng-container
-          *ngTemplateOutlet="
-            stepRevisao.contentTemplate;
-            context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
-          "
-        ></ng-container>
-      </ng-template>
-    </p-stepperPanel>
-  </p-stepper>
+      <p-stepperPanel header="Metas do campanha">
+        <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
+          <ng-container
+            *ngTemplateOutlet="stepMeta.headerTemplate; context: { onClick: onClick, index: index }"
+          ></ng-container>
+        </ng-template>
+        <ng-template
+          pTemplate="content"
+          let-nextCallback="nextCallback"
+          let-prevCallback="prevCallback"
+          let-index="index"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              stepMeta.contentTemplate;
+              context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
+            "
+          ></ng-container>
+        </ng-template>
+      </p-stepperPanel>
+
+      <p-stepperPanel header="Revisando">
+        <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
+          <ng-container
+            *ngTemplateOutlet="stepRevisao.headerTemplate; context: { onClick: onClick, index: index }"
+          ></ng-container>
+        </ng-template>
+        <ng-template
+          pTemplate="content"
+          let-nextCallback="nextCallback"
+          let-prevCallback="prevCallback"
+          let-index="index"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              stepRevisao.contentTemplate;
+              context: { nextCallback: nextCallback, prevCallback: prevCallback, index: index }
+            "
+          ></ng-container>
+        </ng-template>
+      </p-stepperPanel>
+    </p-stepper>
+  </div>
 </section>
 
 <app-step-categoria

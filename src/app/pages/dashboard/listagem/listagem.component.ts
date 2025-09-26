@@ -21,6 +21,9 @@ export class ListagemComponent implements OnInit {
   dialogVisible = false;
   selectedCampanha: Campanha | null = null;
 
+  animatedTotalArrecadado: number = 0;
+  private animationDuration = 2000;
+
   campanhaService = inject(CampanhaService);
   authService = inject(AuthService);
   loadingService = inject(LoadingService);
@@ -43,7 +46,7 @@ export class ListagemComponent implements OnInit {
     this.loadingService.start();
 
     this.campanhaService
-      .findCampanhaByUser(this.userSession!.user_id)
+      .findCampanhaByUser('1743966788918')
       .pipe(takeUntil(this.destroy$), take(1))
       .subscribe({
         next: (resp: Campanha[]) => {
@@ -54,6 +57,8 @@ export class ListagemComponent implements OnInit {
           });
 
           this.campanhas = this.campanhas.concat(this.campanhas);
+
+          this.animateCounter();
         },
         error: () => {
           this.messageConfirmationService.showError('Erro', 'Erro ao carregar campanhas!');
@@ -96,6 +101,56 @@ export class ListagemComponent implements OnInit {
       default:
         return 'Detalhes';
     }
+  }
+
+  getTotalArrecadado(): number {
+    return this.campanhas.reduce((total, campanha) => {
+      return total + (campanha.value_donated || 0);
+    }, 0);
+  }
+
+  getMetaTotal(): number {
+    return this.campanhas.reduce((total, campanha) => {
+      return total + (campanha.value_required || 0);
+    }, 0);
+  }
+
+  getPercentualTotal(): number {
+    const totalArrecadado = this.getTotalArrecadado();
+    const metaTotal = this.getMetaTotal();
+
+    if (metaTotal > 0) {
+      return parseFloat(((totalArrecadado / metaTotal) * 100).toFixed(1));
+    }
+    return 0;
+  }
+
+  getCampanhasFinalizadas(): number {
+    return this.campanhas.filter((campanha) => {
+      return (campanha.progress_percentage || 0) >= 100;
+    }).length;
+  }
+
+  animateCounter(): void {
+    const targetValue = this.getTotalArrecadado();
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / this.animationDuration, 1);
+
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+
+      this.animatedTotalArrecadado = Math.floor(targetValue * easeOutQuart);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        this.animatedTotalArrecadado = targetValue;
+      }
+    };
+
+    requestAnimationFrame(animate);
   }
 }
 

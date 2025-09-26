@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AuthUser } from '../../models/auth';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService, Theme } from '../../services/theme.service';
 import { filter, Subject, take, takeUntil } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageConfirmationService } from '../../services/message-confirmation.service';
@@ -16,7 +17,7 @@ import { SuporteService } from '../../services/suporte.service';
 export class HeaderComponent implements OnInit, OnDestroy {
   activeIndex: number = 0;
   userSession: AuthUser | null = null;
-  actualTheme: 'light' | 'dark' = 'light';
+  currentTheme: Theme = 'light';
   supportForm!: FormGroup;
 
   settings: MenuItem[] | undefined;
@@ -28,22 +29,32 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private messageConfirmationService = inject(MessageConfirmationService);
   private suporteService = inject(SuporteService);
+  public themeService = inject(ThemeService);
 
   private destroy$ = new Subject();
 
   ngOnInit(): void {
+    // Subscribe to theme changes
+    this.themeService.currentTheme$.pipe(takeUntil(this.destroy$)).subscribe((theme) => {
+      this.currentTheme = theme;
+      this.updateSettingsMenu();
+    });
+
+    this.updateSettingsMenu();
+    this.getUserSessionAndSetupRouter();
+    this.initForm();
+  }
+
+  private updateSettingsMenu(): void {
     this.settings = [
       {
         label: 'Configurações',
         items: [
           {
-            label: this.actualTheme === 'light' ? 'Modo Escuro' : 'Modo Claro',
+            label: this.currentTheme === 'light' ? 'Modo Escuro' : 'Modo Claro',
             icon: 'pi pi-palette',
             command: () => {
-              this.actualTheme = this.actualTheme === 'light' ? 'dark' : 'light';
-              document.body.classList.toggle('dark-theme');
-              document.body.classList.toggle('light-theme');
-              localStorage.setItem('theme', this.actualTheme);
+              this.themeService.toggleTheme();
             },
           },
           {
@@ -77,7 +88,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         ],
       },
     ];
+  }
 
+  private getUserSessionAndSetupRouter(): void {
     this.userSession = this.auth.getAuthResponse() || null;
 
     this.router.events
@@ -85,8 +98,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe((event) => {
         this.activeIndex = this.getActiveIndex(event.urlAfterRedirects);
       });
-
-    this.initForm();
   }
 
   ngOnDestroy(): void {
@@ -193,6 +204,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   get message() {
     return this.supportForm.get('message');
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }
 

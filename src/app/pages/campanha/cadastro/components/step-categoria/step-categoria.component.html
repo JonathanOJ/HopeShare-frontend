@@ -1,63 +1,73 @@
 <ng-template #header pTemplate="header" let-onClick="onClick" let-index="index">
   <section class="flex gap-3">
     <div
-      class="w-[48px] h-[48px] flex items-center justify-center bg-[#3b82f6] rounded-full"
+      class="w-12 h-12 flex items-center justify-center rounded-full transition-colors"
       [ngClass]="{
-        'text-white': activeStep === index,
-        'text-[#D1D1D1]': activeStep !== index,
-        'bg-[#3b82f6]': activeStep === index,
-        'bg-[#F6F6F6]': activeStep !== index,
+        'text-white bg-blue-600': activeStep === index,
+        'text-secondary bg-surface border border-theme': activeStep !== index,
       }"
     >
       <mat-icon svgIcon="layers-outline"></mat-icon>
     </div>
     @if (activeStep === index) {
       <div class="flex flex-col justify-center">
-        <span class="text-xs text-[#3b82f6] font-bold"> Passo {{ index + 1 }}/{{ totalSteps }} </span>
-        <span class="text-[#454545]">Categoria do campanha</span>
+        <span class="text-xs text-blue-600 font-bold"> Passo {{ index + 1 }}/{{ totalSteps }} </span>
+        <span class="text-primary">Categoria da campanha</span>
       </div>
     }
   </section>
 </ng-template>
 <ng-template #content pTemplate="content" let-nextCallback="nextCallback" let-index="index">
-  <section class="flex flex-col h-[700px] p-6 gap-6">
+  <section class="flex flex-col min-h-[600px] p-6 gap-6 bg-card">
     <div class="flex flex-col gap-2">
-      <h1 class="text-xl text-[#3d3d3d] font-bold">Em que categoria se encaixa seu campanha?</h1>
-      <span class="text-[#4F4F4F] max-w-[400px]"
-        >Escolha pelo menos uma das categorias abaixo que represente seu campanha.</span
+      <h1 class="text-xl text-primary font-bold">Em que categoria se encaixa sua campanha?</h1>
+      <span class="text-secondary max-w-[400px]"
+        >Escolha pelo menos uma das categorias abaixo que represente sua campanha.</span
       >
     </div>
-    <section class="h-[482px]">
+    <section class="flex-1">
       <section class="flex gap-4 flex-wrap">
         @for (category of categorysList; track category; let index = $index) {
           <section
             [ngClass]="{
-              'border-2': category.selected,
-              border: !category.selected,
-              'border-[#E7E7E7]': !category.selected,
-              'border-[#3b82f6]': category.selected,
+              'border-2 border-blue-600': category.selected,
+              'border border-theme': !category.selected,
             }"
-            class="rounded-xl w-[150px] h-[100px] items-center justify-center flex flex-col gap-2 cursor-pointer hover:bg-[#F6F6F6]"
+            class="rounded-xl w-[150px] h-[100px] items-center justify-center flex flex-col gap-2 cursor-pointer transition-all"
             (click)="category.selected = !category.selected; handleCategoriesSelected()"
           >
             <mat-icon
               style="height: 42px; width: 42px"
-              [style.color]="!category.selected ? '#3D3D3D' : '#3b82f6'"
+              [ngClass]="{
+                'text-blue-600': category.selected,
+                'text-primary': !category.selected,
+              }"
               [svgIcon]="category.icon"
             ></mat-icon>
 
-            <span [class]="category.selected ? 'text-[#3b82f6]' : 'text-[#4F4F4F]'" class="font-semibold text-sm">{{
-              category.name
-            }}</span>
+            <span
+              [ngClass]="{
+                'text-blue-600': category.selected,
+                'text-secondary': !category.selected,
+              }"
+              class="font-semibold text-sm"
+              >{{ category.name }}</span
+            >
           </section>
         }
       </section>
     </section>
-    <section class="flex justify-between">
-      <p-button label="Cancelar" severity="danger" iconPos="right" (click)="onCancel.emit()" />
+    <section class="flex justify-between items-center pt-4 border-t border-theme">
+      <p-button label="Cancelar" severity="secondary" [outlined]="true" iconPos="right" (click)="onCancel.emit()" />
 
       <div class="flex justify-end">
-        <p-button [disabled]="category?.invalid" label="Continuar" iconPos="right" (onClick)="nextCallback.emit()" />
+        <p-button
+          [disabled]="category?.invalid"
+          label="Continuar"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          (onClick)="nextCallback.emit()"
+        />
       </div>
     </section>
   </section>

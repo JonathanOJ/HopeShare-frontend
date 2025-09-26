@@ -2,7 +2,6 @@
   max-width: 1200px;
 }
 
-/* Campanha Cards */
 .campanha-card {
   transition: all 0.2s ease;
 }
@@ -31,22 +30,21 @@
   backdrop-filter: blur(10px);
 }
 
-/* Denuncias Table */
 .denuncias-table {
   border-radius: 8px;
   overflow: hidden;
 }
 
 .denuncias-table th {
-  background: #f8fafc;
+  background: var(--surface-50);
   font-weight: 600;
+  color: var(--text-color-secondary);
 }
 
 .denuncias-table tr:hover {
-  background: #f8fafc;
+  background: var(--surface-hover);
 }
 
-/* Status Tags */
 .status-pendente {
   background: #fee2e2;
   color: #dc2626;
@@ -62,7 +60,6 @@
   color: #16a34a;
 }
 
-/* Animations */
 .fade-in {
   animation: fadeIn 0.3s ease-in;
 }
@@ -87,7 +84,6 @@
   border-bottom: 1px solid #e2e8f0;
 }
 
-/* Fix menu positioning */
 ::ng-deep .p-menu {
   z-index: 1050;
   min-width: 230px;
@@ -109,7 +105,6 @@
   padding: 0.75rem 1rem;
 }
 
-/* Fix table overflow for action menus */
 .p-datatable .p-datatable-tbody > tr > td:last-child {
   position: relative;
   overflow: visible;

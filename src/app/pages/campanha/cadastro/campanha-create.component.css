@@ -2,6 +2,7 @@
   border-radius: 8px;
 }
 
-:host ::ng-deep .p-stepper .p-stepper-header .p-stepper-action {
-  background-color: #f9fafb;
+:host ::ng-deep .p-stepper .p-stepper-header {
+  padding: 1.5rem;
 }
+

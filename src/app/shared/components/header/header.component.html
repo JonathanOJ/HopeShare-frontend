@@ -36,6 +36,14 @@
         <p-button size="small" [rounded]="true" label="Login" (click)="redirectTo('login')" />
       </div>
     } @else {
+      <p-button
+        size="small"
+        [rounded]="true"
+        [outlined]="true"
+        icon="pi pi-palette"
+        (click)="toggleTheme()"
+        [label]="currentTheme === 'light' ? 'Dark' : 'Light'"
+      />
       <section class="flex items-center gap-2 cursor-pointer">
         @if (userSession.image) {
           <img
@@ -47,7 +55,8 @@
         } @else {
           <span
             (click)="menu.toggle($event)"
-            class="w-10 h-10 flex justify-center items-center bg-[#3b82f6] text-white rounded-full"
+            class="w-10 h-10 flex justify-center items-center rounded-full"
+            style="background-color: var(--primary-color); color: var(--primary-color-text)"
             >{{ userSession.username[0].toUpperCase() }}</span
           >
         }
@@ -65,26 +74,26 @@
     </span>
 
     <div class="flex flex-col gap-1.5">
-      <label for="name" class="text-sm text-[#4F4F4F]">Nome</label>
+      <label for="name" class="text-sm" style="color: var(--text-color-secondary)">Nome</label>
       <input pInputText id="name" class="flex-auto" formControlName="name" autocomplete="off" />
       @if (name?.invalid && (name?.dirty || name?.touched)) {
-        <span class="text-xs text-[#ff2637]"> Nome é obrigatório! </span>
+        <span class="text-xs" style="color: var(--red-500)"> Nome é obrigatório! </span>
       }
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label for="subject" class="text-sm text-[#4F4F4F]">Assunto</label>
+      <label for="subject" class="text-sm" style="color: var(--text-color-secondary)">Assunto</label>
       <input pInputText id="subject" class="flex-auto" formControlName="subject" autocomplete="off" />
       @if (subject?.invalid && (subject?.dirty || subject?.touched)) {
-        <span class="text-xs text-[#ff2637]"> Assunto é obrigatório! </span>
+        <span class="text-xs" style="color: var(--red-500)"> Assunto é obrigatório! </span>
       }
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label for="message" class="text-sm text-[#4F4F4F]">Mensagem</label>
+      <label for="message" class="text-sm" style="color: var(--text-color-secondary)">Mensagem</label>
       <textarea pInputTextarea id="message" rows="5" class="flex-auto" formControlName="message"></textarea>
       @if (message?.invalid && (message?.dirty || message?.touched)) {
-        <span class="text-xs text-[#ff2637]"> Mensagem é obrigatório! </span>
+        <span class="text-xs" style="color: var(--red-500)"> Mensagem é obrigatório! </span>
       }
     </div>
 

@@ -70,7 +70,7 @@ export class StepCategoriaComponent implements OnInit, OnChanges {
   initializeForm(): void {
     this.stepCategoriaForm = this.fb.group({
       category: [this.campanha?.category || [], [Validators.required]],
-      categoriesFormatted: [this.campanha?.categoriesFormatted || ''],
+      categoriesFormatted: '',
     });
 
     if (this.campanha?.category) {
@@ -92,6 +92,8 @@ export class StepCategoriaComponent implements OnInit, OnChanges {
       category: categorys,
       categoriesFormatted: this.categoriesFormatted,
     });
+
+    console.log('Selected categories:', categorys);
   }
 
   get category() {

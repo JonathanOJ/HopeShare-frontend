@@ -118,6 +118,10 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
       .subscribe({
         next: (resp: any) => {
           this.campanha = resp;
+
+          if (this.campanha) {
+            this.campanha.categoriesFormatted = this.campanha?.category ? this.campanha.category.join(', ') : '';
+          }
         },
         error: () => {
           this.messageConfirmationService.showError('Erro', 'Erro ao carregar campanha!');

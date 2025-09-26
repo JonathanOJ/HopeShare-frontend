@@ -1,13 +1,13 @@
 <div class="container mx-auto p-6 mt-[70px]">
   <div class="flex justify-between items-center mb-6">
     <div>
-      <h1 class="text-2xl font-bold text-gray-800">Gerenciar Denúncias</h1>
-      <p class="text-gray-600">Gerencie denúncias de campanhas da plataforma</p>
+      <h1 class="text-2xl font-bold text-primary">Gerenciar Denúncias</h1>
+      <p class="text-secondary">Gerencie denúncias de campanhas da plataforma</p>
     </div>
 
     <div class="flex items-center gap-4">
       <div class="flex items-center gap-2">
-        <span class="text-sm font-medium text-gray-700">Status das Denúncias:</span>
+        <span class="text-sm font-medium text-secondary">Status das Denúncias:</span>
         <p-dropdown
           [(ngModel)]="selectedStatus"
           [options]="statusOptions"
@@ -19,7 +19,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <span class="text-sm font-medium text-gray-700">Status da Campanha:</span>
+        <span class="text-sm font-medium text-secondary">Status da Campanha:</span>
         <p-dropdown
           [(ngModel)]="selectedCampanhaStatus"
           [options]="campanhaStatusOptions"
@@ -32,41 +32,33 @@
     </div>
   </div>
 
-  <!-- Loading -->
   <div *ngIf="loading" class="flex justify-center py-8">
     <p-progressSpinner styleClass="w-12 h-12"></p-progressSpinner>
   </div>
 
-  <!-- Campanhas Agrupadas -->
   <div *ngIf="!loading" class="space-y-4">
-    <!-- Empty State -->
-    <div *ngIf="getFilteredCampanhas().length === 0" class="bg-white rounded-lg shadow p-8 text-center">
+    <div *ngIf="getFilteredCampanhas().length === 0" class="bg-card rounded-lg shadow p-8 text-center">
       <div class="flex flex-col items-center">
         <i class="pi pi-info-circle text-gray-400 text-4xl mb-4"></i>
-        <p class="text-gray-500 text-lg mb-2">Nenhuma denúncia encontrada</p>
+        <p class="text-secondary text-lg mb-2">Nenhuma denúncia encontrada</p>
         <p class="text-gray-400 text-sm">Tente ajustar os filtros para ver mais resultados</p>
       </div>
     </div>
 
-    <!-- Cards de Campanhas -->
     <div
       *ngFor="let campanha of getFilteredCampanhas()"
-      class="campanha-card bg-white rounded-lg shadow overflow-hidden fade-in"
+      class="campanha-card bg-card rounded-lg shadow overflow-hidden fade-in"
     >
-      <!-- Header da Campanha -->
-      <div class="p-6 border-b border-gray-100">
+      <div class="p-6 border-b border-theme">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
-            <button
-              (click)="toggleCampanhaExpanded(campanha)"
-              class="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <i [class]="campanha.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" class="text-gray-600"></i>
+            <button (click)="toggleCampanhaExpanded(campanha)" class="p-2 rounded-lg hover-surface transition-colors">
+              <i [class]="campanha.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" class="text-secondary"></i>
             </button>
 
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ campanha.campanha_title }}</h3>
-              <p class="text-sm text-gray-500">ID: {{ campanha.campanha_id }}</p>
+              <h3 class="text-lg font-semibold text-primary mb-1">{{ campanha.campanha_title }}</h3>
+              <p class="text-sm text-secondary">ID: {{ campanha.campanha_id }}</p>
             </div>
 
             <div class="flex items-center gap-2">
@@ -78,71 +70,73 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <!-- Estatísticas -->
             <div class="flex items-center gap-4 text-sm">
               <div class="text-center">
-                <div class="font-bold text-lg text-gray-900">{{ campanha.total_denuncias }}</div>
-                <div class="text-gray-500">Total</div>
+                <div class="font-bold text-lg text-primary">{{ campanha.total_denuncias }}</div>
+                <div class="text-secondary">Total</div>
               </div>
               <div class="text-center">
                 <div class="font-bold text-lg text-red-600">{{ campanha.denuncias_pendentes }}</div>
-                <div class="text-gray-500">Pendentes</div>
+                <div class="text-secondary">Pendentes</div>
               </div>
               <div class="text-center">
                 <div class="font-bold text-lg text-yellow-600">{{ campanha.denuncias_analisadas }}</div>
-                <div class="text-gray-500">Analisadas</div>
+                <div class="text-secondary">Analisadas</div>
               </div>
               <div class="text-center">
                 <div class="font-bold text-lg text-green-600">{{ campanha.denuncias_resolvidas }}</div>
-                <div class="text-gray-500">Resolvidas</div>
+                <div class="text-secondary">Resolvidas</div>
               </div>
             </div>
 
-            <!-- Ações da Campanha -->
-            <p-button
-              icon="pi pi-ellipsis-v"
-              size="small"
-              severity="secondary"
-              [text]="true"
-              pTooltip="Ações da Campanha"
-              (onClick)="campanhaMenu.toggle($event)"
-            ></p-button>
-            <p-menu
-              #campanhaMenu
-              [model]="getCampanhaActionItems(campanha)"
-              [popup]="true"
-              [appendTo]="'body'"
-            ></p-menu>
+            <div class="flex gap-2">
+              <p-button
+                [icon]="campanha.is_suspended ? 'pi pi-play' : 'pi pi-ban'"
+                size="small"
+                [severity]="campanha.is_suspended ? 'success' : 'danger'"
+                [text]="true"
+                [pTooltip]="campanha.is_suspended ? 'Reativar Campanha' : 'Suspender Campanha'"
+                (onClick)="campanha.is_suspended ? reactivateCampanha(campanha) : openSuspendModal(campanha)"
+              ></p-button>
+
+              <p-button
+                icon="pi pi-external-link"
+                size="small"
+                severity="info"
+                [text]="true"
+                pTooltip="Ver Campanha"
+                (onClick)="viewCampanha(campanha)"
+              ></p-button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Detalhes das Denúncias (Expandível) -->
       <div *ngIf="campanha.expanded" class="p-6">
-        <h4 class="text-md font-semibold text-gray-700 mb-4">Denúncias ({{ campanha.denuncias.length }})</h4>
+        <h4 class="text-md font-semibold text-primary mb-4">Denúncias ({{ campanha.denuncias.length }})</h4>
 
         <div class="overflow-x-auto">
           <table class="min-w-full denuncias-table">
-            <thead class="bg-gray-50">
+            <thead class="bg-surface">
               <tr>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Data</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
                   Denunciante
                 </th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Motivo</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Motivo</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Status</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr *ngFor="let denuncia of campanha.denuncias" class="hover:bg-gray-50">
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+            <tbody class="bg-card divide-y divide-gray-200 border-theme">
+              <tr *ngFor="let denuncia of campanha.denuncias" class="hover-surface">
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-primary">
                   {{ formatDate(denuncia.created_at!) }}
                 </td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-primary">
                   {{ denuncia.user_name }}
                 </td>
-                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-secondary">
                   {{ getReasonLabel(denuncia.reason) }}
                 </td>
                 <td class="px-4 py-4 whitespace-nowrap">
@@ -160,19 +154,34 @@
                     ></p-button>
 
                     <p-button
-                      icon="pi pi-ellipsis-v"
+                      icon="pi pi-search"
+                      size="small"
+                      severity="warning"
+                      [text]="true"
+                      pTooltip="Marcar como Analisada"
+                      (onClick)="updateStatus(denuncia, 'ANALYZED')"
+                      [disabled]="denuncia.status === 'ANALYZED'"
+                    ></p-button>
+
+                    <p-button
+                      icon="pi pi-check"
+                      size="small"
+                      severity="success"
+                      [text]="true"
+                      pTooltip="Marcar como Resolvida"
+                      (onClick)="updateStatus(denuncia, 'RESOLVED')"
+                      [disabled]="denuncia.status === 'RESOLVED'"
+                    ></p-button>
+
+                    <p-button
+                      icon="pi pi-clock"
                       size="small"
                       severity="secondary"
                       [text]="true"
-                      pTooltip="Ações da Denúncia"
-                      (onClick)="denunciaMenu.toggle($event)"
+                      pTooltip="Marcar como Pendente"
+                      (onClick)="updateStatus(denuncia, 'PENDING')"
+                      [disabled]="denuncia.status === 'PENDING'"
                     ></p-button>
-                    <p-menu
-                      #denunciaMenu
-                      [model]="getActionItems(denuncia)"
-                      [popup]="true"
-                      [appendTo]="'body'"
-                    ></p-menu>
                   </div>
                 </td>
               </tr>
@@ -183,7 +192,6 @@
     </div>
   </div>
 
-  <!-- Modal de Detalhes -->
   <p-dialog
     [(visible)]="modalDetalhes"
     [modal]="true"
@@ -194,59 +202,57 @@
     styleClass="w-full max-w-2xl"
   >
     <div *ngIf="selectedDenuncia" class="flex flex-col gap-4">
-      <!-- Info da Campanha -->
-      <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="font-semibold text-gray-700 mb-2">Informações da Campanha</h4>
+      <div class="bg-surface p-4 rounded-lg">
+        <h4 class="font-semibold text-primary mb-2">Informações da Campanha</h4>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <span class="text-sm text-gray-500">Título:</span>
-            <p class="font-medium">{{ selectedDenuncia.campanha_title }}</p>
+            <span class="text-sm text-secondary">Título:</span>
+            <p class="font-medium text-primary">{{ selectedDenuncia.campanha_title }}</p>
           </div>
           <div>
-            <span class="text-sm text-gray-500">ID:</span>
-            <p class="font-mono text-sm">{{ selectedDenuncia.campanha_id }}</p>
+            <span class="text-sm text-secondary">ID:</span>
+            <p class="font-mono text-sm text-primary">{{ selectedDenuncia.campanha_id }}</p>
           </div>
         </div>
       </div>
 
-      <!-- Info do Denunciante -->
-      <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="font-semibold text-gray-700 mb-2">Informações do Denunciante</h4>
+      <div class="bg-surface p-4 rounded-lg">
+        <h4 class="font-semibold text-primary mb-2">Informações do Denunciante</h4>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <span class="text-sm text-gray-500">Nome:</span>
-            <p class="font-medium">{{ selectedDenuncia.user_name }}</p>
+            <span class="text-sm text-secondary">Nome:</span>
+            <p class="font-medium text-primary">{{ selectedDenuncia.user_name }}</p>
           </div>
           <div>
-            <span class="text-sm text-gray-500">Data da Denúncia:</span>
-            <p class="font-medium">{{ formatDate(selectedDenuncia.created_at!) }}</p>
+            <span class="text-sm text-secondary">Data da Denúncia:</span>
+            <p class="font-medium text-primary">{{ formatDate(selectedDenuncia.created_at!) }}</p>
           </div>
         </div>
       </div>
 
-      <!-- Detalhes da Denúncia -->
-      <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="font-semibold text-gray-700 mb-2">Detalhes da Denúncia</h4>
+      <div class="bg-surface p-4 rounded-lg">
+        <h4 class="font-semibold text-primary mb-2">Detalhes da Denúncia</h4>
         <div class="space-y-3">
           <div>
-            <span class="text-sm text-gray-500">Motivo:</span>
-            <p class="font-medium">{{ getReasonLabel(selectedDenuncia.reason) }}</p>
+            <span class="text-sm text-secondary">Motivo:</span>
+            <p class="font-medium text-primary">{{ getReasonLabel(selectedDenuncia.reason) }}</p>
           </div>
           <div>
-            <span class="text-sm text-gray-500">Status:</span>
+            <span class="text-sm text-secondary">Status:</span>
             <div class="mt-1">
               <p-tag [value]="selectedDenuncia.status" [severity]="getStatusSeverity(selectedDenuncia.status!)"></p-tag>
             </div>
           </div>
           <div>
-            <span class="text-sm text-gray-500">Descrição:</span>
-            <p class="mt-1 p-3 bg-white border rounded text-sm">{{ selectedDenuncia.description }}</p>
+            <span class="text-sm text-secondary">Descrição:</span>
+            <p class="mt-1 p-3 bg-card border border-theme rounded text-sm text-primary">
+              {{ selectedDenuncia.description }}
+            </p>
           </div>
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="flex justify-end gap-3 pt-4 border-t">
+      <div class="flex justify-end gap-3 pt-4 border-t border-theme">
         <p-button label="Fechar" severity="secondary" [text]="true" (onClick)="modalDetalhes = false"></p-button>
 
         <p-button
@@ -260,7 +266,6 @@
     </div>
   </p-dialog>
 
-  <!-- Modal de Suspensão da Campanha -->
   <p-dialog
     [(visible)]="modalSuspender"
     [modal]="true"
@@ -271,7 +276,6 @@
     styleClass="w-full max-w-lg"
   >
     <div *ngIf="selectedCampanha" class="flex flex-col gap-4">
-      <!-- Informações da Campanha -->
       <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <div class="flex items-start gap-3">
           <i class="pi pi-exclamation-triangle text-yellow-600 mt-1"></i>
@@ -284,9 +288,8 @@
         </div>
       </div>
 
-      <!-- Motivo da Suspensão -->
       <div class="flex flex-col gap-2">
-        <label for="suspensaoReason" class="text-sm font-medium text-gray-700">Motivo da Suspensão *</label>
+        <label for="suspensaoReason" class="text-sm font-medium text-primary">Motivo da Suspensão *</label>
         <textarea
           id="suspensaoReason"
           [(ngModel)]="suspensaoReason"
@@ -295,10 +298,9 @@
           placeholder="Descreva o motivo da suspensão da campanha..."
           class="w-full"
         ></textarea>
-        <small class="text-gray-500">Este motivo será registrado no histórico da campanha.</small>
+        <small class="text-secondary">Este motivo será registrado no histórico da campanha.</small>
       </div>
 
-      <!-- Consequências -->
       <div class="bg-red-50 border border-red-200 rounded-lg p-3">
         <h5 class="text-sm font-semibold text-red-800 mb-2">Consequências da Suspensão:</h5>
         <ul class="text-sm text-red-700 space-y-1">
@@ -309,8 +311,7 @@
         </ul>
       </div>
 
-      <!-- Ações -->
-      <div class="flex justify-end gap-3 pt-4 border-t">
+      <div class="flex justify-end gap-3 pt-4 border-t border-theme">
         <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="modalSuspender = false"></p-button>
 
         <p-button

@@ -3,12 +3,12 @@
 }
 ::ng-deep .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
   background-color: transparent !important;
-  color: #3b82f6;
-  border-color: #3b82f6;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
   background-color: transparent !important;
-  color: #888888;
+  color: var(--text-color-secondary);
   border-color: transparent;
   padding-bottom: 22px;
 }
@@ -17,7 +17,7 @@
 }
 
 ::ng-deep .p-button.p-button-outlined {
-  background-color: white !important;
+  background-color: var(--surface-0) !important;
 }
 
 ::ng-deep .p-button.p-button-rounded {

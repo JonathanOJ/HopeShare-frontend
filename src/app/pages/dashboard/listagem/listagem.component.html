@@ -1,11 +1,80 @@
 <section class="pt-[88px] rounded-2xl px-[5.5dvw] max-w-[1920px] mx-auto">
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-primary mb-6">Dashboard - Minhas Campanhas</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-card rounded-lg shadow-sm p-6 border border-theme fade-in cursor-pointer">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-secondary text-sm font-medium">Total de Campanhas</p>
+            <p class="text-2xl font-bold text-primary">{{ campanhas.length }}</p>
+            <p class="text-xs text-secondary opacity-70">{{ campanhas.length }} ativas</p>
+          </div>
+          <div class="bg-blue-100 rounded-full w-[50px] h-[50px] flex items-center justify-center">
+            <i class="pi pi-megaphone text-blue-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-card rounded-lg shadow-sm p-6 border border-theme fade-in cursor-pointer">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-secondary text-sm font-medium">Total Arrecadado</p>
+            <p class="text-2xl font-bold text-green-600 animated-value">
+              {{ animatedTotalArrecadado | currency: 'BRL' : 'symbol' : '1.0-0' }}
+            </p>
+            <p class="text-xs text-secondary opacity-70">{{ getPercentualTotal() }}% da meta geral</p>
+          </div>
+          <div class="bg-green-100 rounded-full w-[50px] h-[50px] flex items-center justify-center">
+            <i class="pi pi-wallet text-green-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-card rounded-lg shadow-sm p-6 border border-theme fade-in cursor-pointer">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-secondary text-sm font-medium">Meta Total</p>
+            <p class="text-2xl font-bold text-primary">{{ getMetaTotal() | currency: 'BRL' : 'symbol' : '1.0-0' }}</p>
+            <p class="text-xs text-secondary opacity-70">Objetivo das campanhas</p>
+          </div>
+          <div class="bg-purple-100 rounded-full w-[50px] h-[50px] flex items-center justify-center">
+            <i class="pi pi-flag text-purple-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-card rounded-lg shadow-sm p-6 border border-theme fade-in cursor-pointer">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-secondary text-sm font-medium">Campanhas Finalizadas</p>
+            <p class="text-2xl font-bold text-primary">{{ getCampanhasFinalizadas() }}</p>
+            <p class="text-xs text-secondary opacity-70">{{ getCampanhasFinalizadas() }} concluídas</p>
+          </div>
+          <div class="bg-orange-100 rounded-full w-[50px] h-[50px] flex items-center justify-center">
+            <i class="pi pi-check-circle text-orange-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
-    <div *ngFor="let campanha of campanhas" class="bg-white rounded-2xl shadow p-4 flex flex-col justify-between">
-      <h3 class="text-lg font-semibold mb-2">{{ campanha.title }}</h3>
+    <div
+      *ngFor="let campanha of campanhas"
+      class="bg-card rounded-2xl shadow-sm border border-theme p-6 flex flex-col justify-between hover-surface transition-all duration-200"
+    >
+      <div class="flex justify-between items-start mb-4">
+        <h3 class="text-lg font-semibold text-primary flex-1 pr-4">{{ campanha.title }}</h3>
+        <div class="flex flex-col items-end">
+          <span class="text-2xl font-bold text-primary">{{ campanha.progress_percentage | number: '1.0-0' }}%</span>
+          <span class="text-xs text-secondary">do objetivo</span>
+        </div>
+      </div>
 
       <p-progressBar
         [value]="campanha.progress_percentage"
-        [showValue]="true"
+        [showValue]="false"
         [pTooltip]="
           'A campanha ' +
           (campanha?.title ?? '') +
@@ -17,22 +86,31 @@
           (campanha?.progress_percentage ?? 0) +
           '% do objetivo)'
         "
-        class="w-full mb-3"
+        class="w-full mb-4"
       >
       </p-progressBar>
 
-      <div class="text-sm text-gray-600 space-y-1 mb-4">
-        <p>Meta: R$ {{ campanha.value_required | number: '1.0-0' }}</p>
-        <p>Arrecadado: R$ {{ campanha?.value_donated ?? 0 | number: '1.0-0' }}</p>
+      <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+        <div class="text-center p-3 bg-surface rounded-lg border border-theme">
+          <p class="text-secondary text-xs mb-1">Meta</p>
+          <p class="font-bold text-primary">{{ campanha.value_required | currency: 'BRL' : 'symbol' : '1.0-0' }}</p>
+        </div>
+        <div class="text-center p-3 bg-surface rounded-lg border border-theme">
+          <p class="text-secondary text-xs mb-1">Arrecadado</p>
+          <p class="font-bold text-green-600">
+            {{ campanha?.value_donated ?? 0 | currency: 'BRL' : 'symbol' : '1.0-0' }}
+          </p>
+        </div>
       </div>
 
-      <div class="flex justify-between gap-2 mt-auto">
+      <div class="grid grid-cols-2 gap-2 mt-auto">
         <p-button
           [outlined]="true"
           size="small"
           label="Editar"
           icon="pi pi-pencil"
           (click)="onEdit(campanha.campanha_id)"
+          class="w-full"
         >
         </p-button>
 
@@ -42,6 +120,7 @@
           label="Relatório"
           icon="pi pi-file"
           (click)="openDialog('relatorio', campanha)"
+          class="w-full"
         >
         </p-button>
 
@@ -51,6 +130,7 @@
           label="Comentários"
           icon="pi pi-comment"
           (click)="openDialog('comentarios', campanha)"
+          class="w-full"
         >
         </p-button>
 
@@ -60,6 +140,7 @@
           severity="success"
           icon="pi pi-wallet"
           (click)="openDialog('deposito', campanha)"
+          class="w-full"
         >
         </p-button>
       </div>

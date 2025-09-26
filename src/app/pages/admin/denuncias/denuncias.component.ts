@@ -270,6 +270,10 @@ export class DenunciasComponent implements OnInit, OnDestroy {
     campanha.expanded = !campanha.expanded;
   }
 
+  getDenunciaActionItems(denuncia: DenunciaExtended): MenuItem[] {
+    return this.getActionItems(denuncia);
+  }
+
   viewDetails(denuncia: DenunciaExtended) {
     this.selectedDenuncia = denuncia;
     this.modalDetalhes = true;

@@ -1,0 +1,246 @@
+<section class="pt-[88px] px-[5.5dvw] max-w-[1920px] mx-auto">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-primary mb-2">Minhas Campanhas</h1>
+    <p class="text-secondary">Gerencie suas campanhas ativas e acompanhe o progresso das arrecadações</p>
+  </div>
+
+  <div class="bg-card rounded-2xl shadow-sm border border-theme overflow-hidden">
+    <div class="p-6 bg-surface border-b border-theme">
+      <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="relative">
+            <i class="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"></i>
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="searchValue"
+              (input)="onInput($event)"
+              placeholder="Pesquisar campanhas..."
+              class="pl-10 pr-4 py-2 bg-card border-theme text-primary w-full sm:w-80"
+            />
+          </div>
+
+          <p-dropdown
+            placeholder="Filtrar por categoria"
+            [options]="categoryOptions"
+            optionLabel="label"
+            optionValue="value"
+            [(ngModel)]="selectedCategory"
+            (onChange)="filterByCategory($event)"
+            styleClass="w-full sm:w-48"
+          ></p-dropdown>
+        </div>
+
+        <div class="flex gap-2">
+          <p-button
+            size="small"
+            severity="secondary"
+            icon="pi pi-refresh"
+            [loading]="loading"
+            (click)="getCampanhas()"
+            pTooltip="Atualizar Lista"
+          />
+          <p-button
+            size="small"
+            label="Clear Filtros"
+            [outlined]="true"
+            icon="pi pi-filter-slash"
+            (click)="clear(dt2)"
+          />
+          <p-button size="small" label="Nova Campanha" icon="pi pi-plus" (click)="handleCreateMode()" />
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-4 items-center">
+        <span class="text-sm text-secondary">Total:</span>
+        <p-tag [value]="campanhas.length + ' campanhas'" severity="info"></p-tag>
+        <span class="text-sm text-secondary ml-4">Status:</span>
+        <p-tag value="Ativas" severity="success"></p-tag>
+        <p-tag value="Finalizadas" severity="warning"></p-tag>
+      </div>
+    </div>
+
+    <p-table
+      #dt2
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [value]="campanhas"
+      [tableStyle]="{ 'min-width': '60rem' }"
+      [globalFilterFields]="['title', 'description', 'category', 'value']"
+      styleClass="p-datatable-sm"
+      [scrollable]="true"
+      scrollHeight="60vh"
+    >
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="6" class="text-center p-12">
+            <div class="flex flex-col items-center justify-center text-center">
+              <i class="pi pi-inbox text-secondary text-6xl mb-4"></i>
+              <h3 class="text-xl font-semibold text-primary mb-2">Nenhuma campanha encontrada</h3>
+              <p class="text-secondary mb-4">
+                Você ainda não criou nenhuma campanha ou nenhuma corresponde aos filtros aplicados.
+              </p>
+              <p-button label="Criar Primeira Campanha" icon="pi pi-plus" (click)="handleCreateMode()" />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr class="bg-surface">
+          <th pSortableColumn="title" class="text-secondary font-semibold text-xs uppercase tracking-wide px-6 py-4">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-megaphone text-xs"></i>
+              Campanha <p-sortIcon field="title" />
+            </div>
+          </th>
+          <th
+            pSortableColumn="value_required"
+            class="text-secondary font-semibold text-xs uppercase tracking-wide px-6 py-4"
+          >
+            <div class="flex items-center gap-2">
+              <i class="pi pi-money-bill text-xs"></i>
+              Meta <p-sortIcon field="value_required" />
+            </div>
+          </th>
+          <th class="text-secondary font-semibold text-xs uppercase tracking-wide px-6 py-4">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-chart-line text-xs"></i>
+              Progresso
+            </div>
+          </th>
+          <th pSortableColumn="category" class="text-secondary font-semibold text-xs uppercase tracking-wide px-6 py-4">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-tag text-xs"></i>
+              Categoria <p-sortIcon field="category" />
+            </div>
+          </th>
+          <th class="text-secondary font-semibold text-xs uppercase tracking-wide px-6 py-4">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-calendar text-xs"></i>
+              Status
+            </div>
+          </th>
+          <th class="text-secondary font-semibold text-xs uppercase tracking-wide px-6 py-4 text-right">Ações</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-campanha>
+        <tr class="hover:bg-hover border-b border-border">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-surface shadow-sm">
+                @if (campanha.image) {
+                  <img [src]="campanha.image" [alt]="campanha.title" class="w-full h-full object-cover" />
+                } @else {
+                  <div class="w-full h-full flex items-center justify-center bg-surface">
+                    <i class="pi pi-image text-secondary text-lg"></i>
+                  </div>
+                }
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="font-medium text-primary text-sm truncate">{{ campanha.title }}</div>
+                <div
+                  class="text-xs text-secondary truncate max-w-[200px]"
+                  [pTooltip]="campanha.description"
+                  tooltipPosition="top"
+                >
+                  {{ campanha.description }}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="font-semibold text-primary">
+              {{ campanha.value_required | currency: 'BRL' : 'symbol' : '1.2-2' }}
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-secondary">{{ campanha.progress_percentage }}%</span>
+                <span class="font-medium text-primary">
+                  {{
+                    campanha.value_required * (campanha.progress_percentage / 100)
+                      | currency: 'BRL' : 'symbol' : '1.0-0'
+                  }}
+                </span>
+              </div>
+              <div class="w-full bg-surface rounded-full h-2 overflow-hidden">
+                <div
+                  class="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-300"
+                  [style.width.%]="campanha.progress_percentage"
+                ></div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+            >
+              {{ campanha.category[0] }}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span class="text-xs font-medium text-green-600">Ativa</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex gap-1 justify-end">
+              <p-button
+                icon="pi pi-pencil"
+                size="small"
+                severity="secondary"
+                [text]="true"
+                (click)="onEdit(campanha.campanha_id)"
+                pTooltip="Editar campanha"
+                tooltipPosition="top"
+              />
+              <p-button
+                *ngIf="canRequestDeposit(campanha)"
+                icon="pi pi-money-bill"
+                size="small"
+                severity="success"
+                [text]="true"
+                pTooltip="Solicitar Depósito"
+                tooltipPosition="top"
+                (click)="solicitarDeposito(campanha)"
+              />
+              <p-button
+                icon="pi pi-trash"
+                size="small"
+                severity="danger"
+                [text]="true"
+                pTooltip="Deletar campanha"
+                tooltipPosition="top"
+                (click)="selectedItem = campanha; visible = true"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-dialog header="Excluir Campanha" [(visible)]="visible" [style]="{ width: '25rem' }" styleClass="bg-card">
+    <div class="flex flex-col items-end gap-3 bg-card">
+      <span class="font-semibold w-6rem text-primary">
+        Tem certeza que deseja excluir o item "{{ selectedItem?.title }}"? Só será possível excluí-lo caso ainda não
+        tenha sido feita nenhuma doação!
+      </span>
+      <div class="flex justify-content-end gap-2">
+        <p-button size="small" label="Não" severity="secondary" (onClick)="visible = false" />
+        <p-button
+          size="small"
+          label="Sim"
+          severity="danger"
+          (onClick)="onDelete(selectedItem!.campanha_id); visible = false"
+        />
+      </div>
+    </div>
+  </p-dialog>
+</section>
+

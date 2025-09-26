@@ -29,14 +29,14 @@ const routes: Routes = [
       },
       {
         path: 'dashboard',
-        canActivate: [AuthGuard],
-        data: { role: TipoUsuario.EMPRESA },
+        // canActivate: [AuthGuard],
+        // data: { role: TipoUsuario.EMPRESA },
         loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
       },
       {
         path: 'relatorio',
-        canActivate: [AuthGuard],
-        data: { role: TipoUsuario.EMPRESA },
+        // canActivate: [AuthGuard],
+        // data: { role: TipoUsuario.EMPRESA },
         loadChildren: () => import('./relatorio/relatorio.module').then((m) => m.RelatorioModule),
       },
       {

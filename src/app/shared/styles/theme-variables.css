@@ -1,0 +1,82 @@
+body {
+  background-color: var(--surface-ground) !important;
+  color: var(--text-color) !important;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.header {
+  background-color: var(--surface-card) !important;
+  border-bottom: 1px solid var(--surface-border) !important;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.animated-value {
+  transition: all 0.1s ease-out;
+  font-variant-numeric: tabular-nums;
+}
+
+.custom-bg-primary {
+  background-color: var(--primary-color) !important;
+  color: var(--primary-color-text) !important;
+}
+
+.custom-text-primary {
+  color: var(--primary-color) !important;
+}
+
+.custom-border-primary {
+  border-color: var(--primary-color) !important;
+}
+
+.custom-bg-surface {
+  background-color: var(--surface-card) !important;
+}
+
+.custom-text-color {
+  color: var(--text-color) !important;
+}
+
+.custom-text-secondary {
+  color: var(--text-color-secondary) !important;
+}
+
+.custom-border-color {
+  border-color: var(--border-color) !important;
+}
+
+.custom-hover-bg:hover {
+  background-color: var(--hover-bg) !important;
+}
+
+.text-primary {
+  color: var(--text-color);
+}
+
+.text-secondary {
+  color: var(--text-color-secondary);
+}
+
+.bg-card {
+  background-color: var(--surface-card);
+}
+
+.bg-surface {
+  background-color: var(--surface-50);
+}
+
+.bg-surface-100 {
+  background-color: var(--surface-100);
+}
+
+.border-theme {
+  border-color: var(--surface-border);
+}
+
+.hover-surface:hover {
+  background-color: var(--surface-hover);
+}
+

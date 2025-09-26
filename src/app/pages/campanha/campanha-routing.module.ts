@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CampanhaComponent } from './listagem/campanha.component';
 import { CampanhaCreateComponent } from './cadastro/campanha-create.component';
+import { CampanhaListagemComponent } from './listagem/campanha-listagem.component';
 
 const routes: Routes = [
   {
@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: 'listagem',
-    component: CampanhaComponent,
+    component: CampanhaListagemComponent,
   },
   {
     path: 'cadastro',
