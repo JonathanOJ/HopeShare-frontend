@@ -56,7 +56,7 @@
               }"
               class="font-semibold text-sm"
             >
-              {{ option.value | formatValueBrl }}
+              {{ option.value | currency: 'BRL' : 'symbol' : '1.2-2' }}
             </span>
           </div>
           @if (index === 2 || index === 4) {

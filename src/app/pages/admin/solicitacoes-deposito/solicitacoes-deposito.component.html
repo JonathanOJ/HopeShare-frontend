@@ -1,4 +1,4 @@
-<div class="container mx-auto p-6 mt-[70px]">
+<section class="pt-[88px] rounded-2xl px-[5.5dvw] max-w-[1920px] mx-auto">
   <div class="flex justify-between items-center mb-6">
     <div>
       <h1 class="text-2xl font-bold text-primary">Gerenciar Solicitações de Depósito</h1>
@@ -56,8 +56,9 @@
                 <div class="font-medium text-primary">{{ solicitacao.campanha?.title }}</div>
                 <div class="text-sm text-secondary">ID: {{ solicitacao.campanha_id }}</div>
                 <div class="text-xs text-secondary mt-1 opacity-80">
-                  Meta: {{ formatCurrency(solicitacao.campanha?.value_required || 0) }} | Arrecadado:
-                  {{ formatCurrency(solicitacao.campanha?.value_donated || 0) }}
+                  Meta: {{ solicitacao.campanha?.value_required || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }} |
+                  Arrecadado:
+                  {{ solicitacao.campanha?.value_donated || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
                 </div>
               </div>
             </td>
@@ -68,10 +69,10 @@
               </div>
             </td>
             <td class="px-6 py-4 font-semibold text-green-600">
-              {{ formatCurrency(solicitacao.value_requested) }}
+              {{ solicitacao.value_requested | currency: 'BRL' : 'symbol' : '1.2-2' }}
             </td>
             <td class="px-6 py-4 text-sm text-primary">
-              {{ formatDate(solicitacao.created_at!) }}
+              {{ solicitacao.created_at | date: 'dd/MM/yyyy' }}
             </td>
             <td class="px-6 py-4">
               <p-tag [value]="solicitacao.status" [severity]="getStatusSeverity(solicitacao.status)"></p-tag>
@@ -123,7 +124,7 @@
       </table>
     </div>
   </div>
-</div>
+</section>
 
 <p-dialog
   [(visible)]="modalDetalhes"
@@ -149,12 +150,14 @@
         <div>
           <span class="text-secondary">Meta:</span>
           <p class="font-medium text-primary">
-            {{ formatCurrency(selectedSolicitacao.campanha?.value_required || 0) }}
+            {{ selectedSolicitacao.campanha?.value_required || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
           </p>
         </div>
         <div>
           <span class="text-secondary">Arrecadado:</span>
-          <p class="font-medium text-primary">{{ formatCurrency(selectedSolicitacao.campanha?.value_donated || 0) }}</p>
+          <p class="font-medium text-primary">
+            {{ selectedSolicitacao.campanha?.value_donated || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
+          </p>
         </div>
       </div>
     </div>
@@ -168,11 +171,13 @@
         </div>
         <div>
           <span class="text-secondary">Valor Solicitado:</span>
-          <p class="font-medium text-green-600">{{ formatCurrency(selectedSolicitacao.value_requested) }}</p>
+          <p class="font-medium text-green-600">
+            {{ selectedSolicitacao.value_requested | currency: 'BRL' : 'symbol' : '1.2-2' }}
+          </p>
         </div>
         <div>
           <span class="text-secondary">Data da Solicitação:</span>
-          <p class="font-medium text-primary">{{ formatDate(selectedSolicitacao.created_at!) }}</p>
+          <p class="font-medium text-primary">{{ selectedSolicitacao.created_at | date: 'dd/MM/yyyy' }}</p>
         </div>
         <div>
           <span class="text-secondary">Status:</span>
@@ -228,7 +233,7 @@
 
     <div class="text-primary">
       <p><strong>Campanha:</strong> {{ selectedSolicitacao.campanha?.title }}</p>
-      <p><strong>Valor:</strong> {{ formatCurrency(selectedSolicitacao.value_requested) }}</p>
+      <p><strong>Valor:</strong> {{ selectedSolicitacao.value_requested | currency: 'BRL' : 'symbol' : '1.2-2' }}</p>
     </div>
 
     <div>
@@ -272,7 +277,7 @@
 
     <div class="text-primary">
       <p><strong>Campanha:</strong> {{ selectedSolicitacao.campanha?.title }}</p>
-      <p><strong>Valor:</strong> {{ formatCurrency(selectedSolicitacao.value_requested) }}</p>
+      <p><strong>Valor:</strong> {{ selectedSolicitacao.value_requested | currency: 'BRL' : 'symbol' : '1.2-2' }}</p>
     </div>
 
     <div>

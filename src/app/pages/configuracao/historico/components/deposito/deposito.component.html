@@ -1,31 +1,170 @@
-<p-table [value]="depositos" class="shadow-lg rounded-lg overflow-hidden">
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Campanha</th>
-      <th>Valor</th>
-      <th>Status</th>
-      <th>Data</th>
-      <th>Observação</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-deposito>
-    <tr>
-      <td>{{ deposito.nomeCampanha }}</td>
-      <td>R$ {{ deposito.valor | number: '1.2-2' }}</td>
-      <td>
-        <span
-          class="px-3 py-1 rounded-full text-white text-sm"
-          [ngClass]="{
-            'bg-green-500': deposito.status === 'Concluído',
-            'bg-yellow-500': deposito.status === 'Em Análise',
-            'bg-red-500': deposito.status === 'Cancelado',
-          }"
-        >
-          {{ deposito.status }}
-        </span>
-      </td>
-      <td>{{ deposito.data | date: 'dd/MM/yyyy' }}</td>
-      <td>{{ deposito.observacao || '-' }}</td>
-    </tr>
-  </ng-template>
-</p-table>
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <div>
+      <h3 class="text-lg font-semibold text-primary">Minhas Solicitações de Depósito</h3>
+      <p class="text-secondary text-sm">Acompanhe o status das suas solicitações de saque</p>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-medium text-secondary">Status:</span>
+        <p-dropdown
+          [(ngModel)]="selectedStatus"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Todas"
+          styleClass="w-40"
+          (onChange)="onStatusChange()"
+        ></p-dropdown>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center py-8">
+    <p-progressSpinner styleClass="w-12 h-12"></p-progressSpinner>
+  </div>
+
+  <div *ngIf="!loading" class="bg-card rounded-lg shadow overflow-hidden">
+    <div *ngIf="getFilteredDepositos().length === 0" class="p-8 text-center">
+      <div class="flex flex-col items-center">
+        <i class="pi pi-info-circle text-secondary text-4xl mb-4"></i>
+        <p class="text-secondary text-lg mb-2">Nenhuma solicitação encontrada</p>
+        <p class="text-secondary text-sm opacity-70">Tente ajustar os filtros para ver mais resultados</p>
+      </div>
+    </div>
+
+    <div *ngIf="getFilteredDepositos().length > 0" class="overflow-x-auto">
+      <table class="min-w-full">
+        <thead class="bg-surface">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Campanha</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+              Valor Solicitado
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+              Data Solicitação
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+              Resposta Admin
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-card divide-y border-theme">
+          <tr *ngFor="let deposito of getFilteredDepositos(); let i = index" class="hover:bg-hover">
+            <td class="px-6 py-4 font-medium text-primary">
+              {{ deposito.campanha?.title || deposito.nomeCampanha }}
+            </td>
+            <td class="px-6 py-4 font-semibold text-green-600">
+              {{ deposito.value_requested || deposito.valor | currency: 'BRL' : 'symbol' : '1.2-2' }}
+            </td>
+            <td class="px-6 py-4 text-sm text-primary">
+              {{ deposito.created_at || deposito.data | date: 'dd/MM/yyyy' }}
+            </td>
+            <td class="px-6 py-4">
+              <p-tag [value]="deposito.status" [severity]="getStatusSeverity(deposito.status)"></p-tag>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-secondary max-w-xs truncate">
+                  {{ deposito.admin_message || '-' }}
+                </div>
+
+                <p-button
+                  icon="pi pi-eye"
+                  size="small"
+                  severity="secondary"
+                  [text]="true"
+                  pTooltip="Ver detalhes completos"
+                  (onClick)="viewDetails(deposito)"
+                  class="ml-2"
+                ></p-button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<p-dialog
+  [(visible)]="modalDetalhes"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  header="Detalhes da Solicitação"
+  styleClass="w-full max-w-2xl"
+>
+  <div *ngIf="selectedDeposito" class="space-y-4">
+    <div class="bg-surface border border-theme rounded-lg p-4">
+      <h4 class="font-semibold text-primary mb-2">Informações da Campanha</h4>
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <span class="text-secondary">Título:</span>
+          <p class="font-medium text-primary">
+            {{ selectedDeposito.campanha?.title || selectedDeposito.nomeCampanha }}
+          </p>
+        </div>
+        <div>
+          <span class="text-secondary">Status da Campanha:</span>
+          <p class="font-medium text-primary">{{ selectedDeposito.campanha?.status || 'N/A' }}</p>
+        </div>
+        <div *ngIf="selectedDeposito.campanha?.value_required">
+          <span class="text-secondary">Meta:</span>
+          <p class="font-medium text-primary">
+            {{ selectedDeposito.campanha?.value_required | currency: 'BRL' : 'symbol' : '1.2-2' }}
+          </p>
+        </div>
+        <div *ngIf="selectedDeposito.campanha?.value_donated">
+          <span class="text-secondary">Arrecadado:</span>
+          <p class="font-medium text-primary">
+            {{ selectedDeposito.campanha?.value_donated | currency: 'BRL' : 'symbol' : '1.2-2' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-surface border border-theme rounded-lg p-4">
+      <h4 class="font-semibold text-primary mb-2">Detalhes da Solicitação</h4>
+      <div class="space-y-3 text-sm">
+        <div>
+          <span class="text-secondary">Valor Solicitado:</span>
+          <p class="font-medium text-green-600">
+            {{ selectedDeposito.value_requested || selectedDeposito.valor | currency: 'BRL' : 'symbol' : '1.2-2' }}
+          </p>
+        </div>
+        <div>
+          <span class="text-secondary">Data da Solicitação:</span>
+          <p class="font-medium text-primary">
+            {{ selectedDeposito.created_at || selectedDeposito.data | date: 'dd/MM/yyyy' }}
+          </p>
+        </div>
+        <div>
+          <span class="text-secondary">Status:</span>
+          <div class="mt-1">
+            <p-tag [value]="selectedDeposito.status" [severity]="getStatusSeverity(selectedDeposito.status)"></p-tag>
+          </div>
+        </div>
+        <div *ngIf="selectedDeposito.request_message || selectedDeposito.observacao">
+          <span class="text-secondary">Mensagem da Solicitação:</span>
+          <p class="mt-1 p-3 bg-card border border-theme rounded text-primary">
+            {{ selectedDeposito.request_message || selectedDeposito.observacao }}
+          </p>
+        </div>
+        <div *ngIf="selectedDeposito.admin_message">
+          <span class="text-secondary">Resposta do Administrador:</span>
+          <p class="mt-1 p-3 bg-card border border-theme rounded text-primary">
+            {{ selectedDeposito.admin_message }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-4 border-t border-theme">
+      <p-button label="Fechar" severity="secondary" [text]="true" (onClick)="modalDetalhes = false"></p-button>
+    </div>
+  </div>
+</p-dialog>
+

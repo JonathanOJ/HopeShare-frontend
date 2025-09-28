@@ -25,6 +25,8 @@ export class ConfiguracaoComponent implements OnInit {
 
     this.userIsCompany = this.user?.type_user === TipoUsuario.EMPRESA;
 
+    this.userIsCompany = true;
+
     this.items = [
       { label: 'Conta Bancária', icon: 'pi pi-wallet' },
       { label: 'Documentos', icon: 'pi pi-file' },

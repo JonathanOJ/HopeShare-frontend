@@ -23,6 +23,6 @@
 }
 
 .layer {
-  background-image: url('./../../../../assets/images/waves.svg');
+  background-image: var(--waves-bg);
 }
 

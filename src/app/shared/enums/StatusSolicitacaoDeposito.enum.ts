@@ -11,3 +11,4 @@ export const StatusSolicitacaoDepositoList = [
   { label: 'Rejeitada', value: StatusSolicitacaoDeposito.REJECTED },
   { label: 'Processada', value: StatusSolicitacaoDeposito.PROCESSED },
 ];
+

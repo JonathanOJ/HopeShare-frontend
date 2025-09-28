@@ -21,10 +21,10 @@
           [style.padding-left]="isMobile ? (index > 0 ? index * 20 + 25 + 'px' : '') : ''"
           class="flex justify-end p-[25px] w-[300px] md:w-[276px] gap-5"
         >
-          <span class="text-[40px] text-[#3b82f6] font-bold leading-[50px]">{{ index + 1 }}.</span>
+          <span class="text-[40px] text-blue-500 font-bold leading-[50px]">{{ index + 1 }}.</span>
           <div>
-            <span class="font-semibold text-[#530020] text-sm">{{ item.title }}</span>
-            <p class="text-[#888888] text-sm" [innerHtml]="item.detail"></p>
+            <span class="font-semibold text-primary text-sm">{{ item.title }}</span>
+            <p class="text-secondary text-sm" [innerHtml]="item.detail"></p>
           </div>
         </div>
       }

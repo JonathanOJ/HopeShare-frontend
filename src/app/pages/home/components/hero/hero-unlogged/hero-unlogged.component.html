@@ -5,26 +5,28 @@
   <section class="flex flex-col gap-4 justify-center w-full md:w-1/2">
     <div
       [style.animation]="isMobile ? 'slide-infinite 10s linear infinite' : ''"
-      class="md:bg-white/40 py-4 px-3.5 w-fit rounded-3xl whitespace-nowrap md:whitespace-normal flex gap-5 md:gap-3 flex-nowrap"
+      class="md:bg-surface md:border md:border-theme py-4 px-3.5 w-fit rounded-3xl whitespace-nowrap md:whitespace-normal flex gap-5 md:gap-3 flex-nowrap shadow-sm"
       [class]="isMobile ? 'marquee-container' : ''"
     >
       @for (item of tagsMessages; track item; let index = $index) {
-        <span class="bg-white/40 md:bg-transparent rounded-3xl py-2 md:py-3 px-2 text-[#5D5D5D]">
+        <span
+          class="bg-surface border border-theme md:bg-transparent md:border-none rounded-3xl py-2 md:py-3 px-2 text-secondary"
+        >
           <i
-            class="pi pi-check text-white bg-[#3b82f6] rounded-full w-[18px] h-[18px] inline-flex items-center justify-center"
+            class="pi pi-check text-white bg-blue-500 rounded-full w-[18px] h-[18px] inline-flex items-center justify-center"
           ></i>
           {{ item.title }}
         </span>
       }
     </div>
     <section class="flex flex-col gap-8">
-      <div class="text-[#454545] flex flex-col gap-5">
+      <div class="text-primary flex flex-col gap-5">
         <span class="text-[32px] leading-[44px] md:text-5xl md:leading-[64px]"
-          >Faça a diferença com apenas <strong class="text-[#3b82f6]"> uma doação </strong></span
+          >Faça a diferença com apenas <strong class="text-blue-500"> uma doação </strong></span
         >
         <span class="md:text-2xl"
           >As doações podem parecer pequenas, mas juntos fazem a
-          <strong class="text-[#3b82f6]"> diferença na vida de todos </strong></span
+          <strong class="text-blue-500"> diferença na vida de todos </strong></span
         >
       </div>
       <p-button size="small" [rounded]="true" label="Registre-se grátis" (click)="redirectToRegister()" />

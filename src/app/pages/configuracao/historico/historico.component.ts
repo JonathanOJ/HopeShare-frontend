@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { StatusDoacao } from '../../../shared/enums/StatusDoacao.enum';
+import { Doacao } from '../../../shared/models/doacao.model';
 
 @Component({
   selector: 'app-historico',
@@ -8,40 +10,26 @@ import { Component, Input } from '@angular/core';
 export class HistoricoComponent {
   @Input() userIsCompany: boolean = false;
 
-  depositos = [
-    {
-      id: 1,
-      nomeCampanha: 'Campanha Solidária',
-      valor: 2500,
-      status: 'Concluído',
-      data: new Date(),
-      observacaoAdmin: 'Verificar documentação pendente',
-    },
-    {
-      id: 2,
-      nomeCampanha: 'Doe Agora',
-      valor: 1200,
-      status: 'Em Análise',
-      data: new Date(),
-    },
-  ];
+  depositos = [];
 
-  doacoes = [
+  doacoes: Doacao[] = [
     {
-      id: 1,
-      valor: 200,
-      nomeCampanha: 'Campanha Solidária',
-      tipoPagamento: 'Cartão de Crédito',
-      status: 'Recusado',
-      data: new Date(),
+      donation_id: 'don1',
+      campanha_id: 'camp1',
+      user_id: 'user1',
+      value: 100.0,
+      status: StatusDoacao.APPROVED,
+      created_at: new Date('2025-08-10'),
+      payment_method: 'Cartão de Crédito',
     },
     {
-      id: 2,
-      valor: 500,
-      nomeCampanha: 'Doe Agora',
-      tipoPagamento: 'Pix',
-      status: 'Pendente',
-      data: new Date(),
+      donation_id: 'don2',
+      campanha_id: 'camp2',
+      user_id: 'user1',
+      value: 50.0,
+      status: StatusDoacao.PENDING,
+      created_at: new Date('2024-02-15'),
+      payment_method: 'Pix',
     },
   ];
 }

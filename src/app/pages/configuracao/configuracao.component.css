@@ -1,0 +1,51 @@
+::ng-deep .custom-tab-menu {
+  .p-tabmenu {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .p-tabmenu-nav {
+    background: transparent;
+    border: none;
+  }
+
+  .p-menuitem-link {
+    color: var(--text-color-secondary);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+
+    &:hover {
+      background: var(--surface-hover);
+      color: var(--text-color);
+      border-bottom-color: var(--primary-color-text);
+    }
+
+    &:focus {
+      box-shadow: none;
+      background: var(--surface-hover);
+    }
+  }
+
+  .p-highlight .p-menuitem-link {
+    color: var(--primary-color);
+    background: transparent;
+    border-bottom-color: var(--primary-color);
+    font-weight: 600;
+
+    &:hover {
+      color: var(--primary-color);
+      background: var(--surface-hover);
+      border-bottom-color: var(--primary-color);
+    }
+  }
+
+  .p-menuitem-text {
+    font-size: 0.95rem;
+  }
+}

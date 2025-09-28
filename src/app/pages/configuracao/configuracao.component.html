@@ -1,5 +1,10 @@
-<section class="mx-[5dvw] pt-[80px] bg-white">
-  <p-tabMenu [model]="items" [activeItem]="activeItem" (activeItemChange)="onActiveItemChange($event)" />
+<section class="mx-[5dvw] pt-[80px] bg-surface">
+  <p-tabMenu
+    [model]="items"
+    [activeItem]="activeItem"
+    (activeItemChange)="onActiveItemChange($event)"
+    styleClass="custom-tab-menu"
+  />
 
   <span [ngSwitch]="activeItem?.label">
     <div *ngSwitchCase="'Conta Bancária'">
@@ -24,7 +29,16 @@
   </span>
 
   <ng-template #noPermission>
-    <p class="text-red-500 font-semibold">Você não tem permissão para acessar esta seção.</p>
+    <div class="flex items-center justify-center p-8">
+      <div
+        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md mx-auto"
+      >
+        <div class="flex items-center">
+          <i class="pi pi-exclamation-triangle text-red-500 text-xl mr-3"></i>
+          <p class="text-red-700 dark:text-red-400 font-semibold">Você não tem permissão para acessar esta seção.</p>
+        </div>
+      </div>
+    </div>
   </ng-template>
 </section>
 

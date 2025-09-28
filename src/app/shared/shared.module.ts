@@ -39,21 +39,13 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { LayoutService } from './services/layout.service';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
-import { FormatValueBrlPipe } from './pipes/format-value-brl.pipe';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { CardModule } from 'primeng/card';
 import { SelectButtonModule } from 'primeng/selectbutton';
 
 @NgModule({
-  declarations: [
-    LoadingComponent,
-    EmptyTableComponent,
-    NotfoundComponent,
-    FooterComponent,
-    HeaderComponent,
-    FormatValueBrlPipe,
-  ],
+  declarations: [LoadingComponent, EmptyTableComponent, NotfoundComponent, FooterComponent, HeaderComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -133,7 +125,6 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     InputNumberModule,
     FooterComponent,
     HeaderComponent,
-    FormatValueBrlPipe,
     ConfirmDialogModule,
     TabMenuModule,
     CardModule,

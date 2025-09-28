@@ -80,3 +80,11 @@ body {
   background-color: var(--surface-hover);
 }
 
+:root {
+  --waves-bg: url('/assets/images/waves.svg');
+}
+
+[data-theme='dark'] {
+  --waves-bg: url('/assets/images/waves-dark.svg');
+}
+
