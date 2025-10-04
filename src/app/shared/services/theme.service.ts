@@ -27,6 +27,13 @@ export class ThemeService {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
 
+    // Adicionar/remover classe 'dark' para Tailwind CSS
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
     // Carregar dinamicamente o tema do PrimeNG
     this.loadPrimeNGTheme(theme);
   }

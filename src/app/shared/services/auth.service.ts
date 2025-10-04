@@ -13,7 +13,6 @@ export class AuthService {
   private cookieName = 'auth';
 
   private cookieService = inject(CookieService);
-  private router = inject(Router);
 
   setAuthResponse(authResponse: AuthUser): void {
     const value = JSON.stringify(authResponse);
@@ -47,7 +46,7 @@ export class AuthService {
   }
 
   delete() {
-    this.cookieService.delete(this.cookieName);
+    this.cookieService.deleteAll(this.cookieName);
 
     window.location.replace('hopeshare/home');
   }

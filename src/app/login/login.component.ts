@@ -42,7 +42,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       image: [''],
       birthdate: [new Date()],
       type_user: [TipoUsuario.USER],
-      rememberUser: [false],
     });
 
     this.router.url === '/register' ? (this.createUser = true) : null;

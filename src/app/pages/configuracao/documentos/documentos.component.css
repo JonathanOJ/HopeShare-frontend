@@ -1,0 +1,145 @@
+/* Animações para o componente de documentos */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efeito hover para cards */
+.document-card {
+  transition: all 0.3s ease;
+}
+
+.document-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode para document-card */
+.dark .document-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilo para upload área */
+.upload-zone {
+  border: 2px dashed #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.dark .upload-zone {
+  border-color: #374151;
+}
+
+.dark .upload-zone:hover {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Animação para status steps */
+.step-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Responsividade aprimorada */
+@media (max-width: 768px) {
+  .mobile-stack {
+    flex-direction: column;
+  }
+
+  .mobile-full {
+    width: 100%;
+  }
+}
+
+/* Efeito loading personalizado */
+.loading-overlay {
+  position: relative;
+}
+
+.loading-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.dark .loading-overlay::after {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Estilos para tags de status */
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.dark .status-pending {
+  background: rgba(146, 64, 14, 0.2);
+  color: #fbbf24;
+}
+
+.status-approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.dark .status-approved {
+  background: rgba(6, 95, 70, 0.2);
+  color: #34d399;
+}
+
+.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.dark .status-rejected {
+  background: rgba(153, 27, 27, 0.2);
+  color: #f87171;
+}
+

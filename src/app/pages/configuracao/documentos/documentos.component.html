@@ -1,39 +1,289 @@
-<section class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 rounded-2xl shadow-lg w-full rounded-t-none">
-  <div>
-    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Cadastro e Validação da Empresa</h2>
-
-    <form [formGroup]="empresaForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
-      <div class="flex flex-col gap-1">
-        <label for="razaoSocial" class="text-sm font-medium text-gray-700">Razão Social</label>
-        <input pInputText id="razaoSocial" formControlName="razaoSocial" placeholder="Digite a razão social" />
+<!-- Header com informações e status -->
+<div class="space-y-6">
+  <div class="bg-card border border-theme rounded-lg p-6">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+        <i class="pi pi-file-check text-primary text-xl"></i>
       </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="cnpj" class="text-sm font-medium text-gray-700">CNPJ</label>
-        <input pInputText id="cnpj" formControlName="cnpj" placeholder="Digite o CNPJ (apenas números)" />
+      <div>
+        <h2 class="text-xl font-semibold text-primary">Validação de Documentos</h2>
+        <p class="text-secondary text-sm">Complete o cadastro da sua empresa para receber doações</p>
       </div>
+    </div>
 
-      <div class="flex flex-col gap-2">
-        <label for="upload" class="text-sm font-medium text-gray-700">Documentos da Empresa</label>
-        <p-fileUpload
-          id="upload"
-          mode="basic"
-          chooseLabel="Selecionar Arquivos"
-          (onSelect)="onUpload($event)"
-          class="w-full"
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+      <div class="flex items-center gap-3 p-3 bg-surface border border-theme rounded-lg">
+        <div
+          class="w-8 h-8 rounded-full flex items-center justify-center"
+          [class]="
+            getStatusColor() === 'yellow'
+              ? 'bg-yellow-100 dark:bg-yellow-900/30'
+              : getStatusColor() === 'green'
+                ? 'bg-green-100 dark:bg-green-900/30'
+                : getStatusColor() === 'red'
+                  ? 'bg-red-100 dark:bg-red-900/30'
+                  : 'bg-gray-100 dark:bg-gray-800'
+          "
         >
-        </p-fileUpload>
-        <small class="text-gray-500 text-xs">Envie o CNPJ, contrato social e comprovante de endereço.</small>
+          <i
+            class="text-sm"
+            [class]="
+              'pi ' +
+              getStatusIcon() +
+              ' ' +
+              (getStatusColor() === 'yellow'
+                ? 'text-yellow-900 dark:text-yellow-300'
+                : getStatusColor() === 'green'
+                  ? 'text-green-900 dark:text-green-300'
+                  : getStatusColor() === 'red'
+                    ? 'text-red-900 dark:text-red-300'
+                    : 'text-gray-900 dark:text-gray-300')
+            "
+          ></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-primary">Status</p>
+          <p class="text-xs text-secondary">{{ getStatusLabel() }}</p>
+        </div>
       </div>
 
-      <div class="flex justify-end">
-        <button pButton type="submit" label="Enviar para Validação"></button>
+      <div class="flex items-center gap-3 p-3 bg-surface border border-theme rounded-lg">
+        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+          <i class="pi pi-users text-blue-900 dark:text-blue-300 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-primary">Validação</p>
+          <p class="text-xs text-secondary">2-5 dias úteis</p>
+        </div>
       </div>
-    </form>
+
+      <div class="flex items-center gap-3 p-3 bg-surface border border-theme rounded-lg">
+        <div class="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+          <i class="pi pi-shield text-green-900 dark:text-green-300 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-primary">Segurança</p>
+          <p class="text-xs text-secondary">100% protegido</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="flex items-center justify-center">
-    <img src="./../../../../assets/images/document.png" alt="Validação de Empresa" class="w-3/4 md:w-full max-w-sm" />
+  <div
+    *ngIf="validacaoDocumento?.observation && !validacaoDocumento?.observation_read"
+    class="bg-card border border-theme rounded-lg p-6 animate-fade-in"
+    [ngClass]="{
+      'border-blue-200 dark:border-blue-800': getTipoObservacao() === 'info',
+      'border-yellow-200 dark:border-yellow-800': getTipoObservacao() === 'warning',
+      'border-red-200 dark:border-red-800': getTipoObservacao() === 'error',
+    }"
+  >
+    <div class="flex items-start gap-4">
+      <div
+        class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+        [ngClass]="{
+          'bg-blue-100 dark:bg-blue-900/30': getTipoObservacao() === 'info',
+          'bg-yellow-100 dark:bg-yellow-900/30': getTipoObservacao() === 'warning',
+          'bg-red-100 dark:bg-red-900/30': getTipoObservacao() === 'error',
+        }"
+      >
+        <i
+          *ngIf="getTipoObservacao() === 'info'"
+          class="pi pi-info-circle text-lg text-blue-900 dark:text-blue-300"
+        ></i>
+        <i
+          *ngIf="getTipoObservacao() === 'warning'"
+          class="pi pi-exclamation-triangle text-lg text-yellow-900 dark:text-yellow-300"
+        ></i>
+        <i
+          *ngIf="getTipoObservacao() === 'error'"
+          class="pi pi-times-circle text-lg text-red-900 dark:text-red-300"
+        ></i>
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <h3
+          class="text-lg font-semibold mb-2"
+          [ngClass]="{
+            'text-blue-900 dark:text-blue-300': getTipoObservacao() === 'info',
+            'text-yellow-900 dark:text-yellow-300': getTipoObservacao() === 'warning',
+            'text-red-900 dark:text-red-300': getTipoObservacao() === 'error',
+          }"
+        >
+          <span *ngIf="getTipoObservacao() === 'info'">📋 Documentos Aprovados</span>
+          <span *ngIf="getTipoObservacao() === 'warning'">⚠️ Ação Necessária</span>
+          <span *ngIf="getTipoObservacao() === 'error'">❌ Documentos Rejeitados</span>
+        </h3>
+
+        <p
+          class="text-sm leading-relaxed mb-4"
+          [ngClass]="{
+            'text-blue-800 dark:text-blue-400': getTipoObservacao() === 'info',
+            'text-yellow-800 dark:text-yellow-400': getTipoObservacao() === 'warning',
+            'text-red-800 dark:text-red-400': getTipoObservacao() === 'error',
+          }"
+        >
+          {{ validacaoDocumento?.observation }}
+        </p>
+
+        <div class="flex justify-end gap-2">
+          <p-button
+            *ngIf="getTipoObservacao() === 'error'"
+            label="Falar com Suporte"
+            icon="pi pi-comments"
+            size="small"
+            severity="danger"
+            [outlined]="true"
+          ></p-button>
+
+          <p-button
+            label="Marcar como Lida"
+            icon="pi pi-check"
+            size="small"
+            [text]="true"
+            (onClick)="marcarObservacaoLida()"
+            [ngClass]="{
+              'p-button-info': getTipoObservacao() === 'info',
+              'p-button-warning': getTipoObservacao() === 'warning',
+              'p-button-danger': getTipoObservacao() === 'error',
+            }"
+          ></p-button>
+        </div>
+      </div>
+    </div>
   </div>
-</section>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-card border border-theme rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-primary mb-6 flex items-center gap-2">
+          <i class="pi pi-building text-primary"></i>
+          Dados da Empresa
+        </h3>
+
+        <form [formGroup]="empresaForm" (ngSubmit)="onSubmit()" class="space-y-6">
+          <div class="space-y-4">
+            <h4 class="text-md font-semibold text-primary flex items-center gap-2">
+              <i class="pi pi-upload text-primary"></i>
+              Documentos Necessários
+            </h4>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="flex items-center gap-2 p-3 bg-surface border border-theme rounded-lg">
+                <i class="pi pi-file-pdf text-red-900 dark:text-red-400"></i>
+                <span class="text-sm text-secondary">Recibo Bancário</span>
+              </div>
+              <div class="flex items-center gap-2 p-3 bg-surface border border-theme rounded-lg">
+                <i class="pi pi-file-pdf text-red-900 dark:text-red-400"></i>
+                <span class="text-sm text-secondary">Contrato Social</span>
+              </div>
+              <div class="flex items-center gap-2 p-3 bg-surface border border-theme rounded-lg">
+                <i class="pi pi-file-pdf text-red-900 dark:text-red-400"></i>
+                <span class="text-sm text-secondary">Comprovante Endereço</span>
+              </div>
+            </div>
+
+            <p-fileUpload
+              id="upload"
+              mode="advanced"
+              [multiple]="true"
+              accept=".pdf,.jpg,.jpeg,.png"
+              maxFileSize="5000000"
+              chooseLabel="Escolher Arquivos"
+              uploadLabel="Enviar"
+              cancelLabel="Cancelar"
+              (onSelect)="onUpload($event)"
+              (onRemove)="onRemoveFile($event)"
+              class="w-full"
+            >
+              <ng-template pTemplate="content">
+                <div class="p-6 text-center">
+                  <i class="pi pi-cloud-upload text-4xl text-primary mb-4 block"></i>
+                  <p class="text-secondary mb-2">Arraste e solte os arquivos aqui ou clique para selecionar</p>
+                  <p class="text-xs text-secondary">PDF, JPG, PNG até 5MB cada</p>
+                </div>
+              </ng-template>
+            </p-fileUpload>
+          </div>
+
+          <div class="pt-6 border-t border-theme">
+            <p-button
+              type="submit"
+              label="Enviar para Validação"
+              icon="pi pi-send"
+              [loading]="loading"
+              [disabled]="empresaForm.invalid"
+            ></p-button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-card border border-theme rounded-lg p-6">
+        <h4 class="font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-list-check text-primary"></i>
+          Processo de Validação
+        </h4>
+
+        <div class="space-y-4">
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mt-0.5">
+              <i class="pi pi-check text-green-900 dark:text-green-300 text-xs"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-primary">Envio de Documentos</p>
+              <p class="text-xs text-secondary">Upload dos arquivos necessários</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div
+              class="w-6 h-6 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mt-0.5"
+            >
+              <span class="text-yellow-900 dark:text-yellow-300 text-xs font-bold">2</span>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-primary">Análise da Equipe</p>
+              <p class="text-xs text-secondary">Verificação em até 2 dias úteis</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mt-0.5">
+              <span class="text-gray-900 dark:text-gray-300 text-xs font-bold">3</span>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-primary">Aprovação</p>
+              <p class="text-xs text-secondary">Liberação para recebimentos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <div class="flex items-start gap-3">
+          <i class="pi pi-info-circle text-blue-900 dark:text-blue-300 mt-1"></i>
+          <div>
+            <p class="text-sm font-medium text-blue-900 dark:text-blue-300 mb-1">Dicas importantes:</p>
+            <ul class="text-xs text-blue-800 dark:text-blue-400 space-y-1">
+              <li>• Todos os documentos devem estar atualizados e legíveis</li>
+              <li>• O CNPJ deve estar ativo na Receita Federal</li>
+              <li>• Comprovante de endereço não pode ter mais de 90 dias</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-lg p-6">
+        <h4 class="font-semibold text-primary mb-3 flex items-center gap-2">
+          <i class="pi pi-question-circle text-primary"></i>
+          Precisa de Ajuda?
+        </h4>
+        <p class="text-sm text-secondary mb-4">Nossa equipe está pronta para auxiliar no processo de validação</p>
+        <p-button label="Falar com Suporte" icon="pi pi-comments" size="small" [text]="true" class="w-full"></p-button>
+      </div>
+    </div>
+  </div>
+</div>
 

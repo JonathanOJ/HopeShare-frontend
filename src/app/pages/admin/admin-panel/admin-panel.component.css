@@ -1,0 +1,436 @@
+/* Estilos personalizados para o painel admin */
+
+.admin-card {
+  transition: all 0.3s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .admin-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tab-indicator {
+  position: relative;
+}
+
+.tab-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary-color);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.tab-indicator.active::after {
+  transform: scaleX(1);
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.document-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.validation-decision {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.dark .validation-decision {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  border-color: #4b5563;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Estilos específicos para a estrutura de denúncias */
+.campanha-card {
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.campanha-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .campanha-card {
+  border-color: var(--border-color, #374151);
+}
+
+.dark .campanha-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Tabelas (denúncias e solicitações) */
+.min-w-full thead th {
+  background: var(--surface-color, #f9fafb);
+  color: var(--text-color-secondary, #6b7280);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-size: 0.75rem;
+  padding: 0.75rem 1.5rem;
+}
+
+.dark .min-w-full thead th {
+  background: var(--surface-color, #1f2937);
+}
+
+.min-w-full tbody tr {
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.min-w-full tbody tr:hover {
+  background: var(--hover-surface, #f3f4f6);
+}
+
+.dark .min-w-full tbody tr {
+  border-color: var(--border-color, #374151);
+}
+
+.dark .min-w-full tbody tr:hover {
+  background: var(--hover-surface, #374151);
+}
+
+.min-w-full tbody td {
+  padding: 1rem 1.5rem;
+  vertical-align: top;
+}
+
+/* Estilos específicos para valores monetários */
+.text-green-600 {
+  font-weight: 600;
+}
+
+/* Badges e indicadores com melhor suporte ao dark mode */
+.badge-red {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.dark .badge-red {
+  background-color: rgba(153, 27, 27, 0.3);
+  color: #fca5a5;
+}
+
+/* Melhorias para estados de loading e transições */
+.loading-spinner {
+  color: var(--primary-color, #3b82f6);
+}
+
+.dark .loading-spinner {
+  color: var(--primary-color, #60a5fa);
+}
+
+/* Melhorias para botões em dark mode */
+.button-hover {
+  transition: all 0.2s ease;
+}
+
+.dark .button-hover:hover {
+  background-color: rgba(75, 85, 99, 0.1);
+}
+
+/* Melhorias nos botões de ação */
+.flex.gap-2 p-button {
+  margin: 0 1px;
+}
+
+/* Enhanced dark-mode support for tables and PrimeNG components */
+
+/* Standard table styling */
+table {
+  background: var(--surface-0, #ffffff);
+  color: var(--text-color, #212529);
+}
+
+.dark table {
+  background: var(--surface-0, #0e1117);
+  color: var(--text-color, #ffffff);
+}
+
+/* Table headers */
+table thead th,
+.min-w-full thead th {
+  background: var(--surface-100, #f8f9fa) !important;
+  color: var(--text-color-secondary, #6c757d) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+}
+
+.dark table thead th,
+.dark .min-w-full thead th {
+  background: var(--surface-100, #1c1f26) !important;
+  color: var(--text-color-secondary, #a1a8b3) !important;
+  border-color: var(--surface-border, #383c44) !important;
+}
+
+/* Table rows */
+table tbody tr,
+.min-w-full tbody tr {
+  background: var(--surface-0, #ffffff) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+}
+
+.dark table tbody tr,
+.dark .min-w-full tbody tr {
+  background: var(--surface-0, #0e1117) !important;
+  border-color: var(--surface-border, #383c44) !important;
+}
+
+table tbody tr:hover,
+.min-w-full tbody tr:hover {
+  background: var(--surface-hover, #f8f9fa) !important;
+}
+
+.dark table tbody tr:hover,
+.dark .min-w-full tbody tr:hover {
+  background: var(--surface-hover, #1c1f26) !important;
+}
+
+/* Table cells */
+table td,
+table th,
+.min-w-full td,
+.min-w-full th {
+  color: var(--text-color, #212529) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+}
+
+.dark table td,
+.dark table th,
+.dark .min-w-full td,
+.dark .min-w-full th {
+  color: var(--text-color, #ffffff) !important;
+  border-color: var(--surface-border, #383c44) !important;
+}
+
+/* PrimeNG table components */
+.p-datatable .p-datatable-table {
+  background: var(--surface-0, #ffffff) !important;
+}
+
+.dark .p-datatable .p-datatable-table {
+  background: var(--surface-0, #0e1117) !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: var(--surface-100, #f8f9fa) !important;
+  color: var(--text-color-secondary, #6c757d) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+}
+
+.dark .p-datatable .p-datatable-thead > tr > th {
+  background: var(--surface-100, #1c1f26) !important;
+  color: var(--text-color-secondary, #a1a8b3) !important;
+  border-color: var(--surface-border, #383c44) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  background: var(--surface-0, #ffffff) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr {
+  background: var(--surface-0, #0e1117) !important;
+  border-color: var(--surface-border, #383c44) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: var(--surface-hover, #f8f9fa) !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr:hover {
+  background: var(--surface-hover, #1c1f26) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  color: var(--text-color, #212529) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+}
+
+.dark .p-datatable .p-datatable-tbody > tr > td {
+  color: var(--text-color, #ffffff) !important;
+  border-color: var(--surface-border, #383c44) !important;
+}
+
+/* Enhanced dropdowns */
+.p-dropdown {
+  background: var(--surface-0, #ffffff) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+  color: var(--text-color, #212529) !important;
+}
+
+.dark .p-dropdown {
+  background: var(--surface-0, #0e1117) !important;
+  border-color: var(--surface-border, #383c44) !important;
+  color: var(--text-color, #ffffff) !important;
+}
+
+.p-dropdown-panel {
+  background: var(--surface-0, #ffffff) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+}
+
+.dark .p-dropdown-panel {
+  background: var(--surface-0, #0e1117) !important;
+  border-color: var(--surface-border, #383c44) !important;
+}
+
+.p-dropdown-items .p-dropdown-item {
+  color: var(--text-color, #212529) !important;
+}
+
+.dark .p-dropdown-items .p-dropdown-item {
+  color: var(--text-color, #ffffff) !important;
+}
+
+.p-dropdown-items .p-dropdown-item:hover {
+  background: var(--surface-hover, #f8f9fa) !important;
+}
+
+.dark .p-dropdown-items .p-dropdown-item:hover {
+  background: var(--surface-hover, #1c1f26) !important;
+}
+
+/* Enhanced buttons */
+.p-button.p-button-text {
+  color: var(--primary-color, #007bff) !important;
+}
+
+.dark .p-button.p-button-text {
+  color: var(--primary-color, #4dabf7) !important;
+}
+
+.p-button.p-button-text:hover {
+  background: var(--surface-hover, #f8f9fa) !important;
+}
+
+.dark .p-button.p-button-text:hover {
+  background: var(--surface-hover, #1c1f26) !important;
+}
+
+/* Enhanced tags */
+.p-tag.p-tag-success {
+  background: var(--green-500, #28a745) !important;
+  color: white !important;
+}
+
+.p-tag.p-tag-warning {
+  background: var(--orange-500, #fd7e14) !important;
+  color: white !important;
+}
+
+.p-tag.p-tag-danger {
+  background: var(--red-500, #dc3545) !important;
+  color: white !important;
+}
+
+.p-tag.p-tag-info {
+  background: var(--blue-500, #007bff) !important;
+  color: white !important;
+}
+
+/* Enhanced dialogs */
+.p-dialog .p-dialog-header {
+  background: var(--surface-0, #ffffff) !important;
+  color: var(--text-color, #212529) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+}
+
+.dark .p-dialog .p-dialog-header {
+  background: var(--surface-0, #0e1117) !important;
+  color: var(--text-color, #ffffff) !important;
+  border-color: var(--surface-border, #383c44) !important;
+}
+
+.p-dialog .p-dialog-content {
+  background: var(--surface-0, #ffffff) !important;
+  color: var(--text-color, #212529) !important;
+}
+
+.dark .p-dialog .p-dialog-content {
+  background: var(--surface-0, #0e1117) !important;
+  color: var(--text-color, #ffffff) !important;
+}
+
+/* Enhanced form controls */
+.p-inputtext,
+.p-inputtextarea {
+  background: var(--surface-0, #ffffff) !important;
+  border-color: var(--surface-border, #dee2e6) !important;
+  color: var(--text-color, #212529) !important;
+}
+
+.dark .p-inputtext,
+.dark .p-inputtextarea {
+  background: var(--surface-0, #0e1117) !important;
+  border-color: var(--surface-border, #383c44) !important;
+  color: var(--text-color, #ffffff) !important;
+}
+
+/* Enhanced progress spinner */
+.p-progress-spinner-circle {
+  stroke: var(--primary-color, #007bff) !important;
+}
+
+.dark .p-progress-spinner-circle {
+  stroke: var(--primary-color, #4dabf7) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-tabs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .admin-card {
+    margin: 0.5rem 0;
+  }
+
+  .document-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flex.items-center.gap-4 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+

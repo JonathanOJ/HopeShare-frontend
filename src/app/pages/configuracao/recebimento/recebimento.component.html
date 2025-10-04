@@ -1,53 +1,257 @@
-<section class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 rounded-2xl shadow-lg w-full rounded-t-none">
-  <div>
-    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Configuração de Recebimento</h2>
-
-    <form [formGroup]="recebimentoForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
-      <div class="flex flex-col gap-1">
-        <label for="banco" class="text-sm font-medium text-gray-700">Banco</label>
-        <input pInputText id="banco" formControlName="banco" placeholder="Nome do banco" />
+<section class="space-y-6">
+  <div class="bg-card border border-theme rounded-lg p-6">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+        <i class="pi pi-wallet text-primary text-xl"></i>
       </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="agencia" class="text-sm font-medium text-gray-700">Agência</label>
-        <input pInputText id="agencia" formControlName="agencia" placeholder="Número da agência" />
+      <div>
+        <h2 class="text-xl font-semibold text-primary">Configuração de Recebimento</h2>
+        <p class="text-secondary text-sm">Configure seus dados bancários para receber doações das campanhas</p>
       </div>
-
-      <div class="flex flex-col gap-1">
-        <label for="contaBancaria" class="text-sm font-medium text-gray-700">Conta Bancária</label>
-        <input pInputText id="contaBancaria" formControlName="contaBancaria" placeholder="Número da conta" />
-      </div>
-
-      <div class="flex gap-2">
-        <div class="flex flex-col gap-1 w-full">
-          <label for="cnpj" class="text-sm font-medium text-gray-700">CNPJ</label>
-          <input pInputText id="cnpj" formControlName="cnpj" placeholder="Apenas números (14 dígitos)" />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <label for="tipoConta" class="text-sm font-medium text-gray-700">Tipo de Conta</label>
-          <p-dropdown
-            id="tipoConta"
-            [options]="tiposConta"
-            formControlName="tipoConta"
-            placeholder="Selecione o tipo de conta"
-          >
-          </p-dropdown>
-        </div>
-      </div>
-
-      <div class="flex justify-end">
-        <button pButton type="submit" label="Salvar Configuração"></button>
-      </div>
-    </form>
+    </div>
   </div>
 
-  <div class="flex items-center justify-center">
-    <img
-      src="./../../../../assets/images/wallet.png"
-      alt="Ilustração de carteira digital"
-      class="w-3/4 md:w-full max-w-sm"
-    />
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+      <div class="bg-card border border-theme rounded-lg p-6">
+        <form *ngIf="recebimentoForm" [formGroup]="recebimentoForm" (ngSubmit)="onSubmit()" class="space-y-6">
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-primary flex items-center gap-2">
+              <i class="pi pi-building text-primary"></i>
+              Dados Bancários
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-fluid">
+                <label for="banco" class="block text-sm font-medium text-secondary"> Banco * </label>
+                <p-autoComplete
+                  id="banco"
+                  formControlName="banco"
+                  [suggestions]="bancosFiltrados"
+                  (completeMethod)="filterBancos($event)"
+                  (onSelect)="onBancoSelect($event)"
+                  optionLabel="name"
+                  dataKey="code"
+                  placeholder="Digite o nome ou código do banco"
+                  [dropdown]="true"
+                  [showEmptyMessage]="true"
+                  emptyMessage="Nenhum banco encontrado"
+                >
+                  <ng-template let-banco pTemplate="item">
+                    <div class="flex items-center">
+                      <div class="flex flex-col">
+                        <span class="font-medium">{{ getBancoDisplay(banco) }}</span>
+                        <small class="text-gray-500">{{ banco.fullName }}</small>
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+                <small *ngIf="banco?.errors && banco?.touched" class="text-red-500">
+                  Selecione um banco da lista
+                </small>
+              </div>
+
+              <div>
+                <label for="agency" class="block text-sm font-medium text-secondary"> Agência * </label>
+                <p-inputMask
+                  id="agency"
+                  formControlName="agency"
+                  mask="9999-9"
+                  placeholder="0000-0"
+                  styleClass="w-full"
+                ></p-inputMask>
+                <small *ngIf="agency?.errors && agency?.touched" class="text-red-500">
+                  Agência deve ter pelo menos 4 dígitos
+                </small>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="account_number" class="block text-sm font-medium text-secondary"> Conta Bancária * </label>
+                <p-inputMask
+                  id="account_number"
+                  formControlName="account_number"
+                  mask="99999-9"
+                  placeholder="00000-0"
+                  styleClass="w-full"
+                ></p-inputMask>
+                <small *ngIf="account_number?.errors && account_number?.touched" class="text-red-500">
+                  Número da conta é obrigatório
+                </small>
+              </div>
+
+              <div>
+                <label for="account_type" class="block text-sm font-medium text-secondary"> Tipo de Conta * </label>
+                <p-dropdown
+                  id="account_type"
+                  [options]="tiposConta"
+                  formControlName="account_type"
+                  placeholder="Selecione o tipo"
+                  styleClass="w-full"
+                  optionLabel="label"
+                  optionValue="value"
+                ></p-dropdown>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4 pt-6 border-t border-theme">
+            <h3 class="text-lg font-semibold text-primary flex items-center gap-2">
+              <i class="pi pi-id-card text-primary"></i>
+              Dados da Empresa
+            </h3>
+
+            <div>
+              <label for="cnpj" class="block text-sm font-medium text-secondary"> CNPJ * </label>
+              <p-inputMask
+                id="cnpj"
+                formControlName="cnpj"
+                mask="99.999.999/9999-99"
+                placeholder="00.000.000/0000-00"
+                styleClass="w-full md:w-1/2"
+              ></p-inputMask>
+              <small *ngIf="cnpj?.errors && cnpj?.touched" class="text-red-500"> CNPJ deve ter 14 dígitos </small>
+              <p class="text-xs text-secondary">Apenas empresas com CNPJ ativo podem receber doações</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-theme">
+            <p-button
+              type="button"
+              label="Visualizar Dados"
+              icon="pi pi-eye"
+              severity="secondary"
+              [outlined]="true"
+              (onClick)="previewData()"
+              [disabled]="recebimentoForm.invalid"
+            ></p-button>
+
+            <p-button
+              type="submit"
+              label="Salvar Configuração"
+              icon="pi pi-save"
+              [loading]="loading"
+              [disabled]="recebimentoForm.invalid"
+            ></p-button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-card border border-theme rounded-lg p-6">
+        <h4 class="font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-shield text-primary"></i>
+          Status da Conta
+        </h4>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-secondary">Dados Bancários</span>
+            <p-tag
+              [value]="isDadosBancariosConfigurado() ? 'Configurado' : 'Não Configurado'"
+              [severity]="getStatusSeverity(isDadosBancariosConfigurado() ? 'Configurado' : 'Não Configurado')"
+            >
+            </p-tag>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-secondary">Verificação CNPJ</span>
+            <p-tag
+              [value]="isCnpjVerificado() ? 'Verificado' : 'Pendente'"
+              [severity]="getStatusSeverity(isCnpjVerificado() ? 'Verificado' : 'Pendente')"
+            >
+            </p-tag>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-secondary">Status de Recebimento</span>
+            <p-tag [value]="getStatusRecebimento()" [severity]="getStatusSeverity(getStatusRecebimento())"> </p-tag>
+          </div>
+        </div>
+
+        <div *ngIf="recebimentoConfig" class="mt-4 space-y-3">
+          <div class="p-3 bg-surface border border-theme rounded-lg">
+            <h6 class="text-xs font-semibold text-primary mb-2">Última Atualização</h6>
+            <p class="text-xs text-secondary">{{ recebimentoConfig.updated_at | date: 'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+
+          <div class="p-3 bg-surface border border-theme rounded-lg">
+            <h6 class="text-xs font-semibold text-primary mb-2">Banco Configurado</h6>
+            <p class="text-xs text-secondary">{{ getBancoDisplay(recebimentoConfig.banco) }}</p>
+          </div>
+        </div>
+
+        <div
+          class="mt-4 p-3 rounded-lg"
+          [ngClass]="{
+            'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800':
+              getStatusRecebimento() !== 'ATIVO',
+            'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800':
+              getStatusRecebimento() === 'ATIVO',
+          }"
+        >
+          <p
+            class="text-xs"
+            [ngClass]="{
+              'text-yellow-800 dark:text-yellow-300': getStatusRecebimento() !== 'ATIVO',
+              'text-green-800 dark:text-green-300': getStatusRecebimento() === 'ATIVO',
+            }"
+          >
+            <i
+              [class]="getStatusRecebimento() === 'ATIVO' ? 'pi pi-check-circle' : 'pi pi-exclamation-triangle'"
+              class="mr-1"
+            ></i>
+            {{
+              getStatusRecebimento() === 'ATIVO'
+                ? 'Sua conta está ativa e pode receber doações!'
+                : 'Complete a configuração para ativar o recebimento de doações'
+            }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
+<p-dialog
+  [(visible)]="showPreview"
+  [modal]="true"
+  [closable]="true"
+  header="Prévia dos Dados Bancários"
+  styleClass="w-full max-w-md"
+>
+  <div *ngIf="recebimentoForm?.valid" class="space-y-4">
+    <div class="bg-surface border border-theme rounded-lg p-4">
+      <h5 class="font-semibold text-primary mb-3">Dados Configurados</h5>
+
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-secondary">Banco:</span>
+          <span class="font-medium text-primary">{{ getBancoDisplay(banco?.value) }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-secondary">Agência:</span>
+          <span class="font-medium text-primary">{{ agency?.value }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-secondary">Conta:</span>
+          <span class="font-medium text-primary">{{ account_number?.value }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-secondary">Tipo:</span>
+          <span class="font-medium text-primary">{{ getSelectedAccountType() }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-secondary">CNPJ:</span>
+          <span class="font-medium text-primary">{{ cnpj?.value }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 mt-6">
+    <p-button label="Fechar" severity="secondary" [text]="true" (onClick)="showPreview = false"></p-button>
+  </div>
+</p-dialog>
 

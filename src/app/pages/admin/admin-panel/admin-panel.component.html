@@ -1,0 +1,84 @@
+<section class="pt-[88px] px-[5.5dvw] max-w-[1920px] mx-auto gap-4">
+  <div class="bg-card border border-theme rounded-lg p-6">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+        <i class="pi pi-shield text-primary text-xl"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-semibold text-primary">Painel Administrativo</h2>
+        <p class="text-secondary text-sm">Gerencie validações de documentos, denúncias e solicitações de depósito</p>
+      </div>
+    </div>
+
+    <div class="border-b border-theme">
+      <nav class="flex space-x-8">
+        <button
+          (click)="changeTab('validacoes')"
+          [class]="
+            activeTab === 'validacoes'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-secondary hover:text-primary'
+          "
+          class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+        >
+          <i class="pi pi-file-check mr-2"></i>
+          Validação de Documentos
+        </button>
+
+        <button
+          (click)="changeTab('denuncias')"
+          [class]="
+            activeTab === 'denuncias'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-secondary hover:text-primary'
+          "
+          class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+        >
+          <i class="pi pi-exclamation-triangle mr-2"></i>
+          Denúncias
+        </button>
+
+        <button
+          (click)="changeTab('depositos')"
+          [class]="
+            activeTab === 'depositos'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-secondary hover:text-primary'
+          "
+          class="py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+        >
+          <i class="pi pi-wallet mr-2"></i>
+          Solicitações de Depósito
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Conteúdo das Abas -->
+
+  <!-- Aba Validação de Documentos -->
+  <div *ngIf="activeTab === 'validacoes'" class="space-y-4">
+    <app-validacao-documentos
+      [validacoesPendentes]="validacoesPendentes"
+      [loading]="loading"
+      (refresh)="loadValidacoesPendentes()"
+    >
+    </app-validacao-documentos>
+  </div>
+
+  <!-- Aba Denúncias -->
+  <div *ngIf="activeTab === 'denuncias'" class="space-y-4">
+    <app-denuncias [denuncias]="denuncias" [loading]="denunciasLoading" (refresh)="loadDenuncias()"> </app-denuncias>
+  </div>
+
+  <!-- Aba Solicitações de Depósito -->
+  <div *ngIf="activeTab === 'depositos'" class="space-y-4">
+    <app-solicitacoes-deposito
+      [solicitacoes]="solicitacoes"
+      [loading]="solicitacoesLoading"
+      (refresh)="loadSolicitacoes()"
+    >
+    </app-solicitacoes-deposito>
+  </div>
+</section>
+

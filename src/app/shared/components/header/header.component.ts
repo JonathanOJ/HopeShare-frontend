@@ -34,7 +34,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject();
 
   ngOnInit(): void {
-    // Subscribe to theme changes
     this.themeService.currentTheme$.pipe(takeUntil(this.destroy$)).subscribe((theme) => {
       this.currentTheme = theme;
       this.updateSettingsMenu();
@@ -125,10 +124,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       case '/hopeshare/relatorio/listagem':
       case '/hopeshare/relatorio/solicitar':
         return 3;
-      case '/hopeshare/admin/denuncias':
+      case '/hopeshare/admin':
         return this.userSession?.is_admin ? 4 : 0;
-      case '/hopeshare/admin/solicitacoes-deposito':
-        return this.userSession?.is_admin ? 5 : 0;
       default:
         return 0;
     }
@@ -150,12 +147,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       case 4:
         if (this.userSession?.is_admin) {
-          this.router.navigate([`hopeshare/admin/denuncias`]);
-        }
-        break;
-      case 5:
-        if (this.userSession?.is_admin) {
-          this.router.navigate([`hopeshare/admin/solicitacoes-deposito`]);
+          this.router.navigate([`hopeshare/admin`]);
         }
         break;
     }

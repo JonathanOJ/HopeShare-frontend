@@ -1,0 +1,173 @@
+<section class="bg-card border border-theme rounded-lg p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h3 class="text-lg font-semibold text-primary">Validações Pendentes</h3>
+    <p-button
+      icon="pi pi-refresh"
+      (onClick)="refreshListEmit()"
+      [loading]="loading"
+      [outlined]="true"
+      size="small"
+    ></p-button>
+  </div>
+
+  <div *ngIf="validacoesPendentes.length === 0" class="text-center py-12">
+    <i class="pi pi-check-circle text-6xl text-green-500 dark:text-green-400 mb-4 block"></i>
+    <h4 class="text-lg font-medium text-primary mb-2">Nenhuma validação pendente</h4>
+    <p class="text-secondary">Todas as solicitações foram processadas!</p>
+  </div>
+
+  <div *ngIf="validacoesPendentes.length > 0" class="space-y-4">
+    <div
+      *ngFor="let validation of validacoesPendentes"
+      class="bg-surface border border-theme rounded-lg p-4 hover:shadow-md transition-shadow"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2">
+            <h4 class="font-semibold text-primary">{{ validation?.empresa_nome }}</h4>
+            <p-tag
+              [value]="getStatusLabel(validation.status)"
+              [severity]="getStatusSeverity(validation.status)"
+            ></p-tag>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-secondary">Responsável:</span>
+              <span class="text-primary ml-1">{{ validation.user_responsable?.username }}</span>
+            </div>
+            <div>
+              <span class="text-secondary">CNPJ:</span>
+              <span class="text-primary ml-1">{{ validation.cnpj }}</span>
+            </div>
+            <div>
+              <span class="text-secondary">Data de Envio:</span>
+              <span class="text-primary ml-1">{{ validation.updated_at | date: 'dd/MM/yyyy' }}</span>
+            </div>
+            <div>
+              <span class="text-secondary">Documentos:</span>
+              <span class="text-primary ml-1">{{ validation.documentos.length }} arquivo(s)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ml-4">
+          <p-button
+            label="Analisar"
+            icon="pi pi-eye"
+            (onClick)="openValidationModal(validation)"
+            size="small"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p-dialog
+  [(visible)]="showValidationModal"
+  [modal]="true"
+  [closable]="true"
+  header="Validação de Documentos"
+  styleClass="w-full max-w-4xl"
+>
+  <div *ngIf="selectedValidation" class="space-y-6">
+    <!-- Informações da Empresa -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-surface border border-theme rounded-lg p-4">
+        <h5 class="font-semibold text-primary mb-3">Dados da Empresa</h5>
+        <div class="space-y-2 text-sm">
+          <div>
+            <span class="text-secondary">Nome:</span>
+            <span class="text-primary ml-2 font-medium">{{ selectedValidation.empresa_nome }}</span>
+          </div>
+          <div>
+            <span class="text-secondary">CNPJ:</span>
+            <span class="text-primary ml-2">{{ selectedValidation.cnpj }}</span>
+          </div>
+          <div>
+            <span class="text-secondary">Responsável:</span>
+            <span class="text-primary ml-2">{{ selectedValidation.user_responsable?.username }}</span>
+          </div>
+          <div>
+            <span class="text-secondary">E-mail:</span>
+            <span class="text-primary ml-2">{{ selectedValidation.user_responsable?.email }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documentos -->
+    <div class="bg-surface border border-theme rounded-lg p-4">
+      <h5 class="font-semibold text-primary mb-3">Documentos Enviados</h5>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div
+          *ngFor="let doc of selectedValidation.documentos"
+          class="flex items-center gap-2 p-2 bg-card border border-theme rounded"
+        >
+          <i class="pi pi-file-pdf text-red-500 dark:text-red-400"></i>
+          <span class="text-sm text-primary">{{ doc }}</span>
+          <p-button icon="pi pi-download" size="small" [text]="true"></p-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decisão de Validação -->
+    <div class="bg-surface border border-theme rounded-lg p-4">
+      <h5 class="font-semibold text-primary mb-3">Decisão de Validação</h5>
+
+      <div class="space-y-4">
+        <div class="flex gap-4">
+          <div class="flex items-center">
+            <p-radioButton inputId="approve" name="decision" value="APPROVE" [(ngModel)]="validationDecision">
+            </p-radioButton>
+            <label for="approve" class="ml-2 text-green-700 dark:text-green-400 font-medium">
+              <i class="pi pi-check-circle mr-1"></i>
+              Aprovar Documentos
+            </label>
+          </div>
+
+          <div class="flex items-center">
+            <p-radioButton inputId="reject" name="decision" value="REJECT" [(ngModel)]="validationDecision">
+            </p-radioButton>
+            <label for="reject" class="ml-2 text-red-700 dark:text-red-400 font-medium">
+              <i class="pi pi-times-circle mr-1"></i>
+              Rejeitar Documentos
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label for="observacao" class="block text-sm font-medium text-secondary mb-2">
+            Observações {{ validationDecision === 'REJECT' ? '(Obrigatório para rejeição)' : '(Opcional)' }}
+          </label>
+          <textarea
+            id="observacao"
+            [(ngModel)]="observacaoAdmin"
+            rows="4"
+            class="w-full p-3 border border-theme rounded-lg bg-surface text-primary"
+            [placeholder]="
+              validationDecision === 'APPROVE'
+                ? 'Ex: Documentos aprovados. Empresa habilitada para receber doações.'
+                : 'Ex: Documento de comprovante de endereço está ilegível. Por favor, reenvie um documento mais claro.'
+            "
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 mt-6">
+    <p-button label="Cancelar" severity="secondary" [outlined]="true" (onClick)="showValidationModal = false">
+    </p-button>
+    <p-button
+      [label]="validationDecision === 'APPROVE' ? 'Aprovar' : 'Rejeitar'"
+      [severity]="validationDecision === 'APPROVE' ? 'success' : 'danger'"
+      [disabled]="!validationDecision || (validationDecision === 'REJECT' && !observacaoAdmin.trim())"
+      [loading]="loading"
+      (onClick)="processValidation()"
+    >
+    </p-button>
+  </div>
+</p-dialog>
+

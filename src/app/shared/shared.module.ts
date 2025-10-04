@@ -43,6 +43,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { CardModule } from 'primeng/card';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 @NgModule({
   declarations: [LoadingComponent, EmptyTableComponent, NotfoundComponent, FooterComponent, HeaderComponent],
@@ -84,6 +85,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     TabMenuModule,
     CardModule,
     SelectButtonModule,
+    AutoCompleteModule,
   ],
   exports: [
     CommonModule,
@@ -129,6 +131,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     TabMenuModule,
     CardModule,
     SelectButtonModule,
+    AutoCompleteModule,
   ],
 })
 export class SharedModule {
