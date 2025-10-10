@@ -1,16 +1,23 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
-import { BANCOS, type Banco } from '../../../shared/constants/bancos';
 import { AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { Recebimento } from '../../../shared/models/recebimento.model';
+import { AuthUser } from '../../../shared/models/auth';
+import { Banco } from '../../../shared/models/banco.model';
+import { BancoService } from '../../../shared/services/banco.service';
+import { takeUntil, take, Subject } from 'rxjs';
+import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
+import { LoadingService } from '../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-recebimento',
   templateUrl: './recebimento.component.html',
   styleUrls: ['./recebimento.component.css'],
 })
-export class RecebimentoComponent implements OnInit {
+export class RecebimentoComponent implements OnInit, OnDestroy {
+  @Input() user: AuthUser | null = null;
+
   recebimentoForm!: FormGroup;
   loading = false;
   showPreview = false;
@@ -29,34 +36,24 @@ export class RecebimentoComponent implements OnInit {
   ];
 
   private fb = inject(FormBuilder);
-  private messageService = inject(MessageService);
+  private messageConfirmationService = inject(MessageConfirmationService);
+  private bancoService = inject(BancoService);
+  private loadingService = inject(LoadingService);
 
-  async ngOnInit(): Promise<void> {
-    await this.loadBancos();
+  private destroy$ = new Subject();
+
+  ngOnInit() {
     this.initializeForm();
   }
 
-  private async loadBancos(): Promise<void> {
-    try {
-      const bancosData = await import('../../../shared/constants/bancos-list.json');
-      const bancosRaw = Array.isArray(bancosData.default)
-        ? bancosData.default
-        : Array.isArray(bancosData)
-          ? bancosData
-          : [];
-
-      this.bancos = bancosRaw;
-
-      this.bancosFiltrados = [...this.bancos];
-    } catch (error) {
-      this.bancos = [];
-      this.bancosFiltrados = [];
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
   }
 
   private initializeForm(): void {
     this.recebimentoForm = this.fb.group({
-      banco: [null, Validators.required],
+      banck: [null, Validators.required],
       agency: ['', [Validators.required, Validators.minLength(4)]],
       account_number: ['', [Validators.required, Validators.minLength(4)]],
       account_type: ['CORRENTE', Validators.required],
@@ -66,8 +63,6 @@ export class RecebimentoComponent implements OnInit {
     this.bancosFiltrados = [];
 
     this.loadRecebimentoConfig();
-
-    console.log('chamando initform');
 
     this.recebimentoForm.valueChanges.subscribe(() => {
       this.updateConfigurationStatus();
@@ -82,7 +77,6 @@ export class RecebimentoComponent implements OnInit {
     //   this.recebimentoService.getRecebimentoByUserId(userId).subscribe({
     //     next: (config) => {
     //       this.recebimentoConfig = config;
-    //       this.populateFormWithConfig();
     //       this.updateConfigurationStatus();
     //       this.loading = false;
     //     },
@@ -93,42 +87,6 @@ export class RecebimentoComponent implements OnInit {
     //     }
     //   });
     // }
-
-    const recebimentoSimulado: Recebimento = {
-      recebimento_id: '12345',
-      banco: {
-        code: 237,
-        name: 'Bradesco',
-        fullName: 'Banco Bradesco S.A.',
-      },
-      agency: '12345',
-      account_number: '987654',
-      account_type: 'CORRENTE',
-      cnpj: '12345678000190',
-      created_at: new Date('2024-01-15'),
-      updated_at: new Date('2024-10-01'),
-      account_verified: true,
-      status: 'VERIFIED',
-    };
-
-    this.recebimentoConfig = recebimentoSimulado;
-    this.recebimentoForm.patchValue({
-      banco: this.recebimentoConfig.banco,
-      agency: this.recebimentoConfig!.agency,
-      account_number: this.recebimentoConfig!.account_number,
-      account_type: this.recebimentoConfig!.account_type,
-      cnpj: this.recebimentoConfig!.cnpj,
-    });
-
-    console.log(this.recebimentoForm.value);
-
-    this.updateConfigurationStatus();
-    this.loading = false;
-  }
-
-  private getUserId(): string | null {
-    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-    return user.id || null;
   }
 
   private updateConfigurationStatus(): void {
@@ -141,11 +99,10 @@ export class RecebimentoComponent implements OnInit {
       this.showPreview = true;
     } else {
       this.recebimentoForm.markAllAsTouched();
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Formulário Incompleto',
-        detail: 'Por favor, preencha todos os campos obrigatórios antes de visualizar.',
-      });
+      this.messageConfirmationService.showWarning(
+        'Formulário Incompleto',
+        'Por favor, preencha todos os campos obrigatórios antes de visualizar.'
+      );
     }
   }
 
@@ -162,23 +119,20 @@ export class RecebimentoComponent implements OnInit {
       setTimeout(() => {
         console.log('Dados do formulário:', this.recebimentoForm.value);
 
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Configuração Salva',
-          detail:
-            'Seus dados bancários foram salvos com sucesso! As alterações podem levar até 24h para entrar em vigor.',
-        });
+        this.messageConfirmationService.showMessage(
+          'Configuração Salva',
+          'Seus dados bancários foram salvos com sucesso!'
+        );
 
         this.loading = false;
         this.hasConfiguredBank = true;
       }, 2000);
     } else {
       this.recebimentoForm.markAllAsTouched();
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Formulário Inválido',
-        detail: 'Por favor, corrija os erros no formulário antes de salvar.',
-      });
+      this.messageConfirmationService.showWarning(
+        'Formulário Inválido',
+        'Por favor, corrija os erros no formulário antes de salvar.'
+      );
     }
   }
 
@@ -190,24 +144,35 @@ export class RecebimentoComponent implements OnInit {
       return;
     }
 
-    this.bancosFiltrados = this.bancos.filter(
-      (banco) =>
-        banco.name.toLowerCase().includes(query) ||
-        banco.fullName.toLowerCase().includes(query) ||
-        (banco.code && banco.code.toString().includes(query))
-    );
+    this.loading = true;
+    this.loadingService.start();
+
+    this.bancoService
+      .searchBanks(query, 1, 10)
+      .pipe(takeUntil(this.destroy$), take(1))
+      .subscribe({
+        next: (response: Banco[]) => {
+          this.bancosFiltrados = response;
+        },
+        error: () => {
+          this.messageConfirmationService.showError('Erro', 'Ocorreu um erro ao buscar os bancos!');
+        },
+      })
+      .add(() => {
+        this.loading = false;
+        this.loadingService.done();
+      });
   }
 
-  onBancoSelect(event: AutoCompleteSelectEvent): void {
-    const banco = event.value as Banco;
-    this.bancoSelecionado = banco;
-    this.recebimentoForm.patchValue({ banco });
-    console.log('Banco selecionado:', banco);
+  onBankSelect(event: AutoCompleteSelectEvent): void {
+    const bank = event.value as Banco;
+    this.bancoSelecionado = bank;
+    this.recebimentoForm.patchValue({ bank: bank });
   }
 
-  getBancoDisplay(banco: Banco): string {
-    if (!banco) return '';
-    return banco.code ? `${banco.code} - ${banco.name}` : banco.name;
+  getBankDisplay(bank: Banco): string {
+    if (!bank) return '';
+    return bank.code ? `${bank.code} - ${bank.name}` : bank.name;
   }
 
   clearForm(): void {
@@ -227,8 +192,16 @@ export class RecebimentoComponent implements OnInit {
     return cnpj.replace(/\D/g, '').length === 14;
   }
 
-  get banco() {
-    return this.recebimentoForm?.get('banco');
+  isDadosBancariosConfigurado(): boolean {
+    return !!(this.bank?.value && this.agency?.value && this.account_number?.value && this.cnpj?.value);
+  }
+
+  isCnpjVerificado(): boolean {
+    return this.recebimentoConfig?.status === 'VERIFIED';
+  }
+
+  get bank() {
+    return this.recebimentoForm?.get('bank');
   }
 
   get agency() {
@@ -245,49 +218,6 @@ export class RecebimentoComponent implements OnInit {
 
   get cnpj() {
     return this.recebimentoForm?.get('cnpj');
-  }
-
-  // Métodos para verificar status baseado na configuração Recebimento
-  isDadosBancariosConfigurado(): boolean {
-    return !!(
-      this.recebimentoConfig?.banco &&
-      this.recebimentoConfig?.agency &&
-      this.recebimentoConfig?.account_number &&
-      this.recebimentoConfig?.cnpj
-    );
-  }
-
-  isCnpjVerificado(): boolean {
-    return this.recebimentoConfig?.account_verified === true;
-  }
-
-  getStatusRecebimento(): 'ATIVO' | 'INATIVO' | 'PENDENTE' {
-    if (!this.recebimentoConfig) return 'INATIVO';
-
-    if (this.recebimentoConfig.status === 'VERIFIED' && this.recebimentoConfig.account_verified) {
-      return 'ATIVO';
-    } else if (this.recebimentoConfig.status === 'PENDING') {
-      return 'PENDENTE';
-    } else {
-      return 'INATIVO';
-    }
-  }
-
-  getStatusSeverity(status: string): 'success' | 'warning' | 'danger' | 'info' {
-    switch (status) {
-      case 'ATIVO':
-      case 'Configurado':
-      case 'Verificado':
-        return 'success';
-      case 'PENDENTE':
-      case 'Não Configurado':
-        return 'warning';
-      case 'INATIVO':
-      case 'Rejeitado':
-        return 'danger';
-      default:
-        return 'info';
-    }
   }
 }
 

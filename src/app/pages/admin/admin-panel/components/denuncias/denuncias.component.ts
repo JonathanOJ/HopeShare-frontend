@@ -160,7 +160,7 @@ export class DenunciasComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   updateStatus(denuncia: DenunciaExtended, newStatus: string) {
-    if (!denuncia.id) return;
+    if (!denuncia.report_id) return;
 
     // Update local state immediately
     denuncia.status = newStatus as any;

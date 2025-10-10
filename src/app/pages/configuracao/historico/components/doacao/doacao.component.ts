@@ -1,7 +1,12 @@
 import { Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { getStatusClass } from '../../../../../shared/utils/get-status-class.utils';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { StatusDoacao, StatusDoacaoList } from '../../../../../shared/enums/StatusDoacao.enum';
+import {
+  StatusDoacao,
+  StatusDoacaoList,
+  getStatusDoacaoSeverity,
+  getStatusDoacaoLabel,
+} from '../../../../../shared/enums/StatusDoacao.enum';
 import { Doacao } from '../../../../../shared/models/doacao.model';
 
 @Component({
@@ -48,39 +53,21 @@ export class DoacaoComponent implements OnChanges {
   }
 
   getStatusLabel(status: string): string {
-    switch (status) {
-      case StatusDoacao.PENDING:
-        return 'Pendente';
-      case StatusDoacao.APPROVED:
-        return 'Aprovada';
-      case StatusDoacao.REJECTED:
-        return 'Rejeitada';
-      case StatusDoacao.REFOUND_PENDING:
-        return 'Reembolso Pendente';
-      case StatusDoacao.REFOUND_REJECTED:
-        return 'Reembolso Rejeitado';
-      case StatusDoacao.REFOUND_APPROVED:
-        return 'Reembolso Aprovado';
-      default:
-        return status;
-    }
+    return getStatusDoacaoLabel(status as StatusDoacao);
   }
 
   getStatusSeverity(status: string): 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast' {
-    switch (status) {
-      case StatusDoacao.APPROVED:
-        return 'success';
-      case StatusDoacao.PENDING:
-      case StatusDoacao.REFOUND_PENDING:
-        return 'warning';
-      case StatusDoacao.REJECTED:
-      case StatusDoacao.REFOUND_REJECTED:
-        return 'danger';
-      case StatusDoacao.REFOUND_APPROVED:
-        return 'info';
-      default:
-        return 'secondary';
-    }
+    const severity = getStatusDoacaoSeverity(status as StatusDoacao);
+    // Mapear para os tipos suportados pelo componente
+    return severity === 'info'
+      ? 'info'
+      : severity === 'success'
+        ? 'success'
+        : severity === 'warning'
+          ? 'warning'
+          : severity === 'danger'
+            ? 'danger'
+            : 'secondary';
   }
 
   onStatusChange(): void {
@@ -95,7 +82,7 @@ export class DoacaoComponent implements OnChanges {
 
   canRequestRefund(doacao: Doacao): boolean {
     if (doacao.status !== StatusDoacao.APPROVED) return false;
-    if (this.isRefundRelated(doacao.status)) return false;
+    if (this.isRefundRelated(doacao)) return false;
 
     const daysSinceDonation = Math.floor(
       (new Date().getTime() - new Date(doacao.created_at).getTime()) / (1000 * 60 * 60 * 24)
@@ -104,21 +91,16 @@ export class DoacaoComponent implements OnChanges {
     return daysSinceDonation <= 180;
   }
 
-  private isRefundRelated(status: string): boolean {
-    return this.isRefundRelatedStatus(status);
-  }
+  isRefundRelated(doacao: Doacao): boolean {
+    const last180days = new Date().getTime() - new Date(doacao.created_at).getTime() <= 1000 * 60 * 60 * 24 * 180;
 
-  isRefundRelatedStatus(status: string): boolean {
-    return [StatusDoacao.REFOUND_PENDING, StatusDoacao.REFOUND_REJECTED, StatusDoacao.REFOUND_APPROVED].includes(
-      status as StatusDoacao
-    );
+    return [StatusDoacao.REFUNDED].includes(doacao.status as StatusDoacao) || !!last180days;
   }
-
   requestRefund(doacao: Doacao): void {
     const valorFormatado = new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    }).format(doacao.value);
+    }).format(doacao.amount);
 
     this.confirmationService.confirm({
       message: `Deseja realmente solicitar o reembolso da doação de ${valorFormatado} para a campanha "${doacao.title_campanha}"?`,
@@ -134,9 +116,6 @@ export class DoacaoComponent implements OnChanges {
 
   private refoundDonation(doacao: Doacao): void {
     console.log('Processando reembolso para doação:', doacao);
-
-    doacao.status = StatusDoacao.REFOUND_APPROVED;
-    doacao.refund_requested_at = new Date();
 
     setTimeout(() => {
       this.messageService.add({

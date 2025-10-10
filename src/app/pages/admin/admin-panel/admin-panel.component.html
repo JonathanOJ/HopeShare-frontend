@@ -58,12 +58,12 @@
 
   <!-- Aba Validação de Documentos -->
   <div *ngIf="activeTab === 'validacoes'" class="space-y-4">
-    <app-validacao-documentos
+    <app-validacao-usuario
       [validacoesPendentes]="validacoesPendentes"
       [loading]="loading"
       (refresh)="loadValidacoesPendentes()"
     >
-    </app-validacao-documentos>
+    </app-validacao-usuario>
   </div>
 
   <!-- Aba Denúncias -->

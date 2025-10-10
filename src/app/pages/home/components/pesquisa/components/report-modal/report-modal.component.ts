@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CampanhaService } from '../../../../../../shared/services/campanha.service';
 import { DenunciaReasons, CreateDenunciaRequest } from '../../../../../../shared/models/denuncia.model';
 import { Campanha } from '../../../../../../shared/models/campanha.model';
 import { MessageConfirmationService } from '../../../../../../shared/services/message-confirmation.service';
+import { AuthUser } from '../../../../../../shared/models/auth';
 
 @Component({
   selector: 'app-report-modal',
@@ -13,17 +14,16 @@ import { MessageConfirmationService } from '../../../../../../shared/services/me
 export class ReportModalComponent implements OnInit {
   @Input() visible: boolean = false;
   @Input() campanha: Campanha | null = null;
+  @Input() userSession: AuthUser | null = null;
   @Output() onClose = new EventEmitter<void>();
 
   reportForm!: FormGroup;
   reasons = DenunciaReasons;
   loading = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private campanhaService: CampanhaService,
-    private messageService: MessageConfirmationService
-  ) {}
+  private fb = inject(FormBuilder);
+  private campanhaService = inject(CampanhaService);
+  private messageService = inject(MessageConfirmationService);
 
   ngOnInit() {
     this.reportForm = this.fb.group({
@@ -36,7 +36,12 @@ export class ReportModalComponent implements OnInit {
     if (this.reportForm.invalid || !this.campanha) return;
 
     this.loading = true;
-    const reportData: CreateDenunciaRequest = this.reportForm.value;
+    const reportData = {
+      reason: this.reason?.value,
+      description: this.description?.value,
+      user: this.userSession,
+      campanha_id: this.campanha.campanha_id,
+    } as CreateDenunciaRequest;
 
     this.campanhaService.reportCampanha(this.campanha.campanha_id, reportData).subscribe({
       next: () => {
@@ -66,4 +71,13 @@ export class ReportModalComponent implements OnInit {
     }
     return '';
   }
+
+  get reason() {
+    return this.reportForm.get('reason');
+  }
+
+  get description() {
+    return this.reportForm.get('description');
+  }
 }
+

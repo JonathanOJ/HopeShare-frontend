@@ -1,20 +1,20 @@
 import { Component, EventEmitter, inject, Input, Output, OnInit } from '@angular/core';
-import { Banco } from '../../../../../shared/constants/bancos';
-import { ValidacaoDocumento } from '../../../../../shared/models/validacao-documentos.model';
-import { StatusValidacaoDocumentos } from '../../../../../shared/enums/StatusValidacaoDocumentos.enum';
+import { StatusValidacaoUsuario } from '../../../../../shared/enums/StatusValidacaoUsuario.enum';
 import { MessageConfirmationService } from '../../../../../shared/services/message-confirmation.service';
+import { Banco } from '../../../../../shared/models/banco.model';
+import { ValidacaoUsuario } from '../../../../../shared/models/validacao-usuario';
 
 @Component({
-  selector: 'app-validacao-documentos',
-  templateUrl: './validacao-documentos.component.html',
-  styleUrl: './validacao-documentos.component.css',
+  selector: 'app-validacao-usuario',
+  templateUrl: './validacao-usuario.component.html',
+  styleUrl: './validacao-usuario.component.css',
 })
-export class ValidacaoDocumentosComponent implements OnInit {
-  @Input() validacoesPendentes: ValidacaoDocumento[] = [];
+export class ValidacaoUsuarioComponent implements OnInit {
+  @Input() validacoesPendentes: ValidacaoUsuario[] = [];
   @Input() loading: boolean = false;
   @Output() refresh = new EventEmitter<void>();
 
-  selectedValidation: ValidacaoDocumento | null = null;
+  selectedValidation: ValidacaoUsuario | null = null;
   validationDecision: 'APPROVE' | 'REJECT' | null = null;
   observacaoAdmin: string = '';
   showValidationModal: boolean = false;
@@ -34,7 +34,7 @@ export class ValidacaoDocumentosComponent implements OnInit {
     return banco.code ? `${banco.code} - ${banco.name}` : banco.name;
   }
 
-  openValidationModal(validation: ValidacaoDocumento): void {
+  openValidationModal(validation: ValidacaoUsuario): void {
     this.selectedValidation = validation;
     this.validationDecision = null;
     this.observacaoAdmin = '';
@@ -80,7 +80,7 @@ export class ValidacaoDocumentosComponent implements OnInit {
     // Simular processamento
     setTimeout(() => {
       const status =
-        this.validationDecision === 'APPROVE' ? StatusValidacaoDocumentos.APPROVED : StatusValidacaoDocumentos.REJECTED;
+        this.validationDecision === 'APPROVE' ? StatusValidacaoUsuario.APPROVED : StatusValidacaoUsuario.REJECTED;
 
       this.showValidationModal = false;
       this.loading = false;

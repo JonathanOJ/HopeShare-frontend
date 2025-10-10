@@ -30,7 +30,7 @@ export class HeroUnloggedComponent implements OnInit {
   }
 
   redirectToRegister() {
-    this.router.navigate(['hopeshare/camapanhas/register']);
+    this.router.navigate(['hopeshare/campanhas/register']);
   }
 }
 

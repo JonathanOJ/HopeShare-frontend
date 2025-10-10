@@ -29,7 +29,7 @@
                   formControlName="banco"
                   [suggestions]="bancosFiltrados"
                   (completeMethod)="filterBancos($event)"
-                  (onSelect)="onBancoSelect($event)"
+                  (onSelect)="onBankSelect($event)"
                   optionLabel="name"
                   dataKey="code"
                   placeholder="Digite o nome ou código do banco"
@@ -40,15 +40,13 @@
                   <ng-template let-banco pTemplate="item">
                     <div class="flex items-center">
                       <div class="flex flex-col">
-                        <span class="font-medium">{{ getBancoDisplay(banco) }}</span>
+                        <span class="font-medium">{{ getBankDisplay(banco) }}</span>
                         <small class="text-gray-500">{{ banco.fullName }}</small>
                       </div>
                     </div>
                   </ng-template>
                 </p-autoComplete>
-                <small *ngIf="banco?.errors && banco?.touched" class="text-red-500">
-                  Selecione um banco da lista
-                </small>
+                <small *ngIf="bank?.errors && bank?.touched" class="text-red-500"> Selecione um banco da lista </small>
               </div>
 
               <div>
@@ -150,8 +148,8 @@
           <div class="flex items-center justify-between">
             <span class="text-sm text-secondary">Dados Bancários</span>
             <p-tag
-              [value]="isDadosBancariosConfigurado() ? 'Configurado' : 'Não Configurado'"
-              [severity]="getStatusSeverity(isDadosBancariosConfigurado() ? 'Configurado' : 'Não Configurado')"
+              [value]="recebimentoConfig ? 'Configurado' : 'Não Configurado'"
+              [severity]="recebimentoConfig ? 'success' : 'danger'"
             >
             </p-tag>
           </div>
@@ -159,15 +157,19 @@
           <div class="flex items-center justify-between">
             <span class="text-sm text-secondary">Verificação CNPJ</span>
             <p-tag
-              [value]="isCnpjVerificado() ? 'Verificado' : 'Pendente'"
-              [severity]="getStatusSeverity(isCnpjVerificado() ? 'Verificado' : 'Pendente')"
+              [value]="recebimentoConfig?.cnpj_verified ? 'Verificado' : 'Pendente'"
+              [severity]="recebimentoConfig?.cnpj_verified ? 'success' : 'warning'"
             >
             </p-tag>
           </div>
 
           <div class="flex items-center justify-between">
             <span class="text-sm text-secondary">Status de Recebimento</span>
-            <p-tag [value]="getStatusRecebimento()" [severity]="getStatusSeverity(getStatusRecebimento())"> </p-tag>
+            <p-tag
+              [value]="recebimentoConfig ? 'Configurado' : 'Não Configurado'"
+              [severity]="recebimentoConfig ? 'success' : 'danger'"
+            >
+            </p-tag>
           </div>
         </div>
 
@@ -179,32 +181,27 @@
 
           <div class="p-3 bg-surface border border-theme rounded-lg">
             <h6 class="text-xs font-semibold text-primary mb-2">Banco Configurado</h6>
-            <p class="text-xs text-secondary">{{ getBancoDisplay(recebimentoConfig.banco) }}</p>
+            <p class="text-xs text-secondary">{{ getBankDisplay(recebimentoConfig.bank) }}</p>
           </div>
         </div>
 
         <div
           class="mt-4 p-3 rounded-lg"
           [ngClass]="{
-            'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800':
-              getStatusRecebimento() !== 'ATIVO',
-            'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800':
-              getStatusRecebimento() === 'ATIVO',
+            'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800': !recebimentoConfig,
+            'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800': recebimentoConfig,
           }"
         >
           <p
             class="text-xs"
             [ngClass]="{
-              'text-yellow-800 dark:text-yellow-300': getStatusRecebimento() !== 'ATIVO',
-              'text-green-800 dark:text-green-300': getStatusRecebimento() === 'ATIVO',
+              'text-yellow-800 dark:text-yellow-300': !recebimentoConfig,
+              'text-green-800 dark:text-green-300': recebimentoConfig,
             }"
           >
-            <i
-              [class]="getStatusRecebimento() === 'ATIVO' ? 'pi pi-check-circle' : 'pi pi-exclamation-triangle'"
-              class="mr-1"
-            ></i>
+            <i [class]="recebimentoConfig ? 'pi pi-check-circle' : 'pi pi-exclamation-triangle'" class="mr-1"></i>
             {{
-              getStatusRecebimento() === 'ATIVO'
+              recebimentoConfig
                 ? 'Sua conta está ativa e pode receber doações!'
                 : 'Complete a configuração para ativar o recebimento de doações'
             }}
@@ -228,7 +225,7 @@
       <div class="space-y-2 text-sm">
         <div class="flex justify-between">
           <span class="text-secondary">Banco:</span>
-          <span class="font-medium text-primary">{{ getBancoDisplay(banco?.value) }}</span>
+          <span class="font-medium text-primary">{{ getBankDisplay(bank?.value) }}</span>
         </div>
         <div class="flex justify-between">
           <span class="text-secondary">Agência:</span>

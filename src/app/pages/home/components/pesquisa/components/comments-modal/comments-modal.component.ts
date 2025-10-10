@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CampanhaService } from '../../../../../../shared/services/campanha.service';
 import { Comentario, CreateComentarioRequest } from '../../../../../../shared/models/comentario.model';
@@ -14,6 +14,7 @@ import { MessageConfirmationService } from '../../../../../../shared/services/me
 })
 export class CommentsModalComponent implements OnInit, OnChanges {
   @Input() visible: boolean = false;
+  @Input() userSession: AuthUser | null = null;
   @Input() campanha: Campanha | null = null;
   @Output() onClose = new EventEmitter<void>();
 
@@ -21,21 +22,15 @@ export class CommentsModalComponent implements OnInit, OnChanges {
   comments: Comentario[] = [];
   loading = false;
   loadingComments = false;
-  currentUser: AuthUser | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private campanhaService: CampanhaService,
-    private authService: AuthService,
-    private messageService: MessageConfirmationService
-  ) {}
+  private fb = inject(FormBuilder);
+  private campanhaService = inject(CampanhaService);
+  private messageService = inject(MessageConfirmationService);
 
   ngOnInit() {
     this.commentForm = this.fb.group({
       content: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
     });
-
-    this.currentUser = this.authService.getAuthResponse();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -69,28 +64,35 @@ export class CommentsModalComponent implements OnInit, OnChanges {
     }
 
     this.loading = true;
-    const commentData: CreateComentarioRequest = this.commentForm.value;
 
-    this.campanhaService.addComment(this.campanha.campanha_id, commentData).subscribe({
-      next: (newComment) => {
-        this.comments.unshift(newComment);
-        this.commentForm.reset();
-        this.messageService.showMessage('Comentário', 'Comentário adicionado com sucesso!');
+    const commentData = {
+      content: this.commentForm.value.content,
+      user_id: this.userSession!.user_id,
+    } as CreateComentarioRequest;
+
+    this.campanhaService
+      .addComment(this.campanha.campanha_id, commentData)
+      .subscribe({
+        next: (newComment) => {
+          this.comments.unshift(newComment);
+          this.commentForm.reset();
+          this.messageService.showMessage('Comentário', 'Comentário adicionado com sucesso!');
+        },
+        error: () => {
+          this.messageService.showError('Erro', 'Erro ao adicionar comentário. Tente novamente.');
+        },
+      })
+      .add(() => {
         this.loading = false;
-      },
-      error: () => {
-        this.messageService.showError('Erro', 'Erro ao adicionar comentário. Tente novamente.');
-        this.loading = false;
-      },
-    });
+      });
   }
 
   deleteComment(comment: Comentario) {
-    if (!this.campanha || !comment.id) return;
+    if (!this.campanha || !comment.campanha_id) return;
 
-    this.campanhaService.deleteComment(this.campanha.campanha_id, comment.id).subscribe({
+    this.campanhaService.deleteComment(this.campanha.campanha_id, comment.comment_id).subscribe({
       next: () => {
-        this.comments = this.comments.filter((c) => c.id !== comment.id);
+        this.comments = this.comments.filter((c) => c.comment_id !== comment.comment_id);
         this.messageService.showMessage('Comentário', 'Comentário removido com sucesso!');
       },
       error: () => {
@@ -122,31 +124,35 @@ export class CommentsModalComponent implements OnInit, OnChanges {
   }
 
   canDeleteComment(comment: Comentario): boolean {
-    if (!this.currentUser) return false;
+    if (!this.userSession) return false;
 
-    if (this.currentUser.is_admin) return true;
+    if (this.userSession.is_admin) return true;
 
-    return comment.user.id === this.currentUser.user_id;
+    return comment.user.user_id === this.userSession.user_id;
   }
 
   canComment(): boolean {
-    if (!this.currentUser || !this.campanha) return false;
+    if (!this.userSession || !this.campanha) return false;
 
-    if (this.currentUser.is_admin) return true;
+    if (this.userSession.is_admin) return true;
 
-    if (this.campanha.user_responsable.user_id === this.currentUser.user_id) return true;
+    if (this.campanha.user_responsable.user_id === this.userSession.user_id) return true;
 
-    return this.campanha.users_donated.some((donor) => donor.user_id === this.currentUser!.user_id);
+    return this.campanha.users_donated.some((donor) => donor.user_id === this.userSession!.user_id);
   }
 
   getCommentRestrictionMessage(): string {
-    if (!this.currentUser || !this.campanha) return '';
+    if (!this.userSession || !this.campanha) return '';
 
     if (!this.canComment()) {
       return 'Você precisa fazer uma doação para esta campanha para poder comentar.';
     }
 
     return '';
+  }
+
+  get content() {
+    return this.commentForm.get('content');
   }
 }
 

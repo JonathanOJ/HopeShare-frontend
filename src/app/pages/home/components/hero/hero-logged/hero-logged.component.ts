@@ -44,7 +44,9 @@ export class HeroLoggedComponent implements OnInit, OnDestroy {
           if (response) {
             this.infoCampanhasUsuario = response;
 
-            this.animateCounterRaf('animatedTotalDonated', response.total_donated, 2000);
+            if (response.total_donated) {
+              this.animateCounterRaf('animatedTotalDonated', response.total_donated, 2000);
+            }
           }
         },
         error: (error) => {

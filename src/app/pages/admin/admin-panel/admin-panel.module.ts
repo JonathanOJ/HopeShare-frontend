@@ -7,11 +7,11 @@ import { AdminPanelComponent } from './admin-panel.component';
 import { SharedModule } from '../../../shared/shared.module';
 import { DenunciasComponent } from './components/denuncias/denuncias.component';
 import { SolicitacoesDepositoComponent } from './components/solicitacoes-deposito/solicitacoes-deposito.component';
-import { ValidacaoDocumentosComponent } from './components/validacao-documentos/validacao-documentos.component';
+import { ValidacaoUsuarioComponent } from './components/validacao-documentos/validacao-usuario.component';
 import { AdminPanelRoutingModule } from './admin-panel-routing.module';
 
 @NgModule({
-  declarations: [AdminPanelComponent, DenunciasComponent, SolicitacoesDepositoComponent, ValidacaoDocumentosComponent],
+  declarations: [AdminPanelComponent, DenunciasComponent, SolicitacoesDepositoComponent, ValidacaoUsuarioComponent],
   imports: [SharedModule, CommonModule, FormsModule, ReactiveFormsModule, AdminPanelRoutingModule],
 })
 export class AdminPanelModule {}

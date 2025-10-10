@@ -1,10 +1,10 @@
 export interface Comentario {
-  id?: string;
+  comment_id: string;
   content: string;
   created_at: Date;
   updated_at?: Date;
   user: {
-    id: string;
+    user_id: string;
     username: string;
     image?: string;
   };
@@ -13,4 +13,6 @@ export interface Comentario {
 
 export interface CreateComentarioRequest {
   content: string;
+  user_id: string;
 }
+

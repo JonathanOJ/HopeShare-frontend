@@ -70,7 +70,7 @@
   </div>
 
   <div
-    *ngIf="validacaoDocumento?.observation && !validacaoDocumento?.observation_read"
+    *ngIf="validacaoUsuario?.observation && !validacaoUsuario?.observation_read"
     class="bg-card border border-theme rounded-lg p-6 animate-fade-in"
     [ngClass]="{
       'border-blue-200 dark:border-blue-800': getTipoObservacao() === 'info',
@@ -123,7 +123,7 @@
             'text-red-800 dark:text-red-400': getTipoObservacao() === 'error',
           }"
         >
-          {{ validacaoDocumento?.observation }}
+          {{ validacaoUsuario?.observation }}
         </p>
 
         <div class="flex justify-end gap-2">

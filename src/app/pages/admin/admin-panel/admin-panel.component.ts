@@ -1,15 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Recebimento } from '../../../shared/models/recebimento.model';
-import { ValidacaoDocumento } from '../../../shared/models/validacao-documentos.model';
-import { StatusValidacaoDocumentos } from '../../../shared/enums/StatusValidacaoDocumentos.enum';
+import { StatusValidacaoUsuario } from '../../../shared/enums/StatusValidacaoUsuario.enum';
 import { StatusDenuncia } from '../../../shared/enums/StatusDenuncia.enum';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
 import { Denuncia } from '../../../shared/models/denuncia.model';
 import { SolicitacaoDeposito } from '../../../shared/models/solicitacao-deposito.model';
-import { Banco } from '../../../shared/constants/bancos';
 import { StatusSolicitacaoDeposito } from '../../../shared/enums/StatusSolicitacaoDeposito.enum';
 import { StatusCampanha } from '../../../shared/enums/StatusCampanha.enum';
+import { ValidacaoUsuario } from '../../../shared/models/validacao-usuario';
 
 @Component({
   selector: 'app-admin-panel',
@@ -20,7 +19,7 @@ export class AdminPanelComponent implements OnInit {
   activeTab: 'validacoes' | 'denuncias' | 'depositos' = 'validacoes';
 
   // Data arrays for child components
-  validacoesPendentes: ValidacaoDocumento[] = [];
+  validacoesPendentes: ValidacaoUsuario[] = [];
   denuncias: Denuncia[] = [];
   solicitacoes: SolicitacaoDeposito[] = [];
 
@@ -40,28 +39,28 @@ export class AdminPanelComponent implements OnInit {
   // Métodos de carregamento de dados
   loadValidacoesPendentes(): void {
     this.loading = true;
-    setTimeout(() => {
-      this.validacoesPendentes = [
-        {
-          id: '1',
-          user_id: 'user1',
-          user_name: 'João Silva',
-          user_email: 'joao@email.com',
-          empresa_nome: 'Empresa ABC',
-          cnpj: '12.345.678/0001-90',
-          data_envio: new Date(),
-          status: StatusValidacaoDocumentos.PENDING,
-          documentos: ['documento1.pdf', 'documento2.pdf'],
-          recebimento_config: {
-            banco: { code: 1, name: 'Banco do Brasil', fullName: 'Banco do Brasil S.A.' } as Banco,
-            agency: '1234-5',
-            account_number: '12345-6',
-            account_type: 'Conta Corrente',
-          },
-        } as any,
-      ];
-      this.loading = false;
-    }, 300);
+    // setTimeout(() => {
+    //   this.validacoesPendentes = [
+    //     {
+    //       id: '1',
+    //       user_id: 'user1',
+    //       user_name: 'João Silva',
+    //       user_email: 'joao@email.com',
+    //       empresa_nome: 'Empresa ABC',
+    //       cnpj: '12.345.678/0001-90',
+    //       data_envio: new Date(),
+    //       status: StatusValidacaoDocumentos.PENDING,
+    //       documentos: ['documento1.pdf', 'documento2.pdf'],
+    //       recebimento_config: {
+    //         banco: { code: 1, name: 'Banco do Brasil', fullName: 'Banco do Brasil S.A.' } as Banco,
+    //         agency: '1234-5',
+    //         account_number: '12345-6',
+    //         account_type: 'Conta Corrente',
+    //       },
+    //     } as any,
+    //   ];
+    //   this.loading = false;
+    // }, 300);
   }
 
   loadDenuncias(): void {
@@ -100,10 +99,7 @@ export class AdminPanelComponent implements OnInit {
     setTimeout(() => {
       this.solicitacoes = [
         {
-          id: '1',
-          campanha_id: 'camp1',
-          user_id: 'user1',
-          value_requested: 5000,
+          request_id: '1',
           status: StatusSolicitacaoDeposito.PENDING,
           request_message: 'Preciso do valor para comprar os medicamentos urgentemente.',
           created_at: new Date('2024-01-15'),
@@ -111,7 +107,6 @@ export class AdminPanelComponent implements OnInit {
             campanha_id: 'camp1',
             title: 'Ajuda para medicamentos',
             value_donated: 5200,
-            value_required: 5000,
             status: StatusCampanha.ACTIVE,
           } as any,
           user: {

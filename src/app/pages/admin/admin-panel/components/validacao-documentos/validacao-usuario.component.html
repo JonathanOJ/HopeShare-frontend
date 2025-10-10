@@ -24,7 +24,7 @@
       <div class="flex items-center justify-between">
         <div class="flex-1">
           <div class="flex items-center gap-3 mb-2">
-            <h4 class="font-semibold text-primary">{{ validation?.empresa_nome }}</h4>
+            <h4 class="font-semibold text-primary">{{ validation?.company_name }}</h4>
             <p-tag
               [value]="getStatusLabel(validation.status)"
               [severity]="getStatusSeverity(validation.status)"
@@ -34,7 +34,7 @@
           <div class="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span class="text-secondary">Responsável:</span>
-              <span class="text-primary ml-1">{{ validation.user_responsable?.username }}</span>
+              <span class="text-primary ml-1">{{ validation.user?.username }}</span>
             </div>
             <div>
               <span class="text-secondary">CNPJ:</span>
@@ -46,7 +46,7 @@
             </div>
             <div>
               <span class="text-secondary">Documentos:</span>
-              <span class="text-primary ml-1">{{ validation.documentos.length }} arquivo(s)</span>
+              <span class="text-primary ml-1">{{ validation.documents.length }} arquivo(s)</span>
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@
         <div class="space-y-2 text-sm">
           <div>
             <span class="text-secondary">Nome:</span>
-            <span class="text-primary ml-2 font-medium">{{ selectedValidation.empresa_nome }}</span>
+            <span class="text-primary ml-2 font-medium">{{ selectedValidation.company_name }}</span>
           </div>
           <div>
             <span class="text-secondary">CNPJ:</span>
@@ -87,11 +87,11 @@
           </div>
           <div>
             <span class="text-secondary">Responsável:</span>
-            <span class="text-primary ml-2">{{ selectedValidation.user_responsable?.username }}</span>
+            <span class="text-primary ml-2">{{ selectedValidation.user?.username }}</span>
           </div>
           <div>
             <span class="text-secondary">E-mail:</span>
-            <span class="text-primary ml-2">{{ selectedValidation.user_responsable?.email }}</span>
+            <span class="text-primary ml-2">{{ selectedValidation.user?.email }}</span>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@
       <h5 class="font-semibold text-primary mb-3">Documentos Enviados</h5>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div
-          *ngFor="let doc of selectedValidation.documentos"
+          *ngFor="let doc of selectedValidation.documents"
           class="flex items-center gap-2 p-2 bg-card border border-theme rounded"
         >
           <i class="pi pi-file-pdf text-red-500 dark:text-red-400"></i>

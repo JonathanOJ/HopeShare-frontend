@@ -1,18 +1,21 @@
 import { StatusDenuncia } from '../enums/StatusDenuncia.enum';
+import { AuthUser } from './auth';
 
 export interface Denuncia {
-  id?: string;
+  report_id?: string;
+  campanha_id: string;
   reason: string;
   description: string;
   created_at?: Date;
   status?: StatusDenuncia;
-  user_id: string;
-  campanha_id: string;
+  user: AuthUser;
 }
 
 export interface CreateDenunciaRequest {
   reason: string;
   description: string;
+  user: AuthUser;
+  campanha_id: string;
 }
 
 export const DenunciaReasons = [

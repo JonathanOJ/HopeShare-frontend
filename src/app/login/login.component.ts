@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Subject, take, takeUntil } from 'rxjs';
@@ -31,6 +31,32 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject();
 
+  passwordValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+
+      if (!value) {
+        return null;
+      }
+
+      const errors: ValidationErrors = {};
+
+      if (value.length < 8) {
+        errors['minLength'] = true;
+      }
+
+      if (!/[A-Z]/.test(value)) {
+        errors['uppercase'] = true;
+      }
+
+      if (!/[0-9]/.test(value)) {
+        errors['number'] = true;
+      }
+
+      return Object.keys(errors).length ? errors : null;
+    };
+  }
+
   ngOnInit(): void {
     this.userForm = this.fb.group({
       user_id: [''],
@@ -44,10 +70,13 @@ export class LoginComponent implements OnInit, OnDestroy {
       type_user: [TipoUsuario.USER],
     });
 
-    this.router.url === '/register' ? (this.createUser = true) : null;
+    this.router.url === '/login/register' ? (this.createUser = true) : null;
+
+    console.log(this.router.url);
 
     if (this.createUser) {
       this.username?.setValidators(Validators.required);
+      this.password?.setValidators([Validators.required, this.passwordValidator()]);
     }
 
     this.userForm.updateValueAndValidity();
@@ -60,7 +89,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  setValidatorsFortype_user() {
+  setValidatorsForTypeUser() {
     if (this.type_user?.value === TipoUsuario.EMPRESA) {
       this.cnpj?.setValidators([Validators.required]);
       this.cpf?.clearValidators();
@@ -70,6 +99,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.birthdate?.setValidators([Validators.required]);
       this.cnpj?.clearValidators();
     }
+    this.cnpj?.updateValueAndValidity();
+    this.cpf?.updateValueAndValidity();
+    this.birthdate?.updateValueAndValidity();
   }
 
   handleLogin() {
@@ -84,6 +116,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   validateForms(): boolean {
+    console.log(this.userForm);
     if (this.userForm.invalid) {
       this.messageConfirmationService.showWarning('Atenção', 'Preencha todos os campos obrigatórios');
       return true;
@@ -155,6 +188,21 @@ export class LoginComponent implements OnInit, OnDestroy {
       });
   }
 
+  hasMinLength(): boolean {
+    const password = this.password?.value;
+    return password && password.length >= 8;
+  }
+
+  hasUppercase(): boolean {
+    const password = this.password?.value;
+    return password && /[A-Z]/.test(password);
+  }
+
+  hasNumber(): boolean {
+    const password = this.password?.value;
+    return password && /[0-9]/.test(password);
+  }
+
   get username() {
     return this.userForm.get('username');
   }
@@ -181,10 +229,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   get type_user() {
     return this.userForm.get('type_user');
-  }
-
-  get rememberUser() {
-    return this.userForm.get('rememberUser');
   }
 
   get user_id() {

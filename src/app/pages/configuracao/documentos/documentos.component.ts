@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ValidacaoDocumento } from '../../../shared/models/validacao-documentos.model';
-import { StatusValidacaoDocumentos } from '../../../shared/enums/StatusValidacaoDocumentos.enum';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
+import { ValidacaoUsuario } from '../../../shared/models/validacao-usuario';
+import { StatusValidacaoUsuario } from '../../../shared/enums/StatusValidacaoUsuario.enum';
 
 @Component({
   selector: 'app-documentos',
@@ -14,7 +14,7 @@ export class DocumentosComponent implements OnInit {
   loading = false;
   arquivosEnviados: any[] = [];
 
-  validacaoDocumento: ValidacaoDocumento | null = null;
+  validacaoUsuario: ValidacaoUsuario | null = null;
 
   private fb = inject(FormBuilder);
   private messageConfirmationService = inject(MessageConfirmationService);
@@ -73,45 +73,45 @@ export class DocumentosComponent implements OnInit {
   getValidacaoByUser(): void {
     this.loading = true;
 
-    setTimeout(() => {
-      const respostaSimulada: ValidacaoDocumento = {
-        validation_id: '12345',
-        user_id: '67890',
-        status: StatusValidacaoDocumentos.REQUIRES_ACTION,
-        cnpj: '12.345.678/0001-90',
-        observation:
-          'Por favor, reenvie o comprovante de endereço. O documento atual está com data superior a 90 dias.',
-        observation_read: false,
-        updated_at: new Date('2024-10-01T10:00:00Z'),
-        documentos: [
-          {
-            name: 'contrato_social.pdf',
-            url: 'url/to/contrato_social.pdf',
-            file: new File([], 'contrato_social.pdf', { type: 'application/pdf' }),
-          },
-          {
-            name: 'comprovante_endereco.jpg',
-            url: 'url/to/comprovante_endereco.jpg',
-            file: new File([], 'comprovante_endereco.jpg', { type: 'image/jpeg' }),
-          },
-        ],
-      };
+    // setTimeout(() => {
+    //   const respostaSimulada: ValidacaoUsuario = {
+    //     validation_id: '12345',
+    //     user_id: '67890',
+    //     status: StatusValidacaoUsuario.REQUIRES_ACTION,
+    //     cnpj: '12.345.678/0001-90',
+    //     observation:
+    //       'Por favor, reenvie o comprovante de endereço. O documento atual está com data superior a 90 dias.',
+    //     observation_read: false,
+    //     updated_at: new Date('2024-10-01T10:00:00Z'),
+    //     documentos: [
+    //       {
+    //         name: 'contrato_social.pdf',
+    //         url: 'url/to/contrato_social.pdf',
+    //         file: new File([], 'contrato_social.pdf', { type: 'application/pdf' }),
+    //       },
+    //       {
+    //         name: 'comprovante_endereco.jpg',
+    //         url: 'url/to/comprovante_endereco.jpg',
+    //         file: new File([], 'comprovante_endereco.jpg', { type: 'image/jpeg' }),
+    //       },
+    //     ],
+    //   };
 
-      this.validacaoDocumento = respostaSimulada;
+    //   this.ValidacaoUsuario = respostaSimulada;
 
-      this.empresaForm.patchValue({
-        validation_id: respostaSimulada.validation_id,
-        status: respostaSimulada.status,
-        cnpj: respostaSimulada.cnpj,
-        observation: respostaSimulada.observation,
-        updated_at: respostaSimulada.updated_at,
-        documentos: respostaSimulada.documentos,
-      });
+    //   this.empresaForm.patchValue({
+    //     validation_id: respostaSimulada.validation_id,
+    //     status: respostaSimulada.status,
+    //     cnpj: respostaSimulada.cnpj,
+    //     observation: respostaSimulada.observation,
+    //     updated_at: respostaSimulada.updated_at,
+    //     documentos: respostaSimulada.documentos,
+    //   });
 
-      this.arquivosEnviados = respostaSimulada.documentos.map((doc) => doc.file);
+    //   this.arquivosEnviados = respostaSimulada.documentos.map((doc) => doc.file);
 
-      this.loading = false;
-    }, 2000);
+    //   this.loading = false;
+    // }, 2000);
   }
 
   validarCNPJ(): boolean {
@@ -123,8 +123,8 @@ export class DocumentosComponent implements OnInit {
   }
 
   marcarObservacaoLida(): void {
-    if (this.validacaoDocumento) {
-      this.validacaoDocumento.observation_read = true;
+    if (this.validacaoUsuario) {
+      this.validacaoUsuario.observation_read = true;
 
       this.messageConfirmationService.showMessage(
         'Observação Marcada como Lida',
@@ -134,14 +134,14 @@ export class DocumentosComponent implements OnInit {
   }
 
   getTipoObservacao(): 'info' | 'warning' | 'error' {
-    if (!this.validacaoDocumento) return 'info';
+    if (!this.validacaoUsuario) return 'info';
 
-    switch (this.validacaoDocumento.status) {
-      case StatusValidacaoDocumentos.APPROVED:
+    switch (this.validacaoUsuario.status) {
+      case StatusValidacaoUsuario.APPROVED:
         return 'info';
-      case StatusValidacaoDocumentos.REQUIRES_ACTION:
+      case StatusValidacaoUsuario.REQUIRES_ACTION:
         return 'warning';
-      case StatusValidacaoDocumentos.REJECTED:
+      case StatusValidacaoUsuario.REJECTED:
         return 'error';
       default:
         return 'info';
@@ -149,16 +149,16 @@ export class DocumentosComponent implements OnInit {
   }
 
   getStatusLabel(): string {
-    if (!this.validacaoDocumento) return 'Aguardando documentos';
+    if (!this.validacaoUsuario) return 'Aguardando documentos';
 
-    switch (this.validacaoDocumento.status) {
-      case StatusValidacaoDocumentos.PENDING:
+    switch (this.validacaoUsuario.status) {
+      case StatusValidacaoUsuario.PENDING:
         return 'Em análise';
-      case StatusValidacaoDocumentos.APPROVED:
+      case StatusValidacaoUsuario.APPROVED:
         return 'Aprovado';
-      case StatusValidacaoDocumentos.REQUIRES_ACTION:
+      case StatusValidacaoUsuario.REQUIRES_ACTION:
         return 'Ação necessária';
-      case StatusValidacaoDocumentos.REJECTED:
+      case StatusValidacaoUsuario.REJECTED:
         return 'Rejeitado';
       default:
         return 'Aguardando documentos';
@@ -166,16 +166,16 @@ export class DocumentosComponent implements OnInit {
   }
 
   getStatusIcon(): string {
-    if (!this.validacaoDocumento) return 'pi-clock';
+    if (!this.validacaoUsuario) return 'pi-clock';
 
-    switch (this.validacaoDocumento.status) {
-      case StatusValidacaoDocumentos.PENDING:
+    switch (this.validacaoUsuario.status) {
+      case StatusValidacaoUsuario.PENDING:
         return 'pi-clock';
-      case StatusValidacaoDocumentos.APPROVED:
+      case StatusValidacaoUsuario.APPROVED:
         return 'pi-check-circle';
-      case StatusValidacaoDocumentos.REQUIRES_ACTION:
+      case StatusValidacaoUsuario.REQUIRES_ACTION:
         return 'pi-exclamation-triangle';
-      case StatusValidacaoDocumentos.REJECTED:
+      case StatusValidacaoUsuario.REJECTED:
         return 'pi-times-circle';
       default:
         return 'pi-clock';
@@ -183,16 +183,16 @@ export class DocumentosComponent implements OnInit {
   }
 
   getStatusColor(): string {
-    if (!this.validacaoDocumento) return 'gray';
+    if (!this.validacaoUsuario) return 'gray';
 
-    switch (this.validacaoDocumento.status) {
-      case StatusValidacaoDocumentos.PENDING:
+    switch (this.validacaoUsuario.status) {
+      case StatusValidacaoUsuario.PENDING:
         return 'yellow';
-      case StatusValidacaoDocumentos.APPROVED:
+      case StatusValidacaoUsuario.APPROVED:
         return 'green';
-      case StatusValidacaoDocumentos.REQUIRES_ACTION:
+      case StatusValidacaoUsuario.REQUIRES_ACTION:
         return 'yellow';
-      case StatusValidacaoDocumentos.REJECTED:
+      case StatusValidacaoUsuario.REJECTED:
         return 'red';
       default:
         return 'gray';

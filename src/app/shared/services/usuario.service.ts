@@ -33,7 +33,7 @@ export class UsuarioService {
   }
 
   getDetailsCampanhasByUsuarioId(user_id: string): Observable<InfoCampanhasUsuario> {
-    return this.httpClient.get<InfoCampanhasUsuario>(`${this.URL_API}/detailsCampanhasByUsuarioId/${user_id}`);
+    return this.httpClient.get<InfoCampanhasUsuario>(`${this.URL_API}/getDetailsCampanhasByUsuarioId/${user_id}`);
   }
 }
 

@@ -8,6 +8,7 @@ import { CampanhaService } from '../../../../shared/services/campanha.service';
 import { Subject, take, takeUntil } from 'rxjs';
 import { MessageConfirmationService } from '../../../../shared/services/message-confirmation.service';
 import { LoadingService } from '../../../../shared/services/loading.service';
+import { StatusCampanha } from '../../../../shared/enums/StatusCampanha.enum';
 
 @Component({
   selector: 'app-pesquisa-campanha-list',
@@ -189,7 +190,7 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
   }
 
   canDonate(): boolean {
-    return this.campanhaSelected?.status !== 'FINALIZADA';
+    return this.campanhaSelected?.status === StatusCampanha.ACTIVE;
   }
 
   hasValidAddress(): boolean {

@@ -12,25 +12,6 @@ export class HistoricoComponent {
 
   depositos = [];
 
-  doacoes: Doacao[] = [
-    {
-      donation_id: 'don1',
-      campanha_id: 'camp1',
-      user_id: 'user1',
-      value: 100.0,
-      status: StatusDoacao.APPROVED,
-      created_at: new Date('2025-08-10'),
-      payment_method: 'Cartão de Crédito',
-    },
-    {
-      donation_id: 'don2',
-      campanha_id: 'camp2',
-      user_id: 'user1',
-      value: 50.0,
-      status: StatusDoacao.PENDING,
-      created_at: new Date('2024-02-15'),
-      payment_method: 'Pix',
-    },
-  ];
+  doacoes: Doacao[] = [];
 }
 

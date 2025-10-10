@@ -1,16 +1,18 @@
-<section class="flex flex-col md:flex-row w-dvw md:h-dvh h-fit p-6 gap-4">
+<section
+  class="flex flex-col md:flex-row w-dvw md:h-dvh h-fit p-6 gap-4 bg-white dark:bg-gray-900 min-h-screen transition-colors duration-300 relative"
+>
   <section class="md:w-1/2 w-full h-full flex flex-col items-center justify-between gap-6">
     <img
-      class="md:self-start self-center w-[200px]"
+      class="md:self-start self-center w-[200px] filter dark:brightness-0 dark:invert transition-all duration-300"
       src="./../../../assets/images/logo-marca.png"
       alt="Logo HopeShare"
     />
     <section class="h-fit flex flex-col justify-between md:w-[450px] w-full gap-8">
       <div [class]="!createUser ? 'text-center' : 'text-start'" class="flex flex-col gap-2">
-        <h1 class="md:text-3xl text-2xl font-semibold text-[#3D3D3D]">
+        <h1 class="md:text-3xl text-2xl font-semibold text-gray-800 dark:text-gray-100 transition-colors duration-300">
           {{ !createUser ? 'Bem vindo de volta!' : 'Registre-se grátis' }}
         </h1>
-        <span class="text-base text-[#4F4F4F]">{{
+        <span class="text-base text-gray-600 dark:text-gray-300 transition-colors duration-300">{{
           !createUser
             ? 'Entre e ajude as campanhas de hoje'
             : 'Seja bem vindo! Estamos felizes em te-lo na nossa rede de apoio'
@@ -20,7 +22,9 @@
         <section class="flex flex-col gap-3">
           @if (createUser) {
             <div class="flex flex-col gap-1.5">
-              <label for="username" class="text-sm text-[#4F4F4F]">Nome</label>
+              <label for="username" class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300"
+                >Nome</label
+              >
               <input
                 type="text"
                 pInputText
@@ -32,12 +36,14 @@
               />
 
               @if (username?.invalid && (username?.dirty || username?.touched)) {
-                <small class="text-[#ff2637]"> Nome é obrigatório! </small>
+                <small class="text-red-500 dark:text-red-400"> Nome é obrigatório! </small>
               }
             </div>
           }
           <div class="flex flex-col gap-1.5">
-            <label for="email" class="text-sm text-[#4F4F4F]">E-mail</label>
+            <label for="email" class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300"
+              >E-mail</label
+            >
             <input
               type="text"
               pInputText
@@ -50,9 +56,9 @@
 
             @if (email?.invalid && (email?.dirty || email?.touched)) {
               @if (email?.errors?.['required']) {
-                <small class="text-[#ff2637]"> E-mail é obrigatório! </small>
+                <small class="text-red-500 dark:text-red-400"> E-mail é obrigatório! </small>
               } @else if (email?.errors?.['pattern']) {
-                <small class="text-[#ff2637]"> Insira um e-mail válido! </small>
+                <small class="text-red-500 dark:text-red-400"> Insira um e-mail válido! </small>
               }
             }
           </div>
@@ -63,13 +69,15 @@
                 formControlName="type_user"
                 optionLabel="label"
                 optionValue="value"
-                (onChange)="setValidatorsFortype_user()"
+                (onChange)="setValidatorsForTypeUser()"
               />
             </div>
             <div class="flex flex-col md:flex-row gap-1.5 w-full">
               <ng-container *ngIf="type_user?.value === 1; else userTemplate">
                 <div class="w-full">
-                  <label for="cnpj" class="text-sm text-[#4F4F4F]">CNPJ</label>
+                  <label for="cnpj" class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300"
+                    >CNPJ</label
+                  >
                   <p-inputMask
                     id="cnpj"
                     mask="99.999.999/9999-99"
@@ -80,13 +88,15 @@
                   />
 
                   @if (cnpj?.invalid && (cnpj?.dirty || cnpj?.touched)) {
-                    <small class="text-[#ff2637]"> CNPJ é obrigatório! </small>
+                    <small class="text-red-500 dark:text-red-400"> CNPJ é obrigatório! </small>
                   }
                 </div>
               </ng-container>
               <ng-template #userTemplate>
                 <div class="w-full md:w-2/3">
-                  <label for="cpf" class="text-sm text-[#4F4F4F]">CPF</label>
+                  <label for="cpf" class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300"
+                    >CPF</label
+                  >
                   <p-inputMask
                     id="cpf"
                     mask="999.999.999-99"
@@ -96,11 +106,13 @@
                   />
 
                   @if (cpf?.invalid && (cpf?.dirty || cpf?.touched)) {
-                    <small class="text-[#ff2637]"> CPF é obrigatório! </small>
+                    <small class="text-red-500 dark:text-red-400"> CPF é obrigatório! </small>
                   }
                 </div>
                 <div class="w-full md:w-1/3">
-                  <label for="birthdate" class="text-sm text-[#4F4F4F]">Data de nascimento</label>
+                  <label for="birthdate" class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300"
+                    >Data de nascimento</label
+                  >
                   <p-calendar
                     id="birthdate"
                     [readonlyInput]="true"
@@ -110,14 +122,16 @@
                   />
 
                   @if (birthdate?.invalid && (birthdate?.dirty || birthdate?.touched)) {
-                    <small class="text-[#ff2637]"> Insira uma data válida! </small>
+                    <small class="text-red-500 dark:text-red-400"> Insira uma data válida! </small>
                   }
                 </div>
               </ng-template>
             </div>
           }
           <div class="flex flex-col gap-1.5">
-            <label for="password" class="text-sm text-[#4F4F4F]">Senha</label>
+            <label for="password" class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300"
+              >Senha</label
+            >
 
             <p-password
               id="password"
@@ -134,22 +148,60 @@
             >
               <ng-template pTemplate="footer">
                 <p-divider />
-                <p class="mt-2">Sugestões</p>
-                <ul class="pl-2 ml-2 mt-0 list-disc" style="line-height: 1.5">
-                  <li>Pelo menos uma letra maiúscula</li>
-                  <li>Pelo menos um número</li>
-                  <li>Mínimo 8 caracteres</li>
+                <p class="mt-2 text-gray-700 dark:text-gray-300">Sugestões</p>
+                <ul class="pl-2 ml-2 mt-0 list-none text-gray-600 dark:text-gray-400" style="line-height: 1.5">
+                  <li
+                    [class]="hasMinLength() ? 'text-green-500 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'"
+                    class="flex items-center gap-2 transition-colors duration-300"
+                  >
+                    <span *ngIf="hasMinLength()" class="text-green-500 dark:text-green-400">✓</span>
+                    <span *ngIf="!hasMinLength()" class="text-gray-400">•</span>
+                    Mínimo 8 caracteres
+                  </li>
+                  <li
+                    [class]="hasUppercase() ? 'text-green-500 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'"
+                    class="flex items-center gap-2 transition-colors duration-300"
+                  >
+                    <span *ngIf="hasUppercase()" class="text-green-500 dark:text-green-400">✓</span>
+                    <span *ngIf="!hasUppercase()" class="text-gray-400">•</span>
+                    Pelo menos uma letra maiúscula
+                  </li>
+                  <li
+                    [class]="hasNumber() ? 'text-green-500 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'"
+                    class="flex items-center gap-2 transition-colors duration-300"
+                  >
+                    <span *ngIf="hasNumber()" class="text-green-500 dark:text-green-400">✓</span>
+                    <span *ngIf="!hasNumber()" class="text-gray-400">•</span>
+                    Pelo menos um número
+                  </li>
                 </ul>
               </ng-template>
             </p-password>
             @if (password?.invalid && (password?.dirty || password?.touched)) {
-              <small class="text-[#ff2637]"> Senha é obrigatória! </small>
+              @if (password?.errors?.['required']) {
+                <small class="text-red-500 dark:text-red-400"> Senha é obrigatória! </small>
+              }
+              @if (createUser && password?.errors?.['minLength']) {
+                <small class="text-red-500 dark:text-red-400"> A senha deve ter no mínimo 8 caracteres! </small>
+              }
+              @if (createUser && password?.errors?.['uppercase']) {
+                <small class="text-red-500 dark:text-red-400"> A senha deve ter pelo menos uma letra maiúscula! </small>
+              }
+              @if (createUser && password?.errors?.['number']) {
+                <small class="text-red-500 dark:text-red-400"> A senha deve ter pelo menos um número! </small>
+              }
             }
           </div>
 
-          <div class="flex justify-between text-sm items-center text-[#4F4F4F]">
-            <p-checkbox formControlName="rememberUser" value="true" label="Lembrar conta" inputId="remember" />
-            <strong class="text-[#3b82f6] cursor-pointer">Esqueceu sua senha ?</strong>
+          <div
+            class="flex justify-between text-sm items-center text-gray-600 dark:text-gray-300 transition-colors duration-300"
+            *ngIf="!createUser"
+          >
+            <div></div>
+            <strong
+              class="text-blue-500 dark:text-blue-400 cursor-pointer hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-300"
+              >Esqueceu sua senha ?</strong
+            >
           </div>
 
           <div class="flex flex-col gap-4">
@@ -162,11 +214,13 @@
           </div>
         </section>
       </form>
-      <span class="text-sm text-[#4F4F4F] text-center"
+      <span class="text-sm text-gray-600 dark:text-gray-300 text-center transition-colors duration-300"
         >{{ createUser ? 'Já tem uma conta?' : 'Ainda não conhece o HopeShare?' }}
-        <strong class="text-[#3b82f6] cursor-pointer" (click)="handleCreateUser()">{{
-          createUser ? 'Faça login' : 'Registre-se grátis.'
-        }}</strong></span
+        <strong
+          class="text-blue-500 dark:text-blue-400 cursor-pointer hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-300"
+          (click)="handleCreateUser()"
+          >{{ createUser ? 'Faça login' : 'Registre-se grátis.' }}</strong
+        ></span
       >
     </section>
     <div></div>
@@ -177,7 +231,7 @@
         createUser ? './../../assets/images/sign-up-animate.svg' : './../../assets/images/secure-login-animate.svg'
       "
       alt="SVG Animado de login"
-      class="w-[60dvw] h-[60dvh]"
+      class="w-[60dvw] h-[60dvh] dark:opacity-80 transition-opacity duration-300"
     />
   </section>
 </section>

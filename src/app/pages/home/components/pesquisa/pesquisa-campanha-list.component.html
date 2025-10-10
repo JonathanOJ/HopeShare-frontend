@@ -176,9 +176,19 @@
   </section>
 </p-dialog>
 
-<app-report-modal [visible]="modalReport" [campanha]="campanhaSelected" (onClose)="modalReport = false">
+<app-report-modal
+  [visible]="modalReport"
+  [campanha]="campanhaSelected"
+  (onClose)="modalReport = false"
+  [userSession]="userSession"
+>
 </app-report-modal>
 
-<app-comments-modal [visible]="modalComments" [campanha]="campanhaSelected" (onClose)="modalComments = false">
+<app-comments-modal
+  [visible]="modalComments"
+  [campanha]="campanhaSelected"
+  (onClose)="modalComments = false"
+  [userSession]="userSession"
+>
 </app-comments-modal>
 

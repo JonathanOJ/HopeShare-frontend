@@ -81,13 +81,8 @@ export class SolicitacoesDepositoComponent implements OnInit, OnDestroy, OnChang
   aprovarSolicitacao() {
     if (!this.selectedSolicitacao) return;
 
-    // Update local state immediately
-    this.selectedSolicitacao.status = StatusSolicitacaoDeposito.APPROVED;
-    this.selectedSolicitacao.admin_message = this.adminMessage;
-    this.selectedSolicitacao.approved_at = new Date();
-
     if (this.selectedSolicitacao.campanha) {
-      this.selectedSolicitacao.campanha.status = StatusCampanha.FINALIZADA;
+      this.selectedSolicitacao.campanha.status = StatusCampanha.FINISHED;
     }
 
     this.modalAprovar = false;
@@ -105,8 +100,8 @@ export class SolicitacoesDepositoComponent implements OnInit, OnDestroy, OnChang
 
     // Update local state immediately
     this.selectedSolicitacao.status = StatusSolicitacaoDeposito.REJECTED;
-    this.selectedSolicitacao.admin_message = this.adminMessage;
-    this.selectedSolicitacao.rejected_at = new Date();
+    this.selectedSolicitacao.justification_admin = this.adminMessage;
+    this.selectedSolicitacao.updated_at = new Date();
 
     this.modalRejeitar = false;
     this.messageService.showMessage('Sucesso', 'Solicitação rejeitada.');

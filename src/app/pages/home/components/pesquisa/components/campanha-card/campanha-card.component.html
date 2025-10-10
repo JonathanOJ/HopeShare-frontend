@@ -35,7 +35,7 @@
       <p-tag [rounded]="true" class="absolute right-2.5 bottom-2.5 z-10" [value]="campanha!.category[0]" />
 
       <!-- Status da campanha -->
-      @if (campanha?.status === 'FINALIZADA') {
+      @if (campanha?.status !== 'ACTIVE') {
         <p-tag [rounded]="true" class="absolute left-2.5 top-2.5 z-10" value="Finalizada" severity="secondary" />
       }
     </div>

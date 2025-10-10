@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class AuthService {
   private keyCrypt = '##HopeShare##';
 
-  private cookieName = 'auth';
+  private cookieName = 'userAuth';
 
   private cookieService = inject(CookieService);
 
