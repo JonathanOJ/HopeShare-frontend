@@ -1,136 +1,177 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
 import { ValidacaoUsuario } from '../../../shared/models/validacao-usuario';
 import { StatusValidacaoUsuario } from '../../../shared/enums/StatusValidacaoUsuario.enum';
+import { LoadingService } from '../../../shared/services/loading.service';
+import { ValidacaoUsuarioService } from '../../../shared/services/validacao-usuario.service';
+import { AuthUser } from '../../../shared/models/auth';
+import { Subject, takeUntil, take } from 'rxjs';
+import { SupportDialogService } from '../../../shared/services/support-dialog.service';
+import { FileUpload } from 'primeng/fileupload';
 
 @Component({
   selector: 'app-documentos',
   templateUrl: './documentos.component.html',
   styleUrls: ['./documentos.component.css'],
 })
-export class DocumentosComponent implements OnInit {
-  empresaForm!: FormGroup;
-  loading = false;
-  arquivosEnviados: any[] = [];
+export class DocumentosComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() user: AuthUser | null = null;
+  @Input() validacaoUsuario: ValidacaoUsuario | null = null;
+  @Output() getValidacaoEvent: EventEmitter<void> = new EventEmitter<void>();
 
-  validacaoUsuario: ValidacaoUsuario | null = null;
+  @ViewChild('fileUpload') fileUpload!: FileUpload;
+
+  validationForm!: FormGroup;
+  loading = false;
+  arquivosEnviados: File[] = [];
 
   private fb = inject(FormBuilder);
   private messageConfirmationService = inject(MessageConfirmationService);
+  private loadingService = inject(LoadingService);
+  private supportDialogService = inject(SupportDialogService);
+  private validacaoUsuarioService = inject(ValidacaoUsuarioService);
+
+  private destroy$ = new Subject();
 
   ngOnInit(): void {
-    this.empresaForm = this.fb.group({
-      validation_id: [''],
-      status: ['PENDING'],
-      cnpj: [''],
-      observation: [''],
-      updated_at: [''],
-      documentos: [[], Validators.required],
-    });
+    if (!this.validationForm) {
+      this.initializeForm();
+    }
+  }
 
-    this.getValidacaoByUser();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['validacaoUsuario'] && this.validacaoUsuario) {
+      if (!this.validationForm) {
+        this.initializeForm();
+      }
+      this.validationForm.patchValue(this.validacaoUsuario);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
+
+  initializeForm(): void {
+    this.validationForm = this.fb.group({
+      validation_id: [''],
+      user: [this.user, [Validators.required]],
+      status: [StatusValidacaoUsuario.PENDING],
+      company_name: ['', Validators.required],
+      cnpj: [this.user?.cnpj, [Validators.required]],
+      observation: [''],
+      updated_at: [null],
+    });
+  }
+
+  openSupportDialog(): void {
+    this.supportDialogService.open();
   }
 
   onUpload(event: any): void {
-    this.arquivosEnviados = [...this.arquivosEnviados, ...event.files];
-    this.empresaForm.patchValue({ documentos: this.arquivosEnviados });
+    try {
+      const filesArray: File[] = Array.isArray(event.files) ? event.files : Array.from(event.files || []);
 
-    this.messageConfirmationService.showMessage(
-      'Arquivos Adicionados',
-      `${event.files.length} arquivo(s) adicionado(s) com sucesso`
-    );
+      this.arquivosEnviados = [...this.arquivosEnviados, ...filesArray];
+
+      this.messageConfirmationService.showMessage(
+        'Arquivos Adicionados',
+        `${filesArray.length} arquivo(s) adicionado(s) com sucesso`
+      );
+    } catch (error) {
+      console.error('Erro ao processar arquivos:', error);
+      this.messageConfirmationService.showError('Erro', 'Falha ao processar os arquivos. Tente novamente.');
+    }
   }
 
   onRemoveFile(event: any): void {
-    this.arquivosEnviados = this.arquivosEnviados.filter((arquivo) => arquivo !== event.file);
-    this.empresaForm.patchValue({ documentos: this.arquivosEnviados });
+    this.arquivosEnviados = this.arquivosEnviados.filter((file: File) => file.name !== event.file.name);
   }
 
   onSubmit(): void {
-    if (this.empresaForm.valid) {
-      this.empresaForm.markAllAsTouched();
+    if (this.validationForm.invalid) {
+      this.validationForm.markAllAsTouched();
       this.messageConfirmationService.showWarning(
         'Formulário Incompleto',
         'Por favor, preencha todos os campos obrigatórios'
       );
+      return;
+    }
+
+    if (this.arquivosEnviados.length === 0) {
+      this.messageConfirmationService.showWarning(
+        'Documentos Obrigatórios',
+        'Por favor, envie pelo menos um documento'
+      );
+      return;
     }
 
     this.loading = true;
+    this.loadingService.start();
 
-    setTimeout(() => {
-      console.log('Dados da empresa:', this.empresaForm.value);
+    const formData = new FormData();
 
-      this.messageConfirmationService.showMessage(
-        'Documentos Enviados',
-        'Seus documentos foram enviados para validação. Aguarde 2-5 dias úteis para análise.'
-      );
+    const userSimple = {
+      user_id: this.user?.user_id,
+      username: this.user?.username,
+      email: this.user?.email,
+      type_user: this.user?.type_user,
+      cpf: this.user?.cpf,
+      cnpj: this.user?.cnpj,
+    };
 
-      this.loading = false;
-    }, 2000);
-  }
+    formData.append('user', JSON.stringify(userSimple));
+    formData.append('company_name', this.validationForm.get('company_name')?.value);
+    formData.append('cnpj', this.validationForm.get('cnpj')?.value);
+    formData.append('status', this.validationForm.get('status')?.value);
 
-  getValidacaoByUser(): void {
-    this.loading = true;
-
-    // setTimeout(() => {
-    //   const respostaSimulada: ValidacaoUsuario = {
-    //     validation_id: '12345',
-    //     user_id: '67890',
-    //     status: StatusValidacaoUsuario.REQUIRES_ACTION,
-    //     cnpj: '12.345.678/0001-90',
-    //     observation:
-    //       'Por favor, reenvie o comprovante de endereço. O documento atual está com data superior a 90 dias.',
-    //     observation_read: false,
-    //     updated_at: new Date('2024-10-01T10:00:00Z'),
-    //     documentos: [
-    //       {
-    //         name: 'contrato_social.pdf',
-    //         url: 'url/to/contrato_social.pdf',
-    //         file: new File([], 'contrato_social.pdf', { type: 'application/pdf' }),
-    //       },
-    //       {
-    //         name: 'comprovante_endereco.jpg',
-    //         url: 'url/to/comprovante_endereco.jpg',
-    //         file: new File([], 'comprovante_endereco.jpg', { type: 'image/jpeg' }),
-    //       },
-    //     ],
-    //   };
-
-    //   this.ValidacaoUsuario = respostaSimulada;
-
-    //   this.empresaForm.patchValue({
-    //     validation_id: respostaSimulada.validation_id,
-    //     status: respostaSimulada.status,
-    //     cnpj: respostaSimulada.cnpj,
-    //     observation: respostaSimulada.observation,
-    //     updated_at: respostaSimulada.updated_at,
-    //     documentos: respostaSimulada.documentos,
-    //   });
-
-    //   this.arquivosEnviados = respostaSimulada.documentos.map((doc) => doc.file);
-
-    //   this.loading = false;
-    // }, 2000);
-  }
-
-  validarCNPJ(): boolean {
-    const cnpj = this.empresaForm.get('cnpj')?.value;
-    if (!cnpj) return false;
-
-    const cnpjLimpo = cnpj.replace(/\D/g, '');
-    return cnpjLimpo.length === 14;
-  }
-
-  marcarObservacaoLida(): void {
-    if (this.validacaoUsuario) {
-      this.validacaoUsuario.observation_read = true;
-
-      this.messageConfirmationService.showMessage(
-        'Observação Marcada como Lida',
-        'A observação foi marcada como lida com sucesso'
-      );
+    if (this.validationForm.get('validation_id')?.value) {
+      formData.append('validation_id', this.validationForm.get('validation_id')?.value);
     }
+
+    this.arquivosEnviados.forEach((file: File) => {
+      formData.append('documents', file, file.name);
+    });
+
+    this.validacaoUsuarioService
+      .save(formData)
+      .pipe(takeUntil(this.destroy$), take(1))
+      .subscribe({
+        next: (response: any) => {
+          this.messageConfirmationService.showMessage(
+            'Documentos Enviados',
+            'Seus documentos foram enviados para validação. Aguarde 2-5 dias úteis para análise.'
+          );
+          this.arquivosEnviados = [];
+
+          if (this.fileUpload) {
+            this.fileUpload.clear();
+          }
+
+          this.getValidacaoEvent.emit();
+        },
+        error: (error: any) => {
+          const errorMessage = error?.error?.message || 'Ocorreu um erro ao enviar os documentos.';
+          this.messageConfirmationService.showError('Erro', errorMessage);
+        },
+      })
+      .add(() => {
+        this.loading = false;
+        this.loadingService.done();
+      });
   }
 
   getTipoObservacao(): 'info' | 'warning' | 'error' {
@@ -197,6 +238,60 @@ export class DocumentosComponent implements OnInit {
       default:
         return 'gray';
     }
+  }
+
+  get status() {
+    return this.validationForm.get('status')?.value;
+  }
+
+  get company_name() {
+    return this.validationForm.get('company_name')?.value;
+  }
+
+  get cnpj() {
+    return this.validationForm.get('cnpj')?.value;
+  }
+
+  get observation() {
+    return this.validationForm.get('observation')?.value;
+  }
+
+  get updatedAt() {
+    return this.validationForm.get('updated_at')?.value;
+  }
+
+  get documentos() {
+    return this.validationForm.get('documentos')?.value;
+  }
+
+  getFileTypeLabel(type: string): string {
+    const typeMap: { [key: string]: string } = {
+      'application/pdf': 'PDF',
+      'image/jpeg': 'JPEG',
+      'image/jpg': 'JPG',
+      'image/png': 'PNG',
+    };
+    return typeMap[type] || 'Arquivo';
+  }
+
+  viewDocument(url: string): void {
+    window.open(url, '_blank');
+  }
+
+  downloadDocument(url: string, filename: string): void {
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(link.href);
+      })
+      .catch((error) => {
+        console.error('Erro ao baixar documento:', error);
+        this.messageConfirmationService.showError('Erro', 'Não foi possível baixar o documento.');
+      });
   }
 }
 

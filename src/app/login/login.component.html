@@ -18,7 +18,7 @@
             : 'Seja bem vindo! Estamos felizes em te-lo na nossa rede de apoio'
         }}</span>
       </div>
-      <form *ngIf="userForm" [formGroup]="userForm">
+      <form *ngIf="userForm" [formGroup]="userForm" (ngSubmit)="handleLogin()">
         <section class="flex flex-col gap-3">
           @if (createUser) {
             <div class="flex flex-col gap-1.5">
@@ -205,12 +205,7 @@
           </div>
 
           <div class="flex flex-col gap-4">
-            <p-button
-              size="small"
-              [label]="createUser ? 'Criar' : 'Entrar'"
-              [disabled]="loading"
-              (click)="handleLogin()"
-            />
+            <p-button type="submit" size="small" [label]="createUser ? 'Criar' : 'Entrar'" [disabled]="loading" />
           </div>
         </section>
       </form>

@@ -1,0 +1,49 @@
+<p-dialog
+  header="Contato com Suporte"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '35rem' }"
+  (onHide)="closeDialog()"
+>
+  <form [formGroup]="supportForm" class="flex flex-col gap-5">
+    <span class="p-text-secondary block mb-5">
+      Preencha os campos abaixo para enviar sua mensagem à equipe de suporte.
+    </span>
+
+    <div class="flex flex-col gap-1.5">
+      <label for="support-name" class="text-sm" style="color: var(--text-color-secondary)">Nome</label>
+      <input pInputText id="support-name" class="flex-auto" formControlName="name" autocomplete="off" />
+      @if (name?.invalid && (name?.dirty || name?.touched)) {
+        <span class="text-xs" style="color: var(--red-500)">Nome é obrigatório!</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label for="support-subject" class="text-sm" style="color: var(--text-color-secondary)">Assunto</label>
+      <input pInputText id="support-subject" class="flex-auto" formControlName="subject" autocomplete="off" />
+      @if (subject?.invalid && (subject?.dirty || subject?.touched)) {
+        <span class="text-xs" style="color: var(--red-500)">Assunto é obrigatório!</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label for="support-message" class="text-sm" style="color: var(--text-color-secondary)">Mensagem</label>
+      <textarea pInputTextarea id="support-message" rows="5" class="flex-auto" formControlName="message"></textarea>
+      @if (message?.invalid && (message?.dirty || message?.touched)) {
+        <span class="text-xs" style="color: var(--red-500)">Mensagem é obrigatória!</span>
+      }
+    </div>
+
+    <div class="flex justify-end gap-2 mt-2">
+      <p-button label="Cancelar" severity="secondary" (onClick)="closeDialog()" />
+      <p-button
+        label="Enviar"
+        icon="pi pi-send"
+        [loading]="loading"
+        [disabled]="supportForm.invalid || loading"
+        (onClick)="sendSupportEmail()"
+      />
+    </div>
+  </form>
+</p-dialog>
+

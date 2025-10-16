@@ -25,7 +25,7 @@ export class AuthGuard {
     const requiredRole: TipoUsuario | undefined = route.data['role'];
     const adminOnly: boolean = route.data['adminOnly'];
 
-    if (adminOnly && !authResponse.is_admin) {
+    if (adminOnly && !authResponse.admin) {
       this.messageConfirmationService.showWarning('Atenção', 'Acesso restrito para administradores!');
       this.router.navigate(['/hopeshare/home']);
       return true;

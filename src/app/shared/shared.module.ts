@@ -44,9 +44,19 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { CardModule } from 'primeng/card';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { SupportDialogComponent } from './components/support-dialog/support-dialog.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
-  declarations: [LoadingComponent, EmptyTableComponent, NotfoundComponent, FooterComponent, HeaderComponent],
+  declarations: [
+    LoadingComponent,
+    EmptyTableComponent,
+    NotfoundComponent,
+    FooterComponent,
+    HeaderComponent,
+    SupportDialogComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -86,6 +96,8 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     CardModule,
     SelectButtonModule,
     AutoCompleteModule,
+    RadioButtonModule,
+    TooltipModule,
   ],
   exports: [
     CommonModule,
@@ -127,11 +139,14 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     InputNumberModule,
     FooterComponent,
     HeaderComponent,
+    SupportDialogComponent,
     ConfirmDialogModule,
     TabMenuModule,
     CardModule,
     SelectButtonModule,
     AutoCompleteModule,
+    RadioButtonModule,
+    TooltipModule,
   ],
 })
 export class SharedModule {

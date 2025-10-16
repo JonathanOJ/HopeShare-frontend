@@ -9,13 +9,17 @@
   <span [ngSwitch]="activeItem?.label">
     <div *ngSwitchCase="'Conta Bancária'">
       <ng-container *ngIf="userIsCompany; else noPermission">
-        <app-recebimento></app-recebimento>
+        <app-recebimento [user]="user" [recebimentoConfig]="recebimentoConfig"></app-recebimento>
       </ng-container>
     </div>
 
     <div *ngSwitchCase="'Documentos'">
       <ng-container *ngIf="userIsCompany; else noPermission">
-        <app-documentos></app-documentos>
+        <app-documentos
+          [user]="user"
+          [validacaoUsuario]="validacaoUsuario"
+          (getValidacaoEvent)="getValidacaoByUser()"
+        ></app-documentos>
       </ng-container>
     </div>
 

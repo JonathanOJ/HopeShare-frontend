@@ -14,12 +14,13 @@
     />
     <p-tabView class="h-[60px] hidden md:flex" [(activeIndex)]="activeIndex" (click)="tabChange()">
       <p-tabPanel header="Home"> </p-tabPanel>
-      @if (userSession?.cnpj || userSession?.is_admin) {
+      <!-- Se o usuário for do tipo EMPRESA ou Admin -->
+      @if (userSession?.type_user === 1 || userSession?.admin) {
         <p-tabPanel header="Meus posts"> </p-tabPanel>
         <p-tabPanel header="Dashboard"> </p-tabPanel>
         <p-tabPanel header="Relatórios"> </p-tabPanel>
       }
-      @if (userSession?.is_admin) {
+      @if (userSession?.admin) {
         <p-tabPanel header="Painel Admin"> </p-tabPanel>
       }
     </p-tabView>
@@ -65,41 +66,4 @@
     }
   </section>
 </header>
-
-<p-dialog header="Contato com Suporte" [modal]="true" [(visible)]="visible" [style]="{ width: '35rem' }">
-  <form *ngIf="supportForm" [formGroup]="supportForm" class="flex flex-col gap-5">
-    <span class="p-text-secondary block mb-5">
-      Preencha os campos abaixo para enviar sua mensagem à equipe de suporte.
-    </span>
-
-    <div class="flex flex-col gap-1.5">
-      <label for="name" class="text-sm" style="color: var(--text-color-secondary)">Nome</label>
-      <input pInputText id="name" class="flex-auto" formControlName="name" autocomplete="off" />
-      @if (name?.invalid && (name?.dirty || name?.touched)) {
-        <span class="text-xs" style="color: var(--red-500)"> Nome é obrigatório! </span>
-      }
-    </div>
-
-    <div class="flex flex-col gap-1.5">
-      <label for="subject" class="text-sm" style="color: var(--text-color-secondary)">Assunto</label>
-      <input pInputText id="subject" class="flex-auto" formControlName="subject" autocomplete="off" />
-      @if (subject?.invalid && (subject?.dirty || subject?.touched)) {
-        <span class="text-xs" style="color: var(--red-500)"> Assunto é obrigatório! </span>
-      }
-    </div>
-
-    <div class="flex flex-col gap-1.5">
-      <label for="message" class="text-sm" style="color: var(--text-color-secondary)">Mensagem</label>
-      <textarea pInputTextarea id="message" rows="5" class="flex-auto" formControlName="message"></textarea>
-      @if (message?.invalid && (message?.dirty || message?.touched)) {
-        <span class="text-xs" style="color: var(--red-500)"> Mensagem é obrigatório! </span>
-      }
-    </div>
-
-    <div class="flex justify-end gap-2 mt-2">
-      <p-button label="Cancelar" severity="secondary" (onClick)="visible = false" />
-      <p-button label="Enviar" icon="pi pi-send" [disabled]="loading" (onClick)="sendSupportEmail()" />
-    </div>
-  </form>
-</p-dialog>
 

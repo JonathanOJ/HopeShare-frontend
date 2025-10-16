@@ -1,6 +1,5 @@
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MessageService } from 'primeng/api';
 import { AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { Recebimento } from '../../../shared/models/recebimento.model';
 import { AuthUser } from '../../../shared/models/auth';
@@ -8,26 +7,26 @@ import { Banco } from '../../../shared/models/banco.model';
 import { BancoService } from '../../../shared/services/banco.service';
 import { takeUntil, take, Subject } from 'rxjs';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
-import { LoadingService } from '../../../shared/services/loading.service';
+import { ConfigRecebimentoService } from '../../../shared/services/configRecebimento.service';
 
 @Component({
   selector: 'app-recebimento',
   templateUrl: './recebimento.component.html',
   styleUrls: ['./recebimento.component.css'],
 })
-export class RecebimentoComponent implements OnInit, OnDestroy {
+export class RecebimentoComponent implements OnInit, OnChanges, OnDestroy {
   @Input() user: AuthUser | null = null;
+  @Input() recebimentoConfig: Recebimento | null = null;
 
   recebimentoForm!: FormGroup;
   loading = false;
+
   showPreview = false;
   hasConfiguredBank = false;
 
   bancos: Banco[] = [];
   bancosFiltrados: Banco[] = [];
   bancoSelecionado: Banco | null = null;
-
-  recebimentoConfig: Recebimento | null = null;
 
   tiposConta = [
     { label: 'Conta Corrente', value: 'CORRENTE' },
@@ -38,12 +37,19 @@ export class RecebimentoComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private messageConfirmationService = inject(MessageConfirmationService);
   private bancoService = inject(BancoService);
-  private loadingService = inject(LoadingService);
+  private configRecebimentoService = inject(ConfigRecebimentoService);
 
   private destroy$ = new Subject();
 
   ngOnInit() {
     this.initializeForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['recebimentoConfig'] && this.recebimentoConfig) {
+      this.recebimentoForm.patchValue(this.recebimentoConfig);
+      this.updateConfigurationStatus();
+    }
   }
 
   ngOnDestroy(): void {
@@ -53,40 +59,23 @@ export class RecebimentoComponent implements OnInit, OnDestroy {
 
   private initializeForm(): void {
     this.recebimentoForm = this.fb.group({
-      banck: [null, Validators.required],
+      bank: [null, Validators.required],
       agency: ['', [Validators.required, Validators.minLength(4)]],
       account_number: ['', [Validators.required, Validators.minLength(4)]],
       account_type: ['CORRENTE', Validators.required],
-      cnpj: [{ value: '', disabled: true }, Validators.required],
+      cnpj: [{ value: this.user?.cnpj || '', disabled: true }, Validators.required],
+      user_id: [this.user?.user_id || '', Validators.required],
     });
 
-    this.bancosFiltrados = [];
+    if (this.recebimentoConfig) {
+      this.recebimentoForm.patchValue(this.recebimentoConfig);
+    }
 
-    this.loadRecebimentoConfig();
+    this.bancosFiltrados = [];
 
     this.recebimentoForm.valueChanges.subscribe(() => {
       this.updateConfigurationStatus();
     });
-  }
-
-  private loadRecebimentoConfig(): void {
-    this.loading = true;
-
-    // const userId = this.getUserId();
-    // if (userId) {
-    //   this.recebimentoService.getRecebimentoByUserId(userId).subscribe({
-    //     next: (config) => {
-    //       this.recebimentoConfig = config;
-    //       this.updateConfigurationStatus();
-    //       this.loading = false;
-    //     },
-    //     error: (error) => {
-    //       console.error('Erro ao carregar configuração:', error);
-    //       this.recebimentoConfig = null;
-    //       this.loading = false;
-    //     }
-    //   });
-    // }
   }
 
   private updateConfigurationStatus(): void {
@@ -113,27 +102,36 @@ export class RecebimentoComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.recebimentoForm.valid) {
-      this.loading = true;
-
-      setTimeout(() => {
-        console.log('Dados do formulário:', this.recebimentoForm.value);
-
-        this.messageConfirmationService.showMessage(
-          'Configuração Salva',
-          'Seus dados bancários foram salvos com sucesso!'
-        );
-
-        this.loading = false;
-        this.hasConfiguredBank = true;
-      }, 2000);
-    } else {
+    if (this.recebimentoForm.invalid) {
       this.recebimentoForm.markAllAsTouched();
       this.messageConfirmationService.showWarning(
         'Formulário Inválido',
         'Por favor, corrija os erros no formulário antes de salvar.'
       );
+      return;
     }
+
+    this.loading = true;
+
+    this.configRecebimentoService
+      .save(this.recebimentoForm.value)
+      .pipe(takeUntil(this.destroy$), take(1))
+      .subscribe({
+        next: () => {
+          this.messageConfirmationService.showMessage(
+            'Configuração Salva',
+            'Seus dados bancários foram salvos com sucesso!'
+          );
+          this.hasConfiguredBank = true;
+        },
+        error: (error) => {
+          const errorMessage = error?.error?.message || 'Ocorreu um erro ao salvar a configuração.';
+          this.messageConfirmationService.showError('Erro', errorMessage);
+        },
+      })
+      .add(() => {
+        this.loading = false;
+      });
   }
 
   filterBancos(event: any): void {
@@ -145,10 +143,8 @@ export class RecebimentoComponent implements OnInit, OnDestroy {
     }
 
     this.loading = true;
-    this.loadingService.start();
-
     this.bancoService
-      .searchBanks(query, 1, 10)
+      .searchBanks(query, 10)
       .pipe(takeUntil(this.destroy$), take(1))
       .subscribe({
         next: (response: Banco[]) => {
@@ -160,7 +156,6 @@ export class RecebimentoComponent implements OnInit, OnDestroy {
       })
       .add(() => {
         this.loading = false;
-        this.loadingService.done();
       });
   }
 
@@ -194,10 +189,6 @@ export class RecebimentoComponent implements OnInit, OnDestroy {
 
   isDadosBancariosConfigurado(): boolean {
     return !!(this.bank?.value && this.agency?.value && this.account_number?.value && this.cnpj?.value);
-  }
-
-  isCnpjVerificado(): boolean {
-    return this.recebimentoConfig?.status === 'VERIFIED';
   }
 
   get bank() {

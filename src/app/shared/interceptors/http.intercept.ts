@@ -15,7 +15,10 @@ export class HttpIntercept implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let headers = request.headers;
-    headers = headers.set('Content-Type', 'application/json');
+
+    if (!(request.body instanceof FormData) && !headers.has('Content-Type')) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
 
     const urlPermittedWithoutLogin = ['/user/save', '/save/login', '/campanha/search', '/assets/mdi.svg'];
 
@@ -68,6 +71,6 @@ export class HttpIntercept implements HttpInterceptor {
       return of();
     }
 
-    return throwError(() => new Error(err.error.message));
+    return throwError(() => err);
   }
 }

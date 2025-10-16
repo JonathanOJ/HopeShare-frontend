@@ -13,8 +13,8 @@ export class BancoService {
 
   constructor(private httpClient: HttpClient) {}
 
-  searchBanks(param: string, page: number, itemsPerPage: number): Observable<Banco[]> {
-    return this.httpClient.post<Banco[]>(`${this.URL_API}/search`, { search: param, page, itemsPerPage });
+  searchBanks(param: string, itemsPerPage: number): Observable<Banco[]> {
+    return this.httpClient.post<Banco[]>(`${this.URL_API}/search`, { search: param, itemsPerPage });
   }
 
   getBankById(bank_id: string): Observable<Banco> {

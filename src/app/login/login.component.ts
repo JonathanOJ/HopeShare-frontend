@@ -72,8 +72,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.router.url === '/login/register' ? (this.createUser = true) : null;
 
-    console.log(this.router.url);
-
     if (this.createUser) {
       this.username?.setValidators(Validators.required);
       this.password?.setValidators([Validators.required, this.passwordValidator()]);
@@ -116,7 +114,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   validateForms(): boolean {
-    console.log(this.userForm);
     if (this.userForm.invalid) {
       this.messageConfirmationService.showWarning('Atenção', 'Preencha todos os campos obrigatórios');
       return true;
@@ -151,6 +148,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: AuthUser) => {
           this.authService.setAuthResponse(response);
+          console.log;
           this.router.navigate(['hopeshare/home']);
         },
         error: () => {
@@ -175,11 +173,11 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.authService.setAuthResponse(response);
           this.router.navigate(['hopeshare/home']);
         },
-        error: () => {
-          this.messageConfirmationService.showError(
-            'Erro',
-            'Não foi possível criar o usuário. Verifique os dados informados e tente novamente.'
-          );
+        error: (error) => {
+          const errorMsg =
+            error.error.error || 'Não foi possível criar o usuário. Verifique os dados informados e tente novamente.';
+
+          this.messageConfirmationService.showError('Erro', errorMsg);
         },
       })
       .add(() => {

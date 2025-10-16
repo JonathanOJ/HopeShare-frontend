@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthUser } from '../models/auth';
 import * as CryptoJS from 'crypto-js';
-import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',

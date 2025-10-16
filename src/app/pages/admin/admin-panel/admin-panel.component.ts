@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Recebimento } from '../../../shared/models/recebimento.model';
 import { StatusValidacaoUsuario } from '../../../shared/enums/StatusValidacaoUsuario.enum';
@@ -9,58 +9,66 @@ import { SolicitacaoDeposito } from '../../../shared/models/solicitacao-deposito
 import { StatusSolicitacaoDeposito } from '../../../shared/enums/StatusSolicitacaoDeposito.enum';
 import { StatusCampanha } from '../../../shared/enums/StatusCampanha.enum';
 import { ValidacaoUsuario } from '../../../shared/models/validacao-usuario';
+import { ValidacaoUsuarioService } from '../../../shared/services/validacao-usuario.service';
+import { takeUntil, take, Subject } from 'rxjs';
+import { AuthUser } from '../../../shared/models/auth';
+import { AuthService } from '../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-admin-panel',
   templateUrl: './admin-panel.component.html',
   styleUrls: ['./admin-panel.component.css'],
 })
-export class AdminPanelComponent implements OnInit {
+export class AdminPanelComponent implements OnInit, OnDestroy {
   activeTab: 'validacoes' | 'denuncias' | 'depositos' = 'validacoes';
 
-  // Data arrays for child components
   validacoesPendentes: ValidacaoUsuario[] = [];
   denuncias: Denuncia[] = [];
   solicitacoes: SolicitacaoDeposito[] = [];
 
-  // Loading states
   loading = false;
   denunciasLoading = false;
   solicitacoesLoading = false;
 
+  userSession: AuthUser | null = null;
+
   private messageConfirmationService = inject(MessageConfirmationService);
+  private validacaoUsuarioService = inject(ValidacaoUsuarioService);
+  private authService = inject(AuthService);
+
+  private destroy$ = new Subject();
 
   ngOnInit(): void {
+    this.userSession = this.authService.getAuthResponse();
+
     this.loadValidacoesPendentes();
     this.loadDenuncias();
     this.loadSolicitacoes();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
+
   // Métodos de carregamento de dados
   loadValidacoesPendentes(): void {
     this.loading = true;
-    // setTimeout(() => {
-    //   this.validacoesPendentes = [
-    //     {
-    //       id: '1',
-    //       user_id: 'user1',
-    //       user_name: 'João Silva',
-    //       user_email: 'joao@email.com',
-    //       empresa_nome: 'Empresa ABC',
-    //       cnpj: '12.345.678/0001-90',
-    //       data_envio: new Date(),
-    //       status: StatusValidacaoDocumentos.PENDING,
-    //       documentos: ['documento1.pdf', 'documento2.pdf'],
-    //       recebimento_config: {
-    //         banco: { code: 1, name: 'Banco do Brasil', fullName: 'Banco do Brasil S.A.' } as Banco,
-    //         agency: '1234-5',
-    //         account_number: '12345-6',
-    //         account_type: 'Conta Corrente',
-    //       },
-    //     } as any,
-    //   ];
-    //   this.loading = false;
-    // }, 300);
+    this.validacaoUsuarioService
+      .getValidacoesPendentes(this.userSession!.user_id)
+      .pipe(takeUntil(this.destroy$), take(1))
+      .subscribe({
+        next: (response: ValidacaoUsuario[]) => {
+          this.validacoesPendentes = response;
+        },
+        error: (error: any) => {
+          const errorMessage = error?.error?.message || 'Ocorreu um erro ao carregar as validações.';
+          this.messageConfirmationService.showError('Erro', errorMessage);
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   loadDenuncias(): void {

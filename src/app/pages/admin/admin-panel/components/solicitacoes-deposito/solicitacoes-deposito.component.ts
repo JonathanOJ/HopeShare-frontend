@@ -7,6 +7,7 @@ import { StatusCampanha } from '../../../../../shared/enums/StatusCampanha.enum'
 import { CampanhaService } from '../../../../../shared/services/campanha.service';
 import { LoadingService } from '../../../../../shared/services/loading.service';
 import { MessageConfirmationService } from '../../../../../shared/services/message-confirmation.service';
+import { AuthUser } from '../../../../../shared/models/auth';
 
 @Component({
   selector: 'app-solicitacoes-deposito',
@@ -14,6 +15,7 @@ import { MessageConfirmationService } from '../../../../../shared/services/messa
   styleUrl: './solicitacoes-deposito.component.css',
 })
 export class SolicitacoesDepositoComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() userSession: AuthUser | null = null;
   @Input() solicitacoes: SolicitacaoDeposito[] = [];
   @Input() loading: boolean = false;
   @Output() refresh = new EventEmitter<void>();

@@ -9,8 +9,9 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-	production: false,
+  production: false,
 
-	// servidor: "http://localhost:8080",
-	api_url: "https://yseorpm6zd.execute-api.us-east-1.amazonaws.com",
+  // servidor: "http://localhost:8080",
+  api_url: 'https://ipdm3q1733.execute-api.us-east-1.amazonaws.com',
 };
+

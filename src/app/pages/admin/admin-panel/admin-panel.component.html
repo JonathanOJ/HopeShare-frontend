@@ -62,13 +62,20 @@
       [validacoesPendentes]="validacoesPendentes"
       [loading]="loading"
       (refresh)="loadValidacoesPendentes()"
+      [userSession]="userSession"
     >
     </app-validacao-usuario>
   </div>
 
   <!-- Aba Denúncias -->
   <div *ngIf="activeTab === 'denuncias'" class="space-y-4">
-    <app-denuncias [denuncias]="denuncias" [loading]="denunciasLoading" (refresh)="loadDenuncias()"> </app-denuncias>
+    <app-denuncias
+      [denuncias]="denuncias"
+      [loading]="denunciasLoading"
+      (refresh)="loadDenuncias()"
+      [userSession]="userSession"
+    >
+    </app-denuncias>
   </div>
 
   <!-- Aba Solicitações de Depósito -->
@@ -77,6 +84,7 @@
       [solicitacoes]="solicitacoes"
       [loading]="solicitacoesLoading"
       (refresh)="loadSolicitacoes()"
+      [userSession]="userSession"
     >
     </app-solicitacoes-deposito>
   </div>

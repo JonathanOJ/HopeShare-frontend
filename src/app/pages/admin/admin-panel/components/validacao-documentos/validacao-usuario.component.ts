@@ -1,8 +1,11 @@
-import { Component, EventEmitter, inject, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { StatusValidacaoUsuario } from '../../../../../shared/enums/StatusValidacaoUsuario.enum';
 import { MessageConfirmationService } from '../../../../../shared/services/message-confirmation.service';
 import { Banco } from '../../../../../shared/models/banco.model';
 import { ValidacaoUsuario } from '../../../../../shared/models/validacao-usuario';
+import { ValidacaoUsuarioService } from '../../../../../shared/services/validacao-usuario.service';
+import { AuthUser } from '../../../../../shared/models/auth';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-validacao-usuario',
@@ -10,19 +13,26 @@ import { ValidacaoUsuario } from '../../../../../shared/models/validacao-usuario
   styleUrl: './validacao-usuario.component.css',
 })
 export class ValidacaoUsuarioComponent implements OnInit {
+  @Input() userSession: AuthUser | null = null;
   @Input() validacoesPendentes: ValidacaoUsuario[] = [];
   @Input() loading: boolean = false;
   @Output() refresh = new EventEmitter<void>();
 
   selectedValidation: ValidacaoUsuario | null = null;
-  validationDecision: 'APPROVE' | 'REJECT' | null = null;
-  observacaoAdmin: string = '';
+
   showValidationModal: boolean = false;
 
+  formAdmin!: FormGroup;
+
   private messageConfirmationService = inject(MessageConfirmationService);
+  private validacaoUsuarioService = inject(ValidacaoUsuarioService);
+  private fb = inject(FormBuilder);
 
   ngOnInit(): void {
-    // Dados são recebidos via @Input, não precisa carregar aqui
+    this.formAdmin = this.fb.group({
+      observacao: [''],
+      decisao: [StatusValidacaoUsuario.APPROVED],
+    });
   }
 
   refreshListEmit(): void {
@@ -36,62 +46,64 @@ export class ValidacaoUsuarioComponent implements OnInit {
 
   openValidationModal(validation: ValidacaoUsuario): void {
     this.selectedValidation = validation;
-    this.validationDecision = null;
-    this.observacaoAdmin = '';
     this.showValidationModal = true;
+
+    this.formAdmin.patchValue({
+      observacao: '',
+      decisao: StatusValidacaoUsuario.APPROVED,
+    });
   }
 
-  getStatusLabel(status: string): string {
-    const labels: { [key: string]: string } = {
-      PENDING: 'Pendente',
-      APPROVED: 'Aprovado',
-      REJECTED: 'Rejeitado',
-      PENDENTE: 'Pendente',
-      EM_ANALISE: 'Em Análise',
-      RESOLVIDA: 'Resolvida',
-      REJEITADA: 'Rejeitada',
-      APROVADA: 'Aprovada',
-    };
-    return labels[status] || status;
-  }
-
-  getStatusSeverity(status: string): 'success' | 'warning' | 'danger' | 'info' {
-    switch (status) {
-      case 'APPROVED':
-      case 'RESOLVIDA':
-      case 'APROVADA':
-        return 'success';
-      case 'PENDING':
-      case 'PENDENTE':
-        return 'warning';
-      case 'REJECTED':
-      case 'REJEITADA':
-        return 'danger';
-      default:
-        return 'info';
-    }
+  viewDocument(doc: { name: string; url: string }): void {
+    window.open(doc.url, '_blank');
   }
 
   processValidation(): void {
-    if (!this.selectedValidation || !this.validationDecision) return;
+    if (!this.selectedValidation || this.formAdmin.invalid) {
+      console.log(this.selectedValidation, this.formAdmin);
+      this.messageConfirmationService.showError('Erro', 'Formulário inválido ou validação não selecionada.');
+      return;
+    }
 
     this.loading = true;
 
-    // Simular processamento
-    setTimeout(() => {
-      const status =
-        this.validationDecision === 'APPROVE' ? StatusValidacaoUsuario.APPROVED : StatusValidacaoUsuario.REJECTED;
+    const payload = {
+      user_id: this.userSession?.user_id,
+      validation_id: this.selectedValidation.validation_id,
+      status: this.decisao?.value,
+      observation: this.observacao?.value,
+    };
 
-      this.showValidationModal = false;
-      this.loading = false;
+    this.validacaoUsuarioService
+      .updateValidationAdmin(payload)
+      .subscribe({
+        next: () => {
+          this.showValidationModal = false;
+          this.messageConfirmationService.showMessage(
+            'Validação Processada',
+            `Documentos ${this.decisao?.value === 'APPROVED' ? 'aprovados' : 'rejeitados'} com sucesso!`
+          );
+          this.refreshListEmit();
+          this.selectedValidation = null;
+        },
+        error: () => {
+          this.messageConfirmationService.showError(
+            'Erro',
+            'Ocorreu um erro ao processar a validação. Tente novamente mais tarde.'
+          );
+        },
+      })
+      .add(() => {
+        this.loading = false;
+      });
+  }
 
-      this.messageConfirmationService.showMessage(
-        'Validação Processada',
-        `Documentos ${this.validationDecision === 'APPROVE' ? 'aprovados' : 'rejeitados'} com sucesso!`
-      );
+  get observacao() {
+    return this.formAdmin.get('observacao');
+  }
 
-      this.selectedValidation = null;
-    }, 1500);
+  get decisao() {
+    return this.formAdmin.get('decisao');
   }
 }
 

@@ -126,7 +126,7 @@ export class CommentsModalComponent implements OnInit, OnChanges {
   canDeleteComment(comment: Comentario): boolean {
     if (!this.userSession) return false;
 
-    if (this.userSession.is_admin) return true;
+    if (this.userSession.admin) return true;
 
     return comment.user.user_id === this.userSession.user_id;
   }
@@ -134,7 +134,7 @@ export class CommentsModalComponent implements OnInit, OnChanges {
   canComment(): boolean {
     if (!this.userSession || !this.campanha) return false;
 
-    if (this.userSession.is_admin) return true;
+    if (this.userSession.admin) return true;
 
     if (this.campanha.user_responsable.user_id === this.userSession.user_id) return true;
 

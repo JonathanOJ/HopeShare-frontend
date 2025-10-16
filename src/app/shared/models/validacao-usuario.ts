@@ -16,6 +16,7 @@ export interface ValidacaoUsuario {
 export interface Documentos {
   name: string;
   url: string;
+  type: string;
   key: string;
   file: File;
 }

@@ -12,7 +12,7 @@ export interface AuthUser {
   cnpj: string;
   cpf: string;
   type_user: TipoUsuario;
-  is_admin: boolean;
+  admin: boolean;
   birthdate: Date | null;
   total_donated: number;
   total_campanha_donated: number;

@@ -8,9 +8,8 @@ export interface Recebimento {
   account_number: string;
   account_type: 'CORRENTE' | 'POUPANCA' | 'INVESTIMENTO';
   cnpj: string;
-  cnpj_verified?: boolean;
+  cnpj_verified: boolean;
   created_at?: Date;
   updated_at?: Date;
-  status?: 'PENDING' | 'VERIFIED';
 }
 

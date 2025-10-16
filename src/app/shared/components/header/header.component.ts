@@ -5,9 +5,7 @@ import { AuthUser } from '../../models/auth';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService, Theme } from '../../services/theme.service';
 import { filter, Subject, take, takeUntil } from 'rxjs';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MessageConfirmationService } from '../../services/message-confirmation.service';
-import { SuporteService } from '../../services/suporte.service';
+import { SupportDialogService } from '../../services/support-dialog.service';
 
 @Component({
   selector: 'app-header',
@@ -18,17 +16,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   activeIndex: number = 0;
   userSession: AuthUser | null = null;
   currentTheme: Theme = 'light';
-  supportForm!: FormGroup;
 
   settings: MenuItem[] | undefined;
-  visible: boolean = false;
-  loading: boolean = false;
 
   private auth = inject(AuthService);
   private router = inject(Router);
-  private fb = inject(FormBuilder);
-  private messageConfirmationService = inject(MessageConfirmationService);
-  private suporteService = inject(SuporteService);
+  private supportDialogService = inject(SupportDialogService);
   public themeService = inject(ThemeService);
 
   private destroy$ = new Subject();
@@ -41,7 +34,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.updateSettingsMenu();
     this.getUserSessionAndSetupRouter();
-    this.initForm();
   }
 
   private updateSettingsMenu(): void {
@@ -67,7 +59,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             label: 'Suporte',
             icon: 'pi pi-envelope',
             command: () => {
-              this.visible = true;
+              this.supportDialogService.open();
             },
           },
           {
@@ -104,14 +96,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  initForm() {
-    this.supportForm = this.fb.group({
-      name: ['', Validators.required],
-      message: ['', Validators.required],
-      subject: ['', Validators.required],
-    });
-  }
-
   getActiveIndex(url: string): number {
     switch (url) {
       case '/hopeshare/home':
@@ -125,7 +109,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       case '/hopeshare/relatorio/solicitar':
         return 3;
       case '/hopeshare/admin':
-        return this.userSession?.is_admin ? 4 : 0;
+        return this.userSession?.admin ? 4 : 0;
       default:
         return 0;
     }
@@ -146,7 +130,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.router.navigate([`hopeshare/relatorio/listagem`]);
         break;
       case 4:
-        if (this.userSession?.is_admin) {
+        if (this.userSession?.admin) {
           this.router.navigate([`hopeshare/admin`]);
         }
         break;
@@ -159,43 +143,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   redirectTo(route: string) {
     this.router.navigate([`${route}`]);
-  }
-
-  sendSupportEmail() {
-    if (!this.supportForm.valid) {
-      this.supportForm.markAllAsTouched();
-      return;
-    }
-
-    this.loading = true;
-
-    this.suporteService
-      .sendEmailSupport(this.supportForm.value)
-      .pipe(takeUntil(this.destroy$), take(1))
-      .subscribe({
-        next: () => {
-          this.visible = false;
-          this.supportForm.reset();
-        },
-        error: () => {
-          this.messageConfirmationService.showError('Erro', 'Ocorreu um erro ao enviar e-mail!');
-        },
-      })
-      .add(() => {
-        this.loading = false;
-      });
-  }
-
-  get name() {
-    return this.supportForm.get('name');
-  }
-
-  get subject() {
-    return this.supportForm.get('subject');
-  }
-
-  get message() {
-    return this.supportForm.get('message');
   }
 
   toggleTheme() {
