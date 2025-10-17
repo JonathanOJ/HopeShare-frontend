@@ -55,6 +55,7 @@
                 'text-secondary': !option.selected,
               }"
               class="font-semibold text-sm"
+              *ngIf="option.value !== 'custom'"
             >
               {{ option.value | currency: 'BRL' : 'symbol' : '1.2-2' }}
             </span>

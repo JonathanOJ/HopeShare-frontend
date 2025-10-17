@@ -19,13 +19,17 @@ export interface Campanha {
   progress_percentage?: number;
   status: StatusCampanha;
   reason_suspension?: string;
-  address_street: string;
-  address_number: string;
-  address_complement: string;
-  address_city: string;
-  address_state: string;
-  address_zipcode: string;
-  address_neighborhood: string;
+  address: Endereco;
   have_address: boolean;
+}
+
+export interface Endereco {
+  street: string;
+  number: string;
+  complement: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  neighborhood: string;
 }
 

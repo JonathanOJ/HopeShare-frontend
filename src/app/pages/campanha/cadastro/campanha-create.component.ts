@@ -1,13 +1,14 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Campanha } from '../../../shared/models/campanha.model';
+import { Campanha, Endereco } from '../../../shared/models/campanha.model';
 import { CampanhaService } from '../../../shared/services/campanha.service';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
 import { Subject, take, takeUntil } from 'rxjs';
 import { AuthService } from '../../../shared/services/auth.service';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { AuthUser } from '../../../shared/models/auth';
 import { LoadingService } from '../../../shared/services/loading.service';
+import { StatusCampanha } from '../../../shared/enums/StatusCampanha.enum';
 
 @Component({
   selector: 'app-campanha-create',
@@ -73,16 +74,16 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
       .subscribe({
         next: (resp: any) => {
           this.campanha = null;
-          this.loading = false;
-          // this.loadingService.done();
           this.router.navigate(['hopeshare/campanha/listagem']);
           this.messageConfirmationService.showMessage('Sucesso', 'Campanha salva com sucesso!');
         },
         error: () => {
-          this.loading = false;
-          // this.loadingService.done();
           this.messageConfirmationService.showError('Erro', 'Erro ao salvar campanha!');
         },
+      })
+      .add(() => {
+        this.loading = false;
+        this.loadingService.done();
       });
   }
 
@@ -96,14 +97,16 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
       request_emergency: this.stepDescricaoForm.get('request_emergency')?.getRawValue(),
       value_required: this.stepMetaForm.get('value_required')?.value,
       user_responsable: this.userSession,
-      address_street: this.have_address ? this.stepEnderecoForm.get('address_street')?.value : null,
-      address_number: this.have_address ? this.stepEnderecoForm.get('address_number')?.value : null,
-      address_complement: this.have_address ? this.stepEnderecoForm.get('address_complement')?.value : null,
-      address_city: this.have_address ? this.stepEnderecoForm.get('address_city')?.value : null,
-      address_state: this.have_address ? this.stepEnderecoForm.get('address_state')?.value : null,
-      address_zipcode: this.have_address ? this.stepEnderecoForm.get('address_zipcode')?.value : null,
-      address_neighborhood: this.have_address ? this.stepEnderecoForm.get('address_neighborhood')?.value : null,
-      status: this.campanha?.status || 'ATIVA',
+      address: {
+        street: this.have_address ? this.stepEnderecoForm.get('street')?.value : null,
+        number: this.have_address ? this.stepEnderecoForm.get('number')?.value : null,
+        complement: this.have_address ? this.stepEnderecoForm.get('complement')?.value : null,
+        city: this.have_address ? this.stepEnderecoForm.get('city')?.value : null,
+        state: this.have_address ? this.stepEnderecoForm.get('state')?.value : null,
+        zipcode: this.have_address ? this.stepEnderecoForm.get('zipcode')?.value : null,
+        neighborhood: this.have_address ? this.stepEnderecoForm.get('neighborhood')?.value : null,
+      } as Endereco,
+      status: this.campanha?.status || StatusCampanha.ACTIVE,
       have_address: this.stepDescricaoForm.get('have_address')?.getRawValue(),
     } as Campanha;
 
@@ -121,6 +124,8 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
 
           if (this.campanha) {
             this.campanha.categoriesFormatted = this.campanha?.category ? this.campanha.category.join(', ') : '';
+            this.totalSteps = this.campanha.have_address ? 5 : 4;
+            this.haveAddressChange();
           }
         },
         error: () => {
@@ -134,8 +139,10 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
   }
 
   onCancel() {
+    const msgComplement = this.campanha?.campanha_id ? 'a edição da campanha' : 'a criação da campanha';
     this.messageConfirmationService.confirmWarning({
-      message: 'Você realmente deseja cancelar a criação da campanha?',
+      message: `Você realmente deseja cancelar ${msgComplement}?`,
+      acceptLabel: 'Sim, cancelar',
       accept: () => {
         this.campanha = null;
         this.router.navigate(['hopeshare/campanha']);
@@ -161,7 +168,7 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
 
       case 'stepDescricao':
         this.stepDescricaoForm = value;
-        this.totalSteps = this.have_address ? 5 : 4;
+        this.totalSteps = this.have_address?.value ? 5 : 4;
         this.campanha = {
           ...this.campanha,
           ...this.stepDescricaoForm.value,
@@ -170,10 +177,13 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
 
       case 'stepEndereco':
         this.stepEnderecoForm = value;
-        this.campanha = {
-          ...this.campanha,
-          ...this.stepEnderecoForm.value,
-        } as Campanha;
+        const address = {
+          ...this.stepEnderecoForm?.value,
+        };
+        if (this.campanha) {
+          this.campanha.address = address as Endereco;
+        }
+
         break;
 
       case 'stepMeta':
@@ -190,7 +200,7 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
   }
 
   get have_address() {
-    return this.stepDescricaoForm?.get('have_address')?.value;
+    return this.stepDescricaoForm?.get('have_address');
   }
 }
 

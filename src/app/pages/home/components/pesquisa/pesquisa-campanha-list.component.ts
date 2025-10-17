@@ -119,17 +119,6 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
           if (response) {
             const items = response.Items as Campanha[];
 
-            items.forEach((campanha) => {
-              campanha.progress_percentage = this.getProgress(campanha);
-              campanha.have_address = true;
-              campanha.address_street = 'Rua Exemplo';
-              campanha.address_number = '123';
-              campanha.address_complement = 'Apto 456';
-              campanha.address_city = 'São Paulo';
-              campanha.address_state = 'SP';
-              campanha.address_zipcode = '01234-567';
-            });
-
             if (items.length > 0) {
               this.campanhaSearchResults.length == 0 || bySearch
                 ? (this.campanhaSearchResults = items)
@@ -197,7 +186,7 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
     if (!this.campanhaSelected || !this.campanhaSelected.have_address) return false;
 
     const campanha = this.campanhaSelected;
-    return !!(campanha.address_street?.trim() && campanha.address_city?.trim());
+    return !!(campanha?.address.street?.trim() && campanha?.address.city?.trim());
   }
 
   getFormattedAddress(): string {
@@ -206,18 +195,18 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
     const campanha = this.campanhaSelected;
     const parts: string[] = [];
 
-    if (campanha.address_street?.trim()) {
-      let streetWithNumber = campanha.address_street.trim();
+    if (campanha?.address.street?.trim()) {
+      let streetWithNumber = campanha?.address.street?.trim();
 
-      if (campanha.address_number?.trim()) {
-        streetWithNumber += `, nº ${campanha.address_number.trim()}`;
+      if (campanha?.address.number?.trim()) {
+        streetWithNumber += `, nº ${campanha?.address.number?.trim()}`;
       }
 
       parts.push(streetWithNumber);
     }
 
-    if (campanha.address_complement?.trim()) {
-      parts.push(campanha.address_complement.trim());
+    if (campanha?.address.complement?.trim()) {
+      parts.push(campanha?.address.complement?.trim());
     }
 
     return parts.join(' - ');
@@ -229,18 +218,18 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
     const campanha = this.campanhaSelected;
     const parts: string[] = [];
 
-    if (campanha.address_city?.trim()) {
-      parts.push(campanha.address_city.trim());
+    if (campanha?.address.city?.trim()) {
+      parts.push(campanha?.address.city?.trim());
     }
 
-    if (campanha.address_state?.trim()) {
-      parts.push(campanha.address_state.trim());
+    if (campanha?.address.state?.trim()) {
+      parts.push(campanha?.address.state?.trim());
     }
 
     let location = parts.join(' - ');
 
-    if (campanha.address_zipcode?.trim()) {
-      location += ` • CEP: ${campanha.address_zipcode.trim()}`;
+    if (campanha?.address.zipcode?.trim()) {
+      location += ` • CEP: ${campanha?.address.zipcode.trim()}`;
     }
 
     return location;
@@ -254,28 +243,28 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
 
     const addressParts: string[] = [];
 
-    if (campanha.address_street?.trim()) {
-      let street = campanha.address_street.trim();
-      if (campanha.address_number?.trim()) {
-        street += `, ${campanha.address_number.trim()}`;
+    if (campanha?.address.street?.trim()) {
+      let street = campanha?.address.street.trim();
+      if (campanha?.address.number?.trim()) {
+        street += `, ${campanha?.address.number.trim()}`;
       }
       addressParts.push(street);
     }
 
-    if (campanha.address_neighborhood?.trim()) {
-      addressParts.push(campanha.address_neighborhood.trim());
+    if (campanha?.address.neighborhood?.trim()) {
+      addressParts.push(campanha?.address.neighborhood.trim());
     }
 
-    if (campanha.address_city?.trim()) {
-      addressParts.push(campanha.address_city.trim());
+    if (campanha?.address.city?.trim()) {
+      addressParts.push(campanha?.address.city.trim());
     }
 
-    if (campanha.address_state?.trim()) {
-      addressParts.push(campanha.address_state.trim());
+    if (campanha?.address.state?.trim()) {
+      addressParts.push(campanha?.address.state.trim());
     }
 
-    if (campanha.address_zipcode?.trim()) {
-      addressParts.push(campanha.address_zipcode.trim());
+    if (campanha?.address.zipcode?.trim()) {
+      addressParts.push(campanha?.address.zipcode.trim());
     }
 
     searchQuery = addressParts.join(', ');

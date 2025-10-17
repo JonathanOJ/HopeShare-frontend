@@ -92,8 +92,6 @@ export class StepCategoriaComponent implements OnInit, OnChanges {
       category: categorys,
       categoriesFormatted: this.categoriesFormatted,
     });
-
-    console.log('Selected categories:', categorys);
   }
 
   get category() {

@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Campanha } from '../../../shared/models/campanha.model';
-import { AuthUser } from '../../../shared/models/auth';
+import { AuthUser, TipoUsuario } from '../../../shared/models/auth';
 import { Subject, takeUntil, take } from 'rxjs';
 import { AuthService } from '../../../shared/services/auth.service';
 import { CampanhaService } from '../../../shared/services/campanha.service';
 import { LoadingService } from '../../../shared/services/loading.service';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
 import { Router } from '@angular/router';
+import { StatusCampanha } from '../../../shared/enums/StatusCampanha.enum';
 
 @Component({
   selector: 'app-listagem',
@@ -46,7 +47,7 @@ export class ListagemComponent implements OnInit {
     this.loadingService.start();
 
     this.campanhaService
-      .findCampanhaByUser('1743966788918')
+      .findCampanhaByUser(this.userSession!.user_id)
       .pipe(takeUntil(this.destroy$), take(1))
       .subscribe({
         next: (resp: Campanha[]) => {
@@ -81,7 +82,7 @@ export class ListagemComponent implements OnInit {
   }
 
   onEdit(campanha_id: String) {
-    this.router.navigate([`hopeshare/campanha/${campanha_id}`]);
+    this.router.navigate([`hopeshare/campanha/editar/${campanha_id}`]);
   }
 
   openDialog(type: 'relatorio' | 'comentarios' | 'deposito', campanha: any) {
@@ -151,6 +152,10 @@ export class ListagemComponent implements OnInit {
     };
 
     requestAnimationFrame(animate);
+  }
+
+  navigateToCreate() {
+    this.router.navigate([`hopeshare/campanha/cadastro`]);
   }
 }
 

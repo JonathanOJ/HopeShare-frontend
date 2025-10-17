@@ -14,6 +14,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Campanha } from '../../../../../shared/models/campanha.model';
 import { MessageConfirmationService } from '../../../../../shared/services/message-confirmation.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-step-endereco',
@@ -44,24 +45,27 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
 
   initializeForm() {
     this.stepEnderecoForm = this.fb.group({
-      address_zipcode: ['', [Validators.required, Validators.pattern(/^\d{5}-\d{3}$/)]],
-      address_street: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      address_number: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
-      address_complement: ['', [Validators.maxLength(50)]],
-      address_neighborhood: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      address_city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      address_state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      zipcode: ['', [Validators.required, Validators.pattern(/^\d{5}-\d{3}$/)]],
+      street: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      number: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
+      complement: ['', [Validators.maxLength(50)]],
+      neighborhood: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
     });
 
     this.stepEnderecoForm.valueChanges.subscribe(() => {
       this.formUpdate.emit(this.stepEnderecoForm);
     });
 
-    this.stepEnderecoForm.get('address_zipcode')?.valueChanges.subscribe((cep) => {
-      if (cep && cep.length === 9) {
-        this.searchAddressByCep(cep);
-      }
-    });
+    this.stepEnderecoForm
+      .get('zipcode')
+      ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((cep) => {
+        if (cep && cep.length === 9) {
+          this.searchAddressByCep(cep);
+        }
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -69,13 +73,13 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
       if (this.stepEnderecoForm.pristine) {
         this.stepEnderecoForm.patchValue(
           {
-            address_street: this.campanha.address_street || '',
-            address_number: this.campanha.address_number || '',
-            address_complement: this.campanha.address_complement || '',
-            address_city: this.campanha.address_city || '',
-            address_state: this.campanha.address_state || '',
-            address_zipcode: this.campanha.address_zipcode || '',
-            address_neighborhood: this.campanha.address_neighborhood || '',
+            street: this.campanha.address.street || '',
+            number: this.campanha.address.number || '',
+            complement: this.campanha.address.complement || '',
+            city: this.campanha.address.city || '',
+            state: this.campanha.address.state || '',
+            zipcode: this.campanha.address.zipcode || '',
+            neighborhood: this.campanha.address.neighborhood || '',
           },
           { emitEvent: false }
         );
@@ -87,32 +91,32 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
     this.stepEnderecoForm.get('image')?.setValue(event.files[0]);
   }
 
-  get address_street() {
-    return this.stepEnderecoForm.get('address_street');
+  get street() {
+    return this.stepEnderecoForm.get('street');
   }
 
-  get address_number() {
-    return this.stepEnderecoForm.get('address_number');
+  get number() {
+    return this.stepEnderecoForm.get('number');
   }
 
-  get address_complement() {
-    return this.stepEnderecoForm.get('address_complement');
+  get complement() {
+    return this.stepEnderecoForm.get('complement');
   }
 
-  get address_city() {
-    return this.stepEnderecoForm.get('address_city');
+  get city() {
+    return this.stepEnderecoForm.get('city');
   }
 
-  get address_state() {
-    return this.stepEnderecoForm.get('address_state');
+  get state() {
+    return this.stepEnderecoForm.get('state');
   }
 
-  get address_zipcode() {
-    return this.stepEnderecoForm.get('address_zipcode');
+  get zipcode() {
+    return this.stepEnderecoForm.get('zipcode');
   }
 
-  get address_neighborhood() {
-    return this.stepEnderecoForm.get('address_neighborhood');
+  get neighborhood() {
+    return this.stepEnderecoForm.get('neighborhood');
   }
 
   async searchAddressByCep(cep: string): Promise<void> {
@@ -130,10 +134,10 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
       }
 
       this.stepEnderecoForm.patchValue({
-        address_street: data.logradouro || '',
-        address_neighborhood: data.bairro || '',
-        address_city: data.localidade || '',
-        address_state: data.uf || '',
+        street: data.logradouro || '',
+        neighborhood: data.bairro || '',
+        city: data.localidade || '',
+        state: data.uf || '',
       });
 
       this.updateMap();
@@ -146,12 +150,12 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
     const formValue = this.stepEnderecoForm.value;
 
     const addressParts = [
-      formValue.address_street,
-      formValue.address_number,
-      formValue.address_neighborhood,
-      formValue.address_city,
-      formValue.address_state,
-      formValue.address_zipcode,
+      formValue.street,
+      formValue.number,
+      formValue.neighborhood,
+      formValue.city,
+      formValue.state,
+      formValue.zipcode,
     ].filter((part) => part && part.toString().trim());
 
     if (addressParts.length >= 3) {
@@ -167,12 +171,12 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
     const formValue = this.stepEnderecoForm.value;
 
     const addressParts = [
-      formValue.address_street,
-      formValue.address_number,
-      formValue.address_neighborhood,
-      formValue.address_city,
-      formValue.address_state,
-      formValue.address_zipcode,
+      formValue.street,
+      formValue.number,
+      formValue.neighborhood,
+      formValue.city,
+      formValue.state,
+      formValue.zipcode,
     ].filter((part) => part && part.toString().trim());
 
     if (addressParts.length === 0) return '';

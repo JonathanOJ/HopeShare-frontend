@@ -10,13 +10,13 @@ export class MessageConfirmationService {
     private messageService: MessageService
   ) {}
 
-  public confirmWarning(param: { message: string; accept?: () => void; reject?: () => void }) {
+  public confirmWarning(param: { message: string; accept?: () => void; reject?: () => void; acceptLabel?: string }) {
     const confirmationConfig: any = {
       message: param.message,
       header: 'Atenção',
       icon: 'pi pi-exclamation-triangle',
       rejectVisible: false,
-      acceptLabel: 'OK',
+      acceptLabel: param.acceptLabel || 'OK',
     };
 
     if (param.accept) {

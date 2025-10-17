@@ -22,7 +22,6 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
   @Input() campanha!: Campanha;
   @Input() activeStep: number = 0;
   @Input() totalSteps: number = 5;
-  @Input() editMode: boolean = false;
   @Output() onCancel: EventEmitter<void> = new EventEmitter();
   @Output() onSave: EventEmitter<Campanha> = new EventEmitter();
   @ViewChild('header', { static: true }) headerTemplate!: TemplateRef<any>;
@@ -63,12 +62,12 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
     if (!this.campanha?.have_address) return null;
 
     const address = [
-      this.campanha.address_street,
-      this.campanha.address_number,
-      this.campanha.address_neighborhood,
-      this.campanha.address_city,
-      this.campanha.address_state,
-      this.campanha.address_zipcode,
+      this.campanha.address.street,
+      this.campanha.address.number,
+      this.campanha.address.neighborhood,
+      this.campanha.address.city,
+      this.campanha.address.state,
+      this.campanha.address.zipcode,
     ]
       .filter(Boolean)
       .join(', ');
@@ -83,12 +82,12 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
     if (!this.campanha?.have_address) return '';
 
     const addressParts = [
-      this.campanha.address_street,
-      this.campanha.address_number,
-      this.campanha.address_neighborhood,
-      this.campanha.address_city,
-      this.campanha.address_state,
-      this.campanha.address_zipcode,
+      this.campanha.address.street,
+      this.campanha.address.number,
+      this.campanha.address.neighborhood,
+      this.campanha.address.city,
+      this.campanha.address.state,
+      this.campanha.address.zipcode,
     ].filter((part) => part && part.toString().trim());
 
     if (addressParts.length === 0) return '';

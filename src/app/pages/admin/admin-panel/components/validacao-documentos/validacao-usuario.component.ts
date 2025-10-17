@@ -60,7 +60,6 @@ export class ValidacaoUsuarioComponent implements OnInit {
 
   processValidation(): void {
     if (!this.selectedValidation || this.formAdmin.invalid) {
-      console.log(this.selectedValidation, this.formAdmin);
       this.messageConfirmationService.showError('Erro', 'Formulário inválido ou validação não selecionada.');
       return;
     }

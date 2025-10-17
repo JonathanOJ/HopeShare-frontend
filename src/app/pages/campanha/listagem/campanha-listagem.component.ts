@@ -72,7 +72,7 @@ export class CampanhaListagemComponent implements OnInit, OnDestroy, AfterViewIn
     this.loadingService.start();
 
     this.campanhaService
-      .findCampanhaByUser('1743966788918')
+      .findCampanhaByUser(this.userSession!.user_id)
       .pipe(takeUntil(this.destroy$), take(1))
       .subscribe({
         next: (resp: Campanha[]) => {

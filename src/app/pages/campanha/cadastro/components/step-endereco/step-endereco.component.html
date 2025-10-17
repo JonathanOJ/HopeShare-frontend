@@ -34,31 +34,27 @@
     <div class="flex gap-6 h-fit">
       <section class="w-1/2 flex flex-col gap-4">
         <div class="flex flex-col gap-1.5">
-          <label for="address_zipcode" class="text-sm text-secondary font-medium">CEP</label>
+          <label for="zipcode" class="text-sm text-secondary font-medium">CEP</label>
           <p-inputMask
             mask="99999-999"
-            id="address_zipcode"
-            formControlName="address_zipcode"
-            (onBlur)="address_zipcode?.invalid && address_zipcode?.markAsDirty()"
+            id="zipcode"
+            formControlName="zipcode"
+            (onBlur)="zipcode?.invalid && zipcode?.markAsDirty()"
             placeholder="12345-678"
           ></p-inputMask>
 
           <div
             class="flex align-items-end text-xs"
-            [ngClass]="
-              address_zipcode?.invalid && (address_zipcode?.dirty || address_zipcode?.touched)
-                ? 'justify-between'
-                : 'justify-end'
-            "
+            [ngClass]="zipcode?.invalid && (zipcode?.dirty || zipcode?.touched) ? 'justify-between' : 'justify-end'"
           >
             <span
               [ngClass]="
-                address_zipcode?.invalid && (address_zipcode?.dirty || address_zipcode?.touched)
+                zipcode?.invalid && (zipcode?.dirty || zipcode?.touched)
                   ? 'visible text-red-600'
                   : 'invisible text-red-600'
               "
             >
-              <ng-container *ngIf="address_zipcode?.errors as errors">
+              <ng-container *ngIf="zipcode?.errors as errors">
                 <ng-container *ngIf="errors['required']">CEP é obrigatório.</ng-container>
                 <ng-container *ngIf="errors['pattern']">CEP deve ter o formato 99999-999.</ng-container>
               </ng-container>
@@ -67,32 +63,28 @@
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label for="address_street" class="text-sm text-secondary font-medium">Rua</label>
+          <label for="street" class="text-sm text-secondary font-medium">Rua</label>
           <input
             type="text"
             pInputText
-            id="address_street"
-            formControlName="address_street"
-            (blur)="address_street?.invalid && address_street?.markAsDirty()"
+            id="street"
+            formControlName="street"
+            (blur)="street?.invalid && street?.markAsDirty()"
             placeholder="Rua das Flores"
           />
 
           <div
             class="flex align-items-end text-xs"
-            [ngClass]="
-              address_street?.invalid && (address_street?.dirty || address_street?.touched)
-                ? 'justify-between'
-                : 'justify-end'
-            "
+            [ngClass]="street?.invalid && (street?.dirty || street?.touched) ? 'justify-between' : 'justify-end'"
           >
             <span
               [ngClass]="
-                address_street?.invalid && (address_street?.dirty || address_street?.touched)
+                street?.invalid && (street?.dirty || street?.touched)
                   ? 'visible text-red-600'
                   : 'invisible text-red-600'
               "
             >
-              <ng-container *ngIf="address_street?.errors as errors">
+              <ng-container *ngIf="street?.errors as errors">
                 <ng-container *ngIf="errors['required']">Rua é obrigatória.</ng-container>
                 <ng-container *ngIf="errors['minlength']">Mínimo de 3 caracteres.</ng-container>
                 <ng-container *ngIf="errors['maxlength']">Máximo de 100 caracteres.</ng-container>
@@ -103,32 +95,28 @@
 
         <div class="flex gap-2">
           <div class="flex flex-col gap-1.5 w-1/3">
-            <label for="address_number" class="text-sm text-secondary font-medium">Número</label>
+            <label for="number" class="text-sm text-secondary font-medium">Número</label>
             <input
               type="text"
               pInputText
-              id="address_number"
-              formControlName="address_number"
-              (blur)="address_number?.invalid && address_number?.markAsDirty()"
+              id="number"
+              formControlName="number"
+              (blur)="number?.invalid && number?.markAsDirty()"
               placeholder="123"
             />
 
             <div
               class="flex align-items-end text-xs"
-              [ngClass]="
-                address_number?.invalid && (address_number?.dirty || address_number?.touched)
-                  ? 'justify-between'
-                  : 'justify-end'
-              "
+              [ngClass]="number?.invalid && (number?.dirty || number?.touched) ? 'justify-between' : 'justify-end'"
             >
               <span
                 [ngClass]="
-                  address_number?.invalid && (address_number?.dirty || address_number?.touched)
+                  number?.invalid && (number?.dirty || number?.touched)
                     ? 'visible text-red-600'
                     : 'invisible text-red-600'
                 "
               >
-                <ng-container *ngIf="address_number?.errors as errors">
+                <ng-container *ngIf="number?.errors as errors">
                   <ng-container *ngIf="errors['required']">Número é obrigatório.</ng-container>
                   <ng-container *ngIf="errors['minlength']">Mínimo de 1 caractere.</ng-container>
                   <ng-container *ngIf="errors['maxlength']">Máximo de 10 caracteres.</ng-container>
@@ -138,32 +126,30 @@
           </div>
 
           <div class="flex flex-col gap-1.5 w-2/3">
-            <label for="address_complement" class="text-sm text-secondary font-medium">Complemento</label>
+            <label for="complement" class="text-sm text-secondary font-medium">Complemento</label>
             <input
               type="text"
               pInputText
-              id="address_complement"
-              formControlName="address_complement"
-              (blur)="address_complement?.invalid && address_complement?.markAsDirty()"
+              id="complement"
+              formControlName="complement"
+              (blur)="complement?.invalid && complement?.markAsDirty()"
               placeholder="Apto 123"
             />
 
             <div
               class="flex align-items-end text-xs"
               [ngClass]="
-                address_complement?.invalid && (address_complement?.dirty || address_complement?.touched)
-                  ? 'justify-between'
-                  : 'justify-end'
+                complement?.invalid && (complement?.dirty || complement?.touched) ? 'justify-between' : 'justify-end'
               "
             >
               <span
                 [ngClass]="
-                  address_complement?.invalid && (address_complement?.dirty || address_complement?.touched)
+                  complement?.invalid && (complement?.dirty || complement?.touched)
                     ? 'visible text-red-600'
                     : 'invisible text-red-600'
                 "
               >
-                <ng-container *ngIf="address_complement?.errors as errors">
+                <ng-container *ngIf="complement?.errors as errors">
                   <ng-container *ngIf="errors['maxlength']">Máximo de 50 caracteres.</ng-container>
                 </ng-container>
               </span>
@@ -172,32 +158,32 @@
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label for="address_neighborhood" class="text-sm text-secondary font-medium">Bairro</label>
+          <label for="neighborhood" class="text-sm text-secondary font-medium">Bairro</label>
           <input
             type="text"
             pInputText
-            id="address_neighborhood"
-            formControlName="address_neighborhood"
-            (blur)="address_neighborhood?.invalid && address_neighborhood?.markAsDirty()"
+            id="neighborhood"
+            formControlName="neighborhood"
+            (blur)="neighborhood?.invalid && neighborhood?.markAsDirty()"
             placeholder="Centro"
           />
 
           <div
             class="flex align-items-end text-xs"
             [ngClass]="
-              address_neighborhood?.invalid && (address_neighborhood?.dirty || address_neighborhood?.touched)
+              neighborhood?.invalid && (neighborhood?.dirty || neighborhood?.touched)
                 ? 'justify-between'
                 : 'justify-end'
             "
           >
             <span
               [ngClass]="
-                address_neighborhood?.invalid && (address_neighborhood?.dirty || address_neighborhood?.touched)
+                neighborhood?.invalid && (neighborhood?.dirty || neighborhood?.touched)
                   ? 'visible text-red-600'
                   : 'invisible text-red-600'
               "
             >
-              <ng-container *ngIf="address_neighborhood?.errors as errors">
+              <ng-container *ngIf="neighborhood?.errors as errors">
                 <ng-container *ngIf="errors['required']">Bairro é obrigatório.</ng-container>
                 <ng-container *ngIf="errors['minlength']">Mínimo de 2 caracteres.</ng-container>
                 <ng-container *ngIf="errors['maxlength']">Máximo de 50 caracteres.</ng-container>
@@ -208,32 +194,26 @@
 
         <div class="flex gap-2">
           <div class="flex flex-col gap-1.5 w-2/3">
-            <label for="address_city" class="text-sm text-secondary font-medium">Cidade</label>
+            <label for="city" class="text-sm text-secondary font-medium">Cidade</label>
             <input
               type="text"
               pInputText
-              id="address_city"
-              formControlName="address_city"
-              (blur)="address_city?.invalid && address_city?.markAsDirty()"
+              id="city"
+              formControlName="city"
+              (blur)="city?.invalid && city?.markAsDirty()"
               placeholder="São Paulo"
             />
 
             <div
               class="flex align-items-end text-xs"
-              [ngClass]="
-                address_city?.invalid && (address_city?.dirty || address_city?.touched)
-                  ? 'justify-between'
-                  : 'justify-end'
-              "
+              [ngClass]="city?.invalid && (city?.dirty || city?.touched) ? 'justify-between' : 'justify-end'"
             >
               <span
                 [ngClass]="
-                  address_city?.invalid && (address_city?.dirty || address_city?.touched)
-                    ? 'visible text-red-600'
-                    : 'invisible text-red-600'
+                  city?.invalid && (city?.dirty || city?.touched) ? 'visible text-red-600' : 'invisible text-red-600'
                 "
               >
-                <ng-container *ngIf="address_city?.errors as errors">
+                <ng-container *ngIf="city?.errors as errors">
                   <ng-container *ngIf="errors['required']">Cidade é obrigatória.</ng-container>
                   <ng-container *ngIf="errors['minlength']">Mínimo de 2 caracteres.</ng-container>
                   <ng-container *ngIf="errors['maxlength']">Máximo de 50 caracteres.</ng-container>
@@ -243,32 +223,26 @@
           </div>
 
           <div class="flex flex-col gap-1.5 w-1/3">
-            <label for="address_state" class="text-sm text-secondary font-medium">Estado</label>
+            <label for="state" class="text-sm text-secondary font-medium">Estado</label>
             <input
               type="text"
               pInputText
-              id="address_state"
-              formControlName="address_state"
-              (blur)="address_state?.invalid && address_state?.markAsDirty()"
+              id="state"
+              formControlName="state"
+              (blur)="state?.invalid && state?.markAsDirty()"
               placeholder="SP"
             />
 
             <div
               class="flex align-items-end text-xs"
-              [ngClass]="
-                address_state?.invalid && (address_state?.dirty || address_state?.touched)
-                  ? 'justify-between'
-                  : 'justify-end'
-              "
+              [ngClass]="state?.invalid && (state?.dirty || state?.touched) ? 'justify-between' : 'justify-end'"
             >
               <span
                 [ngClass]="
-                  address_state?.invalid && (address_state?.dirty || address_state?.touched)
-                    ? 'visible text-red-600'
-                    : 'invisible text-red-600'
+                  state?.invalid && (state?.dirty || state?.touched) ? 'visible text-red-600' : 'invisible text-red-600'
                 "
               >
-                <ng-container *ngIf="address_state?.errors as errors">
+                <ng-container *ngIf="state?.errors as errors">
                   <ng-container *ngIf="errors['required']">Estado é obrigatório.</ng-container>
                   <ng-container *ngIf="errors['minlength']">Mínimo de 2 caracteres.</ng-container>
                   <ng-container *ngIf="errors['maxlength']">Máximo de 50 caracteres.</ng-container>

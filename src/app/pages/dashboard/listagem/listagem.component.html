@@ -3,63 +3,77 @@
     <h1 class="text-2xl font-bold text-primary mb-6">Dashboard - Minhas Campanhas</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="bg-card rounded-lg shadow-sm p-6 border border-theme fade-in cursor-pointer">
+      <div
+        class="bg-blue-50 dark:bg-blue-900/20 rounded-lg shadow-sm p-6 border border-blue-200 dark:border-blue-800 fade-in cursor-pointer hover:shadow-md transition-shadow"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm font-medium">Total de Campanhas</p>
-            <p class="text-2xl font-bold text-primary">{{ campanhas.length }}</p>
-            <p class="text-xs text-secondary opacity-70">{{ campanhas.length }} ativas</p>
+            <p class="text-blue-700 dark:text-blue-300 text-sm font-medium">Total de Campanhas</p>
+            <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">{{ campanhas.length }}</p>
+            <p class="text-xs text-blue-600 dark:text-blue-400 opacity-70">{{ campanhas.length }} ativas</p>
           </div>
-          <div class="bg-blue-100 rounded-full w-[50px] h-[50px] flex items-center justify-center">
-            <i class="pi pi-megaphone text-blue-600 text-xl"></i>
+          <div class="bg-blue-100 dark:bg-blue-800 rounded-full w-[50px] h-[50px] flex items-center justify-center">
+            <i class="pi pi-megaphone text-blue-600 dark:text-blue-300 text-xl"></i>
           </div>
         </div>
       </div>
 
-      <div class="bg-card rounded-lg shadow-sm p-6 border border-theme fade-in cursor-pointer">
+      <div
+        class="bg-green-50 dark:bg-green-900/20 rounded-lg shadow-sm p-6 border border-green-200 dark:border-green-800 fade-in cursor-pointer hover:shadow-md transition-shadow"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm font-medium">Total Arrecadado</p>
-            <p class="text-2xl font-bold text-green-600 animated-value">
+            <p class="text-green-700 dark:text-green-300 text-sm font-medium">Total Arrecadado</p>
+            <p class="text-2xl font-bold text-green-900 dark:text-green-100 animated-value">
               {{ animatedTotalArrecadado | currency: 'BRL' : 'symbol' : '1.0-0' }}
             </p>
-            <p class="text-xs text-secondary opacity-70">{{ getPercentualTotal() }}% da meta geral</p>
+            <p class="text-xs text-green-600 dark:text-green-400 opacity-70">
+              {{ getPercentualTotal() }}% da meta geral
+            </p>
           </div>
-          <div class="bg-green-100 rounded-full w-[50px] h-[50px] flex items-center justify-center">
-            <i class="pi pi-wallet text-green-600 text-xl"></i>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-card rounded-lg shadow-sm p-6 border border-theme fade-in cursor-pointer">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-secondary text-sm font-medium">Meta Total</p>
-            <p class="text-2xl font-bold text-primary">{{ getMetaTotal() | currency: 'BRL' : 'symbol' : '1.0-0' }}</p>
-            <p class="text-xs text-secondary opacity-70">Objetivo das campanhas</p>
-          </div>
-          <div class="bg-purple-100 rounded-full w-[50px] h-[50px] flex items-center justify-center">
-            <i class="pi pi-flag text-purple-600 text-xl"></i>
+          <div class="bg-green-100 dark:bg-green-800 rounded-full w-[50px] h-[50px] flex items-center justify-center">
+            <i class="pi pi-wallet text-green-600 dark:text-green-300 text-xl"></i>
           </div>
         </div>
       </div>
 
-      <div class="bg-card rounded-lg shadow-sm p-6 border border-theme fade-in cursor-pointer">
+      <div
+        class="bg-purple-50 dark:bg-purple-900/20 rounded-lg shadow-sm p-6 border border-purple-200 dark:border-purple-800 fade-in cursor-pointer hover:shadow-md transition-shadow"
+      >
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm font-medium">Campanhas Finalizadas</p>
-            <p class="text-2xl font-bold text-primary">{{ getCampanhasFinalizadas() }}</p>
-            <p class="text-xs text-secondary opacity-70">{{ getCampanhasFinalizadas() }} concluídas</p>
+            <p class="text-purple-700 dark:text-purple-300 text-sm font-medium">Meta Total</p>
+            <p class="text-2xl font-bold text-purple-900 dark:text-purple-100">
+              {{ getMetaTotal() | currency: 'BRL' : 'symbol' : '1.0-0' }}
+            </p>
+            <p class="text-xs text-purple-600 dark:text-purple-400 opacity-70">Objetivo das campanhas</p>
           </div>
-          <div class="bg-orange-100 rounded-full w-[50px] h-[50px] flex items-center justify-center">
-            <i class="pi pi-check-circle text-orange-600 text-xl"></i>
+          <div class="bg-purple-100 dark:bg-purple-800 rounded-full w-[50px] h-[50px] flex items-center justify-center">
+            <i class="pi pi-flag text-purple-600 dark:text-purple-300 text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-orange-50 dark:bg-orange-900/20 rounded-lg shadow-sm p-6 border border-orange-200 dark:border-orange-800 fade-in cursor-pointer hover:shadow-md transition-shadow"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-orange-700 dark:text-orange-300 text-sm font-medium">Campanhas Finalizadas</p>
+            <p class="text-2xl font-bold text-orange-900 dark:text-orange-100">{{ getCampanhasFinalizadas() }}</p>
+            <p class="text-xs text-orange-600 dark:text-orange-400 opacity-70">
+              {{ getCampanhasFinalizadas() }} concluídas
+            </p>
+          </div>
+          <div class="bg-orange-100 dark:bg-orange-800 rounded-full w-[50px] h-[50px] flex items-center justify-center">
+            <i class="pi pi-check-circle text-orange-600 dark:text-orange-300 text-xl"></i>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6" *ngIf="campanhas.length > 0; else noCampanhas">
     <div
       *ngFor="let campanha of campanhas"
       class="bg-card rounded-2xl shadow-sm border border-theme p-6 flex flex-col justify-between hover-surface transition-all duration-200"
@@ -146,6 +160,19 @@
       </div>
     </div>
   </div>
+
+  <ng-template #noCampanhas>
+    <div class="text-center py-20">
+      <h2 class="text-xl font-semibold text-primary mb-4">Nenhuma campanha encontrada</h2>
+      <p class="text-secondary">Você ainda não criou nenhuma campanha. Comece agora e faça a diferença!</p>
+      <button
+        (click)="navigateToCreate()"
+        class="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+      >
+        Criar Nova Campanha
+      </button>
+    </div>
+  </ng-template>
 </section>
 
 <p-dialog

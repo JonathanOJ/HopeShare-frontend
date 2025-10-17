@@ -10,7 +10,7 @@
   @if (!campanha?.request_emergency) {
     <div class="relative">
       @if (campanha?.image) {
-        <img class="w-full h-[230px] rounded-t-3xl" src="{{ campanha?.image }}" alt="Image of {{ campanha?.title }}" />
+        <img class="w-full h-[230px] rounded-t-3xl" [src]="campanha?.image" alt="Image of {{ campanha?.title }}" />
       } @else {
         <div class="w-full h-[230px] rounded-t-3xl bg-surface items-center justify-center flex">
           <mat-icon class="text-secondary w-8 h-8" svgIcon="camera-off"></mat-icon>

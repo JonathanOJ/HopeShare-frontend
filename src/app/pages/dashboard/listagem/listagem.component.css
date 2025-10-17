@@ -43,3 +43,6 @@
   border-radius: 4px;
 }
 
+.bg-surface {
+  background-color: var(--surface-50);
+}
