@@ -6,7 +6,8 @@ export interface Campanha {
   campanha_id: string;
   title: string;
   description: string;
-  image: string;
+  image: Imagem;
+  new_file_image?: File;
   category: string[];
   categoriesFormatted: string;
   users_donated: UserDonatedModel[];
@@ -23,6 +24,10 @@ export interface Campanha {
   have_address: boolean;
 }
 
+export interface Imagem {
+  url: string;
+  key: string;
+}
 export interface Endereco {
   street: string;
   number: string;

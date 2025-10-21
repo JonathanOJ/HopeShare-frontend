@@ -96,7 +96,6 @@ export class MessageConfirmationService {
 
   public showWarning(title: string, message: string) {
     this.messageService.add({ severity: 'warn', summary: title, detail: message });
-    console.log('Warning: ', title, message);
   }
 
   public showError(title: string, message: string) {

@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Campanha } from '../../../../../shared/models/campanha.model';
+import { Form, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-step-revisao',
@@ -19,7 +20,7 @@ import { Campanha } from '../../../../../shared/models/campanha.model';
   styleUrl: './step-revisao.component.css',
 })
 export class StepRevisaoComponent implements OnInit, OnChanges {
-  @Input() campanha!: Campanha;
+  @Input() campanhaForm!: FormGroup | null;
   @Input() activeStep: number = 0;
   @Input() totalSteps: number = 5;
   @Output() onCancel: EventEmitter<void> = new EventEmitter();
@@ -29,6 +30,8 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
 
   tabItems: any[] = [];
   activeTab: any;
+  imagePreviewUrl: string = '';
+  mapUrl: SafeResourceUrl = '';
 
   private sanitizer = inject(DomSanitizer);
 
@@ -37,8 +40,10 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['campanha'] && this.campanha) {
+    if (changes['activeStep'] && this.activeStep === 4) {
       this.initializeTabs();
+      this.getGoogleMapsUrl();
+      this.updateImagePreview();
     }
   }
 
@@ -47,7 +52,7 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
 
     this.tabItems.push({ label: 'Resumo', icon: 'pi pi-file' });
 
-    if (this.campanha?.have_address) {
+    if (this.campanhaForm?.get('have_address')?.value) {
       this.tabItems.push({ label: 'Endereço', icon: 'pi pi-map-marker' });
     }
 
@@ -58,36 +63,44 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
     }
   }
 
-  getGoogleMapsUrl(): SafeResourceUrl | null {
-    if (!this.campanha?.have_address) return null;
+  updateImagePreview(): void {
+    const newFileImage = this.campanhaForm?.get('new_file_image')?.value as File;
 
+    if (newFileImage) {
+      this.imagePreviewUrl = URL.createObjectURL(newFileImage);
+    } else if (this.campanhaForm?.get('image')?.value) {
+      this.imagePreviewUrl = this.campanhaForm?.get('image')?.value.url;
+    } else {
+      this.imagePreviewUrl = '';
+    }
+  }
+
+  getGoogleMapsUrl() {
     const address = [
-      this.campanha.address.street,
-      this.campanha.address.number,
-      this.campanha.address.neighborhood,
-      this.campanha.address.city,
-      this.campanha.address.state,
-      this.campanha.address.zipcode,
+      this.street?.value,
+      this.number?.value,
+      this.neighborhood?.value,
+      this.city?.value,
+      this.state?.value,
+      this.zipcode?.value,
     ]
       .filter(Boolean)
       .join(', ');
 
-    if (!address.trim()) return null;
+    if (!address.trim()) return;
 
     const url = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  getGoogleMapsLink(): string {
-    if (!this.campanha?.have_address) return '';
-
+  getGoogleMapsLink() {
     const addressParts = [
-      this.campanha.address.street,
-      this.campanha.address.number,
-      this.campanha.address.neighborhood,
-      this.campanha.address.city,
-      this.campanha.address.state,
-      this.campanha.address.zipcode,
+      this.street?.value,
+      this.number?.value,
+      this.neighborhood?.value,
+      this.city?.value,
+      this.state?.value,
+      this.zipcode?.value,
     ].filter((part) => part && part.toString().trim());
 
     if (addressParts.length === 0) return '';
@@ -95,8 +108,60 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressParts.join(', '))}`;
   }
 
-  log() {
-    console.log(this.campanha);
+  get title() {
+    return this.campanhaForm?.get('title')?.value;
+  }
+
+  get request_emergency() {
+    return this.campanhaForm?.get('request_emergency')?.value;
+  }
+
+  get categoriesFormatted(): string {
+    const categories = this.campanhaForm?.get('category')?.value;
+    if (Array.isArray(categories)) {
+      return categories.map((cat: any) => cat.name).join(', ');
+    }
+    return '';
+  }
+
+  get value_required() {
+    return this.campanhaForm?.get('value_required')?.value;
+  }
+
+  get description() {
+    return this.campanhaForm?.get('description')?.value;
+  }
+
+  get street() {
+    return this.campanhaForm?.get('street')?.value;
+  }
+
+  get number() {
+    return this.campanhaForm?.get('number')?.value;
+  }
+
+  get complement() {
+    return this.campanhaForm?.get('complement')?.value;
+  }
+
+  get city() {
+    return this.campanhaForm?.get('city')?.value;
+  }
+
+  get state() {
+    return this.campanhaForm?.get('state')?.value;
+  }
+
+  get zipcode() {
+    return this.campanhaForm?.get('zipcode')?.value;
+  }
+
+  get neighborhood() {
+    return this.campanhaForm?.get('neighborhood')?.value;
+  }
+
+  get campanha_id() {
+    return this.campanhaForm?.get('campanha_id')?.value;
   }
 }
 

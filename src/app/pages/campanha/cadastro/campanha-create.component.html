@@ -5,7 +5,7 @@
   </div>
 
   <div class="bg-card rounded-2xl shadow-sm border border-theme overflow-hidden">
-    <p-stepper [linear]="true" [(activeStep)]="activeStep" styleClass="bg-transparent">
+    <p-stepper [(activeStep)]="activeStep" styleClass="bg-transparent">
       <p-stepperPanel header="Categoria da campanha">
         <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
           <ng-container
@@ -40,7 +40,7 @@
         </ng-template>
       </p-stepperPanel>
 
-      @if (have_address) {
+      @if (have_address || campanha?.have_address) {
         <p-stepperPanel header="Endereço">
           <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
             <ng-container
@@ -112,8 +112,7 @@
   #stepCategoria
   [activeStep]="activeStep"
   [totalSteps]="totalSteps"
-  [campanha]="campanha"
-  (formUpdate)="updateForm('stepCategoria', $event)"
+  [campanhaForm]="campanhaForm"
   (onCancel)="onCancel()"
 ></app-step-categoria>
 
@@ -121,8 +120,7 @@
   #stepDescricao
   [activeStep]="activeStep"
   [totalSteps]="totalSteps"
-  [campanha]="campanha"
-  (formUpdate)="updateForm('stepDescricao', $event)"
+  [campanhaForm]="campanhaForm"
   (onCancel)="onCancel()"
   (haveAddressChange)="haveAddressChange()"
 ></app-step-descricao>
@@ -131,8 +129,7 @@
   #stepEndereco
   [activeStep]="activeStep"
   [totalSteps]="totalSteps"
-  [campanha]="campanha"
-  (formUpdate)="updateForm('stepEndereco', $event)"
+  [campanhaForm]="campanhaForm"
   (onCancel)="onCancel()"
 ></app-step-endereco>
 
@@ -141,13 +138,12 @@
   [activeStep]="activeStep"
   [totalSteps]="totalSteps"
   (onCancel)="onCancel()"
-  (formUpdate)="updateForm('stepMeta', $event)"
-  [campanha]="campanha"
+  [campanhaForm]="campanhaForm"
 ></app-step-meta>
 
 <app-step-revisao
   #stepRevisao
-  [campanha]="campanha!"
+  [campanhaForm]="campanhaForm!"
   [activeStep]="activeStep"
   [totalSteps]="totalSteps"
   (onCancel)="onCancel()"

@@ -148,7 +148,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: AuthUser) => {
           this.authService.setAuthResponse(response);
-          console.log;
           this.router.navigate(['hopeshare/home']);
         },
         error: () => {

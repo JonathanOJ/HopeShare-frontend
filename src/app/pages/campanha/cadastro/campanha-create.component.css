@@ -1,5 +1,6 @@
 :host ::ng-deep .p-stepper .p-stepper-panels {
   border-radius: 8px;
+  padding-top: 0;
 }
 
 :host ::ng-deep .p-stepper .p-stepper-header {

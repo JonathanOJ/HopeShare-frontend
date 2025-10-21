@@ -12,7 +12,7 @@
     @if (activeStep === index) {
       <div class="flex flex-col justify-center">
         <span class="text-xs text-blue-600 font-bold"> Passo {{ index + 1 }}/{{ totalSteps }} </span>
-        <span class="text-primary" (click)="log()">Revisando</span>
+        <span class="text-primary">Revisando</span>
       </div>
     }
   </section>
@@ -39,7 +39,7 @@
                     [disabled]="true"
                     type="text"
                     pInputText
-                    [(ngModel)]="campanha.title"
+                    [(ngModel)]="title"
                     required
                     placeholder="Seu título aqui"
                   />
@@ -47,7 +47,7 @@
                 <p-toggleButton
                   class="mb-[6px] w-[120px]"
                   [disabled]="true"
-                  [(ngModel)]="campanha.request_emergency"
+                  [(ngModel)]="request_emergency"
                   onLabel="Urgente"
                   offLabel="Não urgente"
                 ></p-toggleButton>
@@ -58,7 +58,7 @@
                   [disabled]="true"
                   type="text"
                   pInputText
-                  [(ngModel)]="campanha.categoriesFormatted"
+                  [(ngModel)]="categoriesFormatted"
                   required
                   placeholder="Suas categorias aqui"
                 />
@@ -68,7 +68,7 @@
                 <span
                   class="w-full font-bold text-blue-600 flex items-center justify-center h-[80px] rounded-lg border-theme border bg-surface"
                 >
-                  {{ campanha.value_required | currency: 'BRL' : 'symbol' : '1.2-2' }}
+                  {{ value_required | currency: 'BRL' : 'symbol' : '1.2-2' }}
                 </span>
               </div>
               <div class="flex flex-col gap-1.5">
@@ -79,15 +79,15 @@
                   [disabled]="true"
                   pInputTextarea
                   placeholder="Escreva a descrição da sua campanha, não economize nas palavras"
-                  [(ngModel)]="campanha.description"
+                  [(ngModel)]="description"
                 ></textarea>
               </div>
             </section>
             <div class="w-[40%] h-[482px]">
-              @if (campanha.image) {
+              @if (imagePreviewUrl) {
                 <img
-                  class="h-full w-full rounded-3xl border border-theme"
-                  [src]="campanha.image"
+                  class="h-full w-full rounded-3xl border border-theme object-cover"
+                  [src]="imagePreviewUrl"
                   alt="imagem da campanha"
                 />
               } @else {
@@ -110,37 +110,37 @@
               <section class="flex gap-2 justify-between">
                 <div class="flex flex-col gap-1.5 w-full">
                   <span class="text-sm text-secondary font-medium">Rua</span>
-                  <input [disabled]="true" type="text" pInputText [(ngModel)]="campanha.address.street" />
+                  <input [disabled]="true" type="text" pInputText [(ngModel)]="street" />
                 </div>
                 <div class="flex flex-col gap-1.5">
                   <span class="text-sm text-secondary font-medium">Número</span>
-                  <input [disabled]="true" type="text" pInputText [(ngModel)]="campanha.address.number" />
+                  <input [disabled]="true" type="text" pInputText [(ngModel)]="number" />
                 </div>
               </section>
               <section class="flex gap-2 justify-between">
                 <div class="flex flex-col gap-1.5 w-1/2">
                   <span class="text-sm text-secondary font-medium">Complemento</span>
-                  <input [disabled]="true" type="text" pInputText [(ngModel)]="campanha.address.complement" />
+                  <input [disabled]="true" type="text" pInputText [(ngModel)]="complement" />
                 </div>
                 <div class="flex flex-col gap-1.5 w-1/2">
                   <span class="text-sm text-secondary font-medium">Cidade</span>
-                  <input [disabled]="true" type="text" pInputText [(ngModel)]="campanha.address.city" />
+                  <input [disabled]="true" type="text" pInputText [(ngModel)]="city" />
                 </div>
               </section>
               <section class="flex gap-2 justify-between">
                 <div class="flex flex-col gap-1.5 w-1/2">
                   <span class="text-sm text-secondary font-medium">Estado</span>
-                  <input [disabled]="true" type="text" pInputText [(ngModel)]="campanha.address.state" />
+                  <input [disabled]="true" type="text" pInputText [(ngModel)]="state" />
                 </div>
                 <div class="flex flex-col gap-1.5 w-1/2">
                   <span class="text-sm text-secondary font-medium">Bairro</span>
-                  <input [disabled]="true" type="text" pInputText [(ngModel)]="campanha.address.neighborhood" />
+                  <input [disabled]="true" type="text" pInputText [(ngModel)]="neighborhood" />
                 </div>
               </section>
               <section>
                 <div class="flex flex-col gap-1.5 w-1/2">
                   <span class="text-sm text-secondary font-medium">CEP</span>
-                  <input [disabled]="true" type="text" pInputText [(ngModel)]="campanha.address.zipcode" />
+                  <input [disabled]="true" type="text" pInputText [(ngModel)]="zipcode" />
                 </div>
               </section>
             </section>
@@ -148,23 +148,21 @@
             <section class="w-1/2 flex flex-col gap-2">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-secondary font-medium">Localização no Mapa</span>
-                @if (getGoogleMapsLink()) {
-                  <a
-                    [href]="getGoogleMapsLink()"
-                    target="_blank"
-                    class="text-xs text-blue-600 hover:underline flex items-center gap-1"
-                  >
-                    <mat-icon class="text-sm" svgIcon="open-in-new"></mat-icon>
-                    Abrir no Google Maps
-                  </a>
-                }
+                <a
+                  [href]="getGoogleMapsLink()"
+                  target="_blank"
+                  class="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                >
+                  <mat-icon class="text-sm" svgIcon="open-in-new"></mat-icon>
+                  Abrir no Google Maps
+                </a>
               </div>
               <div
                 class="h-full border border-theme rounded-lg overflow-hidden bg-surface flex items-center justify-center relative min-h-[300px]"
               >
-                @if (getGoogleMapsUrl()) {
+                @if (mapUrl) {
                   <iframe
-                    [src]="getGoogleMapsUrl()"
+                    [src]="mapUrl"
                     width="100%"
                     height="100%"
                     style="border: 0; min-height: 300px"
@@ -198,10 +196,10 @@
             (onClick)="prevCallback.emit()"
           />
           <p-button
-            [label]="campanha.campanha_id ? 'Salvar' : 'Criar'"
+            [label]="campanha_id ? 'Salvar' : 'Criar'"
             icon="pi pi-check"
             iconPos="right"
-            (onClick)="onSave.emit(campanha)"
+            (onClick)="onSave.emit()"
           />
         </div>
       </section>

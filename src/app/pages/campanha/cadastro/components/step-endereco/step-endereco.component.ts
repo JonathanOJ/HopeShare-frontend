@@ -4,15 +4,13 @@ import {
   inject,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Campanha } from '../../../../../shared/models/campanha.model';
 import { MessageConfirmationService } from '../../../../../shared/services/message-confirmation.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -21,102 +19,64 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
   templateUrl: './step-endereco.component.html',
   styleUrl: './step-endereco.component.css',
 })
-export class StepEnderecoComponent implements OnInit, OnChanges {
+export class StepEnderecoComponent implements OnChanges {
   @Input() activeStep: number = 0;
   @Input() totalSteps: number = 5;
-  @Input() campanha: Campanha | null = null;
+  @Input() campanhaForm: FormGroup | null = null;
   @Output() onCancel: EventEmitter<void> = new EventEmitter();
-  @Output() formUpdate: EventEmitter<FormGroup> = new EventEmitter();
   @ViewChild('header', { static: true }) headerTemplate!: TemplateRef<any>;
   @ViewChild('content', { static: true }) contentTemplate!: TemplateRef<any>;
 
-  stepEnderecoForm!: FormGroup;
   mapUrl: SafeResourceUrl | null = null;
 
-  private fb = inject(FormBuilder);
   private sanitizer = inject(DomSanitizer);
   private messageService = inject(MessageConfirmationService);
 
-  ngOnInit(): void {
-    if (!this.stepEnderecoForm) {
-      this.initializeForm();
-    }
-  }
-
-  initializeForm() {
-    this.stepEnderecoForm = this.fb.group({
-      zipcode: ['', [Validators.required, Validators.pattern(/^\d{5}-\d{3}$/)]],
-      street: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      number: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(10)]],
-      complement: ['', [Validators.maxLength(50)]],
-      neighborhood: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-    });
-
-    this.stepEnderecoForm.valueChanges.subscribe(() => {
-      this.formUpdate.emit(this.stepEnderecoForm);
-    });
-
-    this.stepEnderecoForm
-      .get('zipcode')
-      ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
-      .subscribe((cep) => {
-        if (cep && cep.length === 9) {
-          this.searchAddressByCep(cep);
-        }
-      });
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['campanha'] && this.campanha && this.stepEnderecoForm) {
-      if (this.stepEnderecoForm.pristine) {
-        this.stepEnderecoForm.patchValue(
-          {
-            street: this.campanha.address.street || '',
-            number: this.campanha.address.number || '',
-            complement: this.campanha.address.complement || '',
-            city: this.campanha.address.city || '',
-            state: this.campanha.address.state || '',
-            zipcode: this.campanha.address.zipcode || '',
-            neighborhood: this.campanha.address.neighborhood || '',
-          },
-          { emitEvent: false }
-        );
-      }
+    if (changes['campanhaForm'] && this.campanhaForm) {
+      this.campanhaForm
+        .get('zipcode')
+        ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+        .subscribe((cep) => {
+          if (cep && cep.length === 9) {
+            this.searchAddressByCep(cep);
+          }
+        });
+
+      this.updateMap();
     }
   }
 
   onUpload(event: any) {
-    this.stepEnderecoForm.get('image')?.setValue(event.files[0]);
+    this.campanhaForm?.get('image')?.setValue(event.files[0]);
   }
 
   get street() {
-    return this.stepEnderecoForm.get('street');
+    return this.campanhaForm?.get('street');
   }
 
   get number() {
-    return this.stepEnderecoForm.get('number');
+    return this.campanhaForm?.get('number');
   }
 
   get complement() {
-    return this.stepEnderecoForm.get('complement');
+    return this.campanhaForm?.get('complement');
   }
 
   get city() {
-    return this.stepEnderecoForm.get('city');
+    return this.campanhaForm?.get('city');
   }
 
   get state() {
-    return this.stepEnderecoForm.get('state');
+    return this.campanhaForm?.get('state');
   }
 
   get zipcode() {
-    return this.stepEnderecoForm.get('zipcode');
+    return this.campanhaForm?.get('zipcode');
   }
 
   get neighborhood() {
-    return this.stepEnderecoForm.get('neighborhood');
+    return this.campanhaForm?.get('neighborhood');
   }
 
   async searchAddressByCep(cep: string): Promise<void> {
@@ -133,7 +93,7 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
         return;
       }
 
-      this.stepEnderecoForm.patchValue({
+      this.campanhaForm?.patchValue({
         street: data.logradouro || '',
         neighborhood: data.bairro || '',
         city: data.localidade || '',
@@ -147,7 +107,7 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
   }
 
   updateMap(): void {
-    const formValue = this.stepEnderecoForm.value;
+    const formValue = this.campanhaForm?.value;
 
     const addressParts = [
       formValue.street,
@@ -168,7 +128,7 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
   }
 
   getGoogleMapsLink(): string {
-    const formValue = this.stepEnderecoForm.value;
+    const formValue = this.campanhaForm?.value;
 
     const addressParts = [
       formValue.street,
@@ -182,6 +142,21 @@ export class StepEnderecoComponent implements OnInit, OnChanges {
     if (addressParts.length === 0) return '';
 
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressParts.join(', '))}`;
+  }
+
+  validateStepEndereco(): boolean {
+    if (!this.campanhaForm) return true;
+
+    const requiredFields = ['zipcode', 'street', 'number', 'neighborhood', 'city', 'state'];
+
+    for (const field of requiredFields) {
+      const control = this.campanhaForm.get(field);
+      if (!control || control.invalid) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 

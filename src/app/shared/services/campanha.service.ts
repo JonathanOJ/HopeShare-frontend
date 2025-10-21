@@ -28,7 +28,7 @@ export class CampanhaService {
     return this.httpClient.get<Campanha[]>(`${this.URL_API}/findAllByUser/${id}`);
   }
 
-  saveCampanha(campanha: Campanha) {
+  saveCampanha(campanha: FormData) {
     return this.httpClient.post(`${this.URL_API}/save`, campanha);
   }
 

@@ -1,98 +1,78 @@
-import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Campanha } from '../../../../../shared/models/campanha.model';
+import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-step-descricao',
   templateUrl: './step-descricao.component.html',
   styleUrl: './step-descricao.component.css',
 })
-export class StepDescricaoComponent implements OnInit, OnChanges {
+export class StepDescricaoComponent {
   @Input() activeStep: number = 0;
   @Input() totalSteps: number = 5;
-  @Input() campanha: Campanha | null = null;
+  @Input() campanhaForm: FormGroup | null = null;
   @Output() haveAddressChange: EventEmitter<void> = new EventEmitter();
   @Output() onCancel: EventEmitter<void> = new EventEmitter();
-  @Output() formUpdate: EventEmitter<FormGroup> = new EventEmitter();
   @ViewChild('header', { static: true }) headerTemplate!: TemplateRef<any>;
   @ViewChild('content', { static: true }) contentTemplate!: TemplateRef<any>;
 
-  stepDescricaoForm!: FormGroup;
-  private fb = inject(FormBuilder);
+  imagemSelecionada: File | null = null;
 
-  ngOnInit(): void {
-    this.initializeForm();
-  }
+  onUpload(event: any) {
+    try {
+      const file = event.files[0];
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['campanha'] && this.stepDescricaoForm && this.campanha) {
-      this.stepDescricaoForm.patchValue(
-        {
-          title: this.campanha.title || '',
-          description: this.campanha.description || '',
-          image: this.campanha.image || '',
-          request_emergency: this.campanha.request_emergency || false,
-          have_address: this.campanha.have_address || false,
-        },
-        { emitEvent: false }
-      );
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        return;
+      }
+
+      if (file.size > 5000000) {
+        return;
+      }
+
+      this.imagemSelecionada = file;
+      this.new_file_image?.setValue(file);
+    } catch (error) {
+      console.error('Erro ao processar imagem:', error);
     }
   }
 
-  initializeForm(): void {
-    this.stepDescricaoForm = this.fb.group({
-      title: [this.campanha?.title || '', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      description: [
-        this.campanha?.description || '',
-        [Validators.required, Validators.minLength(10), Validators.maxLength(500)],
-      ],
-      image: [this.campanha?.image || ''],
-      request_emergency: [this.campanha?.request_emergency || false],
-      have_address: [this.campanha?.have_address || false],
-    });
-
-    this.stepDescricaoForm.valueChanges.subscribe(() => {
-      this.formUpdate.emit(this.stepDescricaoForm);
-    });
-  }
-
-  onUpload(event: any) {
-    this.image?.setValue(event.files[0]);
+  removerImagem() {
+    this.imagemSelecionada = null;
+    this.new_file_image?.setValue('');
   }
 
   handleHaveAddressChange() {
     this.haveAddressChange.emit();
   }
 
+  validateDescricaoStep(): boolean {
+    return !(this.title?.valid && this.description?.valid);
+  }
+
   get description() {
-    return this.stepDescricaoForm.get('description');
+    return this.campanhaForm?.get('description');
   }
 
   get title() {
-    return this.stepDescricaoForm.get('title');
+    return this.campanhaForm?.get('title');
   }
 
-  get image() {
-    return this.stepDescricaoForm.get('image');
+  get new_file_image() {
+    return this.campanhaForm?.get('new_file_image');
   }
 
   get request_emergency() {
-    return this.stepDescricaoForm.get('request_emergency');
+    return this.campanhaForm?.get('request_emergency');
   }
 
   get have_address() {
-    return this.stepDescricaoForm.get('have_address');
+    return this.campanhaForm?.get('have_address');
+  }
+
+  get image() {
+    return this.campanhaForm?.get('image');
   }
 }
 

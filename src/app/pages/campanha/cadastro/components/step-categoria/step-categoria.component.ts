@@ -1,36 +1,29 @@
 import {
   Component,
   EventEmitter,
-  inject,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Campanha } from '../../../../../shared/models/campanha.model';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-step-categoria',
   templateUrl: './step-categoria.component.html',
   styleUrl: './step-categoria.component.css',
 })
-export class StepCategoriaComponent implements OnInit, OnChanges {
+export class StepCategoriaComponent implements OnChanges {
   @Input() activeStep: number = 0;
   @Input() totalSteps: number = 5;
-  @Input() campanha: Campanha | null = null;
-  @Output() formUpdate: EventEmitter<FormGroup> = new EventEmitter();
+  @Input() campanhaForm: FormGroup | null = null;
   @Output() onCancel: EventEmitter<void> = new EventEmitter();
   @ViewChild('header', { static: true }) headerTemplate!: TemplateRef<any>;
   @ViewChild('content', { static: true }) contentTemplate!: TemplateRef<any>;
 
   categoriesFormatted: string = '';
-  stepCategoriaForm!: FormGroup;
-
-  private fb = inject(FormBuilder);
 
   categorysList = [
     { name: 'Alimentação', value: 'Alimentação', selected: false, icon: 'food-apple-outline' },
@@ -47,55 +40,27 @@ export class StepCategoriaComponent implements OnInit, OnChanges {
     { name: 'Outros', value: 'Outros', selected: false, icon: 'dots-horizontal-circle-outline' },
   ];
 
-  ngOnInit(): void {
-    this.initializeForm();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['campanha'] && this.stepCategoriaForm && this.campanha) {
-      this.stepCategoriaForm.patchValue(
-        {
-          category: this.campanha.category || [],
-          categoriesFormatted: this.campanha.categoriesFormatted || '',
-        },
-        { emitEvent: false }
-      );
-
+    if (changes['campanhaForm'] && this.campanhaForm) {
+      console.log('Campanha Form mudou:', this.campanhaForm?.get('category')?.value);
       this.categorysList.forEach((category) => {
-        category.selected = (this.campanha?.category || []).includes(category.value);
+        category.selected = (this.campanhaForm?.get('category')?.value || []).includes(category.value);
       });
     }
-  }
-
-  initializeForm(): void {
-    this.stepCategoriaForm = this.fb.group({
-      category: [this.campanha?.category || [], [Validators.required]],
-      categoriesFormatted: '',
-    });
-
-    if (this.campanha?.category) {
-      this.categorysList.forEach((category) => {
-        category.selected = this.campanha?.category?.includes(category.value) || false;
-      });
-    }
-
-    this.stepCategoriaForm.valueChanges.subscribe(() => {
-      this.formUpdate.emit(this.stepCategoriaForm);
-    });
   }
 
   handleCategoriesSelected() {
     const categorys = this.categorysList.filter((c) => c.selected).map((c) => c.value);
     this.categoriesFormatted = categorys.join(', ');
 
-    this.stepCategoriaForm.patchValue({
+    this.campanhaForm?.patchValue({
       category: categorys,
       categoriesFormatted: this.categoriesFormatted,
     });
   }
 
   get category() {
-    return this.stepCategoriaForm.get('category');
+    return this.campanhaForm?.get('category');
   }
 }
 
