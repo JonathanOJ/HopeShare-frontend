@@ -8,6 +8,7 @@ import { LoadingService } from '../../../shared/services/loading.service';
 import { AuthService } from '../../../shared/services/auth.service';
 import { AuthUser } from '../../../shared/models/auth';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
+import { CreateSolicitacaoDepositoRequest } from '../../../shared/models/solicitacao-deposito.model';
 
 @Component({
   selector: 'app-campanha-listagem',
@@ -167,8 +168,14 @@ export class CampanhaListagemComponent implements OnInit, OnDestroy, AfterViewIn
       accept: () => {
         this.loading = true;
         this.loadingService.start();
+
+        const payload: CreateSolicitacaoDepositoRequest = {
+          campanha: campanha,
+          user: this.userSession!,
+        };
+
         this.campanhaService
-          .createSolicitacaoDeposito(campanha.campanha_id, 'Solicitação de depósito da campanha.')
+          .createSolicitacaoDeposito(payload)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {

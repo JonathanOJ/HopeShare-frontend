@@ -2,7 +2,7 @@
   <p-tabView>
     <p-tabPanel header="Depósitos" *ngIf="userIsCompany">
       <div *ngIf="depositos?.length; else semDepositos" class="grid gap-6">
-        <app-deposito [depositos]="depositos"></app-deposito>
+        <app-deposito [depositos]="depositos" (refresh)="getDepositosEvent.emit()"></app-deposito>
       </div>
       <ng-template #semDepositos>
         <p class="text-center text-secondary italic mt-4">Nenhum depósito encontrado.</p>
@@ -11,7 +11,7 @@
 
     <p-tabPanel header="Doações">
       <div *ngIf="doacoes?.length; else semDoacoes" class="grid gap-6">
-        <app-doacao [doacoes]="doacoes"></app-doacao>
+        <app-doacao [doacoes]="doacoes" (refresh)="getDoacoesEvent.emit()"></app-doacao>
       </div>
       <ng-template #semDoacoes>
         <p class="text-center text-secondary italic mt-4">Nenhuma doação encontrada.</p>

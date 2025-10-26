@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { Recebimento } from '../../../shared/models/recebimento.model';
@@ -7,14 +7,14 @@ import { Banco } from '../../../shared/models/banco.model';
 import { BancoService } from '../../../shared/services/banco.service';
 import { takeUntil, take, Subject } from 'rxjs';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
-import { ConfigRecebimentoService } from '../../../shared/services/configRecebimento.service';
+import { ConfigRecebimentoService } from '../../../shared/services/config-recebimento.service';
 
 @Component({
   selector: 'app-recebimento',
   templateUrl: './recebimento.component.html',
   styleUrls: ['./recebimento.component.css'],
 })
-export class RecebimentoComponent implements OnInit, OnChanges, OnDestroy {
+export class RecebimentoComponent implements OnChanges, OnDestroy {
   @Input() user: AuthUser | null = null;
   @Input() recebimentoConfig: Recebimento | null = null;
 
@@ -41,13 +41,9 @@ export class RecebimentoComponent implements OnInit, OnChanges, OnDestroy {
 
   private destroy$ = new Subject();
 
-  ngOnInit() {
-    this.initializeForm();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['recebimentoConfig'] && this.recebimentoConfig) {
-      this.recebimentoForm.patchValue(this.recebimentoConfig);
+      this.initializeForm(this.recebimentoConfig);
       this.updateConfigurationStatus();
     }
   }
@@ -57,19 +53,17 @@ export class RecebimentoComponent implements OnInit, OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
-  private initializeForm(): void {
+  private initializeForm(recebimentoConfig: Recebimento | null = null): void {
+    if (this.recebimentoForm) return;
+
     this.recebimentoForm = this.fb.group({
-      bank: [null, Validators.required],
-      agency: ['', [Validators.required, Validators.minLength(4)]],
-      account_number: ['', [Validators.required, Validators.minLength(4)]],
-      account_type: ['CORRENTE', Validators.required],
+      bank: [recebimentoConfig?.bank || null, Validators.required],
+      agency: [recebimentoConfig?.agency || '', [Validators.required, Validators.minLength(4)]],
+      account_number: [recebimentoConfig?.account_number || '', [Validators.required, Validators.minLength(4)]],
+      account_type: [recebimentoConfig?.account_type || 'CORRENTE', Validators.required],
       cnpj: [{ value: this.user?.cnpj || '', disabled: true }, Validators.required],
       user_id: [this.user?.user_id || '', Validators.required],
     });
-
-    if (this.recebimentoConfig) {
-      this.recebimentoForm.patchValue(this.recebimentoConfig);
-    }
 
     this.bancosFiltrados = [];
 

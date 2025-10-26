@@ -1,18 +1,28 @@
-import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  inject,
+  OnDestroy,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CampanhaService } from '../../../../../../shared/services/campanha.service';
-import { Comentario, CreateComentarioRequest } from '../../../../../../shared/models/comentario.model';
+import { Comentario } from '../../../../../../shared/models/comentario.model';
 import { Campanha } from '../../../../../../shared/models/campanha.model';
 import { AuthUser } from '../../../../../../shared/models/auth';
-import { AuthService } from '../../../../../../shared/services/auth.service';
 import { MessageConfirmationService } from '../../../../../../shared/services/message-confirmation.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-comments-modal',
   templateUrl: './comments-modal.component.html',
   styleUrl: './comments-modal.component.css',
 })
-export class CommentsModalComponent implements OnInit, OnChanges {
+export class CommentsModalComponent implements OnInit, OnChanges, OnDestroy {
   @Input() visible: boolean = false;
   @Input() userSession: AuthUser | null = null;
   @Input() campanha: Campanha | null = null;
@@ -27,6 +37,8 @@ export class CommentsModalComponent implements OnInit, OnChanges {
   private campanhaService = inject(CampanhaService);
   private messageService = inject(MessageConfirmationService);
 
+  private destroy$ = new Subject();
+
   ngOnInit() {
     this.commentForm = this.fb.group({
       content: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
@@ -39,20 +51,30 @@ export class CommentsModalComponent implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
+
   loadComments() {
     if (!this.campanha) return;
 
     this.loadingComments = true;
-    this.campanhaService.getComments(this.campanha.campanha_id).subscribe({
-      next: (comments) => {
-        this.comments = comments;
+    this.campanhaService
+      .getComments(this.campanha.campanha_id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.comments = response || [];
+        },
+        error: (error) => {
+          const msg = error?.error || 'Erro ao carregar comentários.';
+          this.messageService.showError('Erro', msg);
+        },
+      })
+      .add(() => {
         this.loadingComments = false;
-      },
-      error: () => {
-        this.messageService.showError('Erro', 'Erro ao carregar comentários.');
-        this.loadingComments = false;
-      },
-    });
+      });
   }
 
   onSubmit() {
@@ -66,20 +88,22 @@ export class CommentsModalComponent implements OnInit, OnChanges {
     this.loading = true;
 
     const commentData = {
-      content: this.commentForm.value.content,
+      comment: this.commentForm.value.content,
       user_id: this.userSession!.user_id,
-    } as CreateComentarioRequest;
+    };
 
     this.campanhaService
       .addComment(this.campanha.campanha_id, commentData)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (newComment) => {
           this.comments.unshift(newComment);
           this.commentForm.reset();
           this.messageService.showMessage('Comentário', 'Comentário adicionado com sucesso!');
         },
-        error: () => {
-          this.messageService.showError('Erro', 'Erro ao adicionar comentário. Tente novamente.');
+        error: (error) => {
+          const msg = error?.error?.error || 'Erro ao adicionar comentário. Tente novamente.';
+          this.messageService.showError('Erro', msg);
         },
       })
       .add(() => {
@@ -90,15 +114,18 @@ export class CommentsModalComponent implements OnInit, OnChanges {
   deleteComment(comment: Comentario) {
     if (!this.campanha || !comment.campanha_id) return;
 
-    this.campanhaService.deleteComment(this.campanha.campanha_id, comment.comment_id).subscribe({
-      next: () => {
-        this.comments = this.comments.filter((c) => c.comment_id !== comment.comment_id);
-        this.messageService.showMessage('Comentário', 'Comentário removido com sucesso!');
-      },
-      error: () => {
-        this.messageService.showError('Erro', 'Erro ao remover comentário.');
-      },
-    });
+    this.campanhaService
+      .deleteComment(this.campanha.campanha_id, comment.comment_id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.comments = this.comments.filter((c) => c.comment_id !== comment.comment_id);
+          this.messageService.showMessage('Comentário', 'Comentário removido com sucesso!');
+        },
+        error: () => {
+          this.messageService.showError('Erro', 'Erro ao remover comentário.');
+        },
+      });
   }
 
   closeModal() {

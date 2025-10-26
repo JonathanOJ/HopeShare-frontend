@@ -26,3 +26,6 @@
   background-image: var(--waves-bg);
 }
 
+.dark .bg-surface-50-custom {
+  background-color: #1e293b;
+}

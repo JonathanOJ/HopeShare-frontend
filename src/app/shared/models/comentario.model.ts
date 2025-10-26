@@ -11,8 +11,3 @@ export interface Comentario {
   campanha_id: string;
 }
 
-export interface CreateComentarioRequest {
-  content: string;
-  user_id: string;
-}
-

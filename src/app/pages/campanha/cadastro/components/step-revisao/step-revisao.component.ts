@@ -112,8 +112,8 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
     return this.campanhaForm?.get('title')?.value;
   }
 
-  get request_emergency() {
-    return this.campanhaForm?.get('request_emergency')?.value;
+  get emergency() {
+    return this.campanhaForm?.get('emergency')?.value;
   }
 
   get categoriesFormatted(): string {

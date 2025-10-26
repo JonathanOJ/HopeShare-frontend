@@ -64,8 +64,16 @@ body {
   background-color: var(--surface-card);
 }
 
+.bg-card-highlight {
+  background-color: var(--surface-0);
+}
+
 .bg-surface {
-  background-color: var(--surface-50);
+  background-color: var(--surface-100);
+}
+
+.dark .bg-surface {
+  background-color: var(--surface-0);
 }
 
 .bg-surface-100 {

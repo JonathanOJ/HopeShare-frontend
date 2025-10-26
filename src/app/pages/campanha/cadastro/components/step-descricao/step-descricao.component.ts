@@ -63,8 +63,8 @@ export class StepDescricaoComponent {
     return this.campanhaForm?.get('new_file_image');
   }
 
-  get request_emergency() {
-    return this.campanhaForm?.get('request_emergency');
+  get emergency() {
+    return this.campanhaForm?.get('emergency');
   }
 
   get have_address() {

@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { StatusDoacao } from '../../../shared/enums/StatusDoacao.enum';
 import { Doacao } from '../../../shared/models/doacao.model';
+import { SolicitacaoDeposito } from '../../../shared/models/solicitacao-deposito.model';
 
 @Component({
   selector: 'app-historico',
@@ -9,9 +10,10 @@ import { Doacao } from '../../../shared/models/doacao.model';
 })
 export class HistoricoComponent {
   @Input() userIsCompany: boolean = false;
+  @Input() depositos: SolicitacaoDeposito[] = [];
+  @Input() doacoes: Doacao[] = [];
 
-  depositos = [];
-
-  doacoes: Doacao[] = [];
+  @Output() getDepositosEvent = new EventEmitter<void>();
+  @Output() getDoacoesEvent = new EventEmitter<void>();
 }
 

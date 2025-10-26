@@ -8,6 +8,8 @@ import { LoadingService } from '../../../shared/services/loading.service';
 import { MessageConfirmationService } from '../../../shared/services/message-confirmation.service';
 import { Router } from '@angular/router';
 import { StatusCampanha } from '../../../shared/enums/StatusCampanha.enum';
+import { CreateSolicitacaoDepositoRequest } from '../../../shared/models/solicitacao-deposito.model';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-listagem',
@@ -21,6 +23,38 @@ export class ListagemComponent implements OnInit {
   dialog: 'relatorio' | 'comentarios' | 'deposito' | null = null;
   dialogVisible = false;
   selectedCampanha: Campanha | null = null;
+
+  isMobile: boolean = window.innerWidth < 768;
+
+  actionsMenuItems: MenuItem[] = [
+    {
+      label: 'Editar',
+      icon: 'pi pi-pencil',
+      command: () => this.onEdit(this.selectedCampanha!.campanha_id),
+    },
+    {
+      separator: true,
+    },
+    {
+      label: 'Comentários',
+      icon: 'pi pi-comment',
+      command: () => this.openDialog('comentarios'),
+    },
+    {
+      label: 'Relatório',
+      icon: 'pi pi-file',
+      command: () => this.redirectToRelatorios(),
+    },
+    {
+      separator: true,
+    },
+    {
+      label: 'Solicitar Depósito',
+      icon: 'pi pi-wallet',
+      command: () => this.openDialog('deposito'),
+      styleClass: 'text-green-600',
+    },
+  ];
 
   animatedTotalArrecadado: number = 0;
   private animationDuration = 2000;
@@ -47,7 +81,7 @@ export class ListagemComponent implements OnInit {
     this.loadingService.start();
 
     this.campanhaService
-      .findCampanhaByUser(this.userSession!.user_id)
+      .findCampanhaByUser(this.userSession!.user_id, true)
       .pipe(takeUntil(this.destroy$), take(1))
       .subscribe({
         next: (resp: Campanha[]) => {
@@ -56,8 +90,6 @@ export class ListagemComponent implements OnInit {
           this.campanhas.forEach((campanha) => {
             campanha.progress_percentage = this.getProgress(campanha);
           });
-
-          this.campanhas = this.campanhas.concat(this.campanhas);
 
           this.animateCounter();
         },
@@ -85,16 +117,13 @@ export class ListagemComponent implements OnInit {
     this.router.navigate([`hopeshare/campanha/editar/${campanha_id}`]);
   }
 
-  openDialog(type: 'relatorio' | 'comentarios' | 'deposito', campanha: any) {
+  openDialog(type: 'comentarios' | 'deposito') {
     this.dialog = type;
-    this.selectedCampanha = campanha;
     this.dialogVisible = true;
   }
 
   getDialogHeader(): string {
     switch (this.dialog) {
-      case 'relatorio':
-        return 'Gerar Relatório';
       case 'comentarios':
         return 'Comentários da Campanha';
       case 'deposito':
@@ -156,6 +185,81 @@ export class ListagemComponent implements OnInit {
 
   navigateToCreate() {
     this.router.navigate([`hopeshare/campanha/cadastro`]);
+  }
+
+  formatCommentDate(date: Date | string): string {
+    if (!date) return '';
+
+    const commentDate = typeof date === 'string' ? new Date(date) : date;
+    const now = new Date();
+    const diffInMs = now.getTime() - commentDate.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 1) {
+      return 'agora';
+    } else if (diffInMinutes < 60) {
+      return `há ${diffInMinutes} minuto${diffInMinutes > 1 ? 's' : ''}`;
+    } else if (diffInHours < 24) {
+      return `há ${diffInHours} hora${diffInHours > 1 ? 's' : ''}`;
+    } else if (diffInDays < 7) {
+      return `há ${diffInDays} dia${diffInDays > 1 ? 's' : ''}`;
+    } else {
+      return commentDate.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+    }
+  }
+
+  createSolicitacaoDeposito(): void {
+    if (!this.selectedCampanha) return;
+
+    if (this.selectedCampanha.status !== StatusCampanha.ACTIVE) {
+      this.messageConfirmationService.showError('Erro', 'Somente campanhas ativas podem solicitar depósito.');
+      return;
+    }
+
+    if (this.selectedCampanha.value_donated! <= 0) {
+      this.messageConfirmationService.showError('Erro', 'Campanhas sem arrecadação não podem solicitar depósito.');
+      return;
+    }
+
+    this.loading = true;
+    this.loadingService.start();
+
+    const payload: CreateSolicitacaoDepositoRequest = {
+      campanha: this.selectedCampanha,
+      user: this.userSession!,
+    };
+
+    this.campanhaService
+      .createSolicitacaoDeposito(payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.messageConfirmationService.showMessage(
+            'Sucesso',
+            'Solicitação de depósito enviada com sucesso! Aguarde a análise do administrador.'
+          );
+          this.dialogVisible = false;
+        },
+        error: (error) => {
+          console.error('Erro ao solicitar depósito:', error);
+          const errorMessage = error.error.error || 'Erro ao solicitar depósito.';
+          this.messageConfirmationService.showError('Erro', errorMessage);
+        },
+      })
+      .add(() => {
+        this.loading = false;
+        this.loadingService.done();
+      });
+  }
+
+  redirectToRelatorios(): void {
+    this.router.navigate([`hopeshare/dashboard/relatorios/${this.selectedCampanha?.campanha_id}`]);
   }
 }
 

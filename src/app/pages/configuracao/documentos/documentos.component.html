@@ -1,382 +1,369 @@
-<div class="space-y-6">
-  <div class="bg-card border border-theme rounded-lg p-6">
-    <div class="flex items-center gap-4 mb-4">
-      <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-        <i class="pi pi-file-check text-primary text-xl"></i>
-      </div>
-      <div>
-        <h2 class="text-xl font-semibold text-primary">Validação de Documentos</h2>
-        <p class="text-secondary text-sm">Complete o cadastro da sua empresa para receber doações</p>
-      </div>
+<section class="bg-card border border-theme rounded-lg p-6 mb-4">
+  <div class="flex items-center gap-4 mb-4">
+    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+      <i class="pi pi-file-check text-primary text-xl"></i>
     </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-      <div class="flex items-center gap-3 p-3 bg-surface border border-theme rounded-lg">
-        <div
-          class="w-8 h-8 rounded-full flex items-center justify-center"
-          [class]="
-            getStatusColor() === 'yellow'
-              ? 'bg-yellow-100 dark:bg-yellow-900/30'
-              : getStatusColor() === 'green'
-                ? 'bg-green-100 dark:bg-green-900/30'
-                : getStatusColor() === 'red'
-                  ? 'bg-red-100 dark:bg-red-900/30'
-                  : 'bg-gray-100 dark:bg-gray-800'
-          "
-        >
-          <i
-            class="text-sm"
-            [class]="
-              'pi ' +
-              getStatusIcon() +
-              ' ' +
-              (getStatusColor() === 'yellow'
-                ? 'text-yellow-900 dark:text-yellow-300'
-                : getStatusColor() === 'green'
-                  ? 'text-green-900 dark:text-green-300'
-                  : getStatusColor() === 'red'
-                    ? 'text-red-900 dark:text-red-300'
-                    : 'text-gray-900 dark:text-gray-300')
-            "
-          ></i>
-        </div>
-        <div>
-          <p class="text-sm font-medium text-primary">Status</p>
-          <p class="text-xs text-secondary">{{ getStatusLabel() }}</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3 p-3 bg-surface border border-theme rounded-lg">
-        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-          <i class="pi pi-users text-blue-900 dark:text-blue-300 text-sm"></i>
-        </div>
-        <div>
-          <p class="text-sm font-medium text-primary">Validação</p>
-          <p class="text-xs text-secondary">2-5 dias úteis</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3 p-3 bg-surface border border-theme rounded-lg">
-        <div class="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-          <i class="pi pi-shield text-green-900 dark:text-green-300 text-sm"></i>
-        </div>
-        <div>
-          <p class="text-sm font-medium text-primary">Segurança</p>
-          <p class="text-xs text-secondary">100% protegido</p>
-        </div>
-      </div>
+    <div>
+      <h2 class="text-xl font-semibold text-primary">Validação de Documentos</h2>
+      <p class="text-secondary text-sm">Complete o cadastro da sua empresa para receber doações</p>
     </div>
   </div>
 
-  <div
-    *ngIf="validacaoUsuario?.observation && !validacaoUsuario?.observation_read"
-    class="bg-card border border-theme rounded-lg p-6 animate-fade-in"
-    [ngClass]="{
-      'border-blue-200 dark:border-blue-800': getTipoObservacao() === 'info',
-      'border-yellow-200 dark:border-yellow-800': getTipoObservacao() === 'warning',
-      'border-red-200 dark:border-red-800': getTipoObservacao() === 'error',
-    }"
-  >
-    <div class="flex items-start gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+    <div class="flex items-center gap-3 p-3 bg-surface border border-theme rounded-lg">
       <div
-        class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-        [ngClass]="{
-          'bg-blue-100 dark:bg-blue-900/30': getTipoObservacao() === 'info',
-          'bg-yellow-100 dark:bg-yellow-900/30': getTipoObservacao() === 'warning',
-          'bg-red-100 dark:bg-red-900/30': getTipoObservacao() === 'error',
-        }"
+        class="w-8 h-8 rounded-full flex items-center justify-center"
+        [class]="
+          getStatusColor() === 'yellow'
+            ? 'bg-yellow-100 dark:bg-yellow-900/30'
+            : getStatusColor() === 'green'
+              ? 'bg-green-100 dark:bg-green-900/30'
+              : getStatusColor() === 'red'
+                ? 'bg-red-100 dark:bg-red-900/30'
+                : 'bg-gray-100 dark:bg-gray-800'
+        "
       >
         <i
-          *ngIf="getTipoObservacao() === 'info'"
-          class="pi pi-info-circle text-lg text-blue-900 dark:text-blue-300"
-        ></i>
-        <i
-          *ngIf="getTipoObservacao() === 'warning'"
-          class="pi pi-exclamation-triangle text-lg text-yellow-900 dark:text-yellow-300"
-        ></i>
-        <i
-          *ngIf="getTipoObservacao() === 'error'"
-          class="pi pi-times-circle text-lg text-red-900 dark:text-red-300"
+          class="text-sm"
+          [class]="
+            'pi ' +
+            getStatusIcon() +
+            ' ' +
+            (getStatusColor() === 'yellow'
+              ? 'text-yellow-900 dark:text-yellow-300'
+              : getStatusColor() === 'green'
+                ? 'text-green-900 dark:text-green-300'
+                : getStatusColor() === 'red'
+                  ? 'text-red-900 dark:text-red-300'
+                  : 'text-gray-900 dark:text-gray-300')
+          "
         ></i>
       </div>
+      <div>
+        <p class="text-sm font-medium text-primary">Status</p>
+        <p class="text-xs text-secondary">{{ getStatusLabel() }}</p>
+      </div>
+    </div>
 
-      <div class="flex-1 min-w-0">
-        <h3
-          class="text-lg font-semibold mb-2"
-          [ngClass]="{
-            'text-blue-900 dark:text-blue-300': getTipoObservacao() === 'info',
-            'text-yellow-900 dark:text-yellow-300': getTipoObservacao() === 'warning',
-            'text-red-900 dark:text-red-300': getTipoObservacao() === 'error',
-          }"
-        >
-          <span *ngIf="getTipoObservacao() === 'info'">📋 Documentos Aprovados</span>
-          <span *ngIf="getTipoObservacao() === 'warning'">⚠️ Ação Necessária</span>
-          <span *ngIf="getTipoObservacao() === 'error'">❌ Documentos Rejeitados</span>
-        </h3>
+    <div class="flex items-center gap-3 p-3 bg-surface border border-theme rounded-lg">
+      <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+        <i class="pi pi-users text-blue-900 dark:text-blue-300 text-sm"></i>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-primary">Validação</p>
+        <p class="text-xs text-secondary">2-5 dias úteis</p>
+      </div>
+    </div>
 
-        <p
-          class="text-sm leading-relaxed mb-4"
-          [ngClass]="{
-            'text-blue-800 dark:text-blue-400': getTipoObservacao() === 'info',
-            'text-yellow-800 dark:text-yellow-400': getTipoObservacao() === 'warning',
-            'text-red-800 dark:text-red-400': getTipoObservacao() === 'error',
-          }"
-        >
-          {{ validacaoUsuario?.observation }}
-        </p>
-
-        <div class="flex justify-end gap-2">
-          <p-button
-            *ngIf="getTipoObservacao() === 'error'"
-            label="Falar com Suporte"
-            icon="pi pi-comments"
-            size="small"
-            severity="danger"
-            [outlined]="true"
-            (onClick)="openSupportDialog()"
-          ></p-button>
-        </div>
+    <div class="flex items-center gap-3 p-3 bg-surface border border-theme rounded-lg">
+      <div class="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+        <i class="pi pi-shield text-green-900 dark:text-green-300 text-sm"></i>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-primary">Segurança</p>
+        <p class="text-xs text-secondary">100% protegido</p>
       </div>
     </div>
   </div>
+</section>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 space-y-6">
-      <div class="bg-card border border-theme rounded-lg p-6">
-        <h3 class="text-lg font-semibold text-primary mb-6 flex items-center gap-2">
-          <i class="pi pi-building text-primary"></i>
-          Dados da Empresa
-        </h3>
-
-        <form [formGroup]="validationForm" (ngSubmit)="onSubmit()" class="space-y-6">
-          <div class="space-y-4">
-            <h4 class="text-md font-semibold text-primary flex items-center gap-2">
-              <i class="pi pi-building text-primary"></i>
-              Informações da Empresa
-            </h4>
-
-            <div class="space-y-2">
-              <label for="company_name" class="block text-sm font-medium text-primary">
-                Nome da Empresa <span class="text-red-500">*</span>
-              </label>
-              <input
-                pInputText
-                id="company_name"
-                formControlName="company_name"
-                placeholder="Digite o nome da sua empresa"
-                class="w-full"
-                [class.ng-invalid]="company_name?.invalid && company_name?.touched"
-              />
-              <small *ngIf="company_name?.invalid && company_name?.touched" class="text-red-500 text-xs">
-                Nome da empresa é obrigatório
-              </small>
-            </div>
-          </div>
-
-          <div class="space-y-4">
-            <h4 class="text-md font-semibold text-primary flex items-center gap-2">
-              <i class="pi pi-upload text-primary"></i>
-              Documentos Necessários
-            </h4>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div class="flex items-center gap-2 p-3 bg-surface border border-theme rounded-lg">
-                <i class="pi pi-file-pdf text-red-900 dark:text-red-400"></i>
-                <span class="text-sm text-secondary">Recibo Bancário</span>
-              </div>
-              <div class="flex items-center gap-2 p-3 bg-surface border border-theme rounded-lg">
-                <i class="pi pi-file-pdf text-red-900 dark:text-red-400"></i>
-                <span class="text-sm text-secondary">Contrato Social</span>
-              </div>
-              <div class="flex items-center gap-2 p-3 bg-surface border border-theme rounded-lg">
-                <i class="pi pi-file-pdf text-red-900 dark:text-red-400"></i>
-                <span class="text-sm text-secondary">Comprovante Endereço</span>
-              </div>
-            </div>
-
-            <!-- Documentos Já Enviados -->
-            <div
-              *ngIf="validacaoUsuario?.documents && (validacaoUsuario?.documents?.length ?? 0) > 0"
-              class="mt-6 p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg"
-            >
-              <h5 class="text-sm font-semibold text-green-900 dark:text-green-300 mb-3 flex items-center gap-2">
-                <i class="pi pi-check-circle"></i>
-                Documentos Enviados ({{ validacaoUsuario?.documents?.length ?? 0 }})
-              </h5>
-              <div class="space-y-2">
-                <div
-                  *ngFor="let doc of validacaoUsuario?.documents; let i = index"
-                  class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border border-green-200 dark:border-green-800 rounded-lg"
-                >
-                  <div class="flex items-center gap-3 flex-1 min-w-0">
-                    <div
-                      class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                      [ngClass]="{
-                        'bg-red-100 dark:bg-red-900/30': doc.type === 'application/pdf',
-                        'bg-blue-100 dark:bg-blue-900/30':
-                          doc.type === 'image/jpeg' || doc.type === 'image/jpg' || doc.type === 'image/png',
-                      }"
-                    >
-                      <i
-                        *ngIf="doc.type === 'application/pdf'"
-                        class="pi pi-file-pdf text-red-600 dark:text-red-400"
-                      ></i>
-                      <i
-                        *ngIf="doc.type === 'image/jpeg' || doc.type === 'image/jpg' || doc.type === 'image/png'"
-                        class="pi pi-image text-blue-600 dark:text-blue-400"
-                      ></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-primary truncate" [pTooltip]="doc.name" tooltipPosition="top">
-                        {{ doc.name }}
-                      </p>
-                      <p class="text-xs text-secondary">{{ getFileTypeLabel(doc.type) }}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <p-button
-                      icon="pi pi-eye"
-                      [text]="true"
-                      [rounded]="true"
-                      size="small"
-                      severity="success"
-                      pTooltip="Visualizar documento"
-                      tooltipPosition="top"
-                      (onClick)="viewDocument(doc.url)"
-                    ></p-button>
-                    <p-button
-                      icon="pi pi-download"
-                      [text]="true"
-                      [rounded]="true"
-                      size="small"
-                      severity="info"
-                      pTooltip="Baixar documento"
-                      tooltipPosition="top"
-                      (onClick)="downloadDocument(doc.url, doc.name)"
-                    ></p-button>
-                  </div>
-                </div>
-              </div>
-              <p class="text-xs text-green-700 dark:text-green-400 mt-3 flex items-center gap-1">
-                <i class="pi pi-info-circle"></i>
-                Você pode enviar novos documentos para substituir os existentes.
-              </p>
-            </div>
-
-            <p-fileUpload
-              #fileUpload
-              id="upload"
-              mode="advanced"
-              [multiple]="true"
-              accept=".pdf,.jpg,.jpeg,.png"
-              [maxFileSize]="5000000"
-              chooseLabel="Escolher Arquivos"
-              cancelLabel="Cancelar"
-              [auto]="false"
-              [customUpload]="true"
-              [showUploadButton]="false"
-              [showCancelButton]="false"
-              (onSelect)="onUpload($event)"
-              (onRemove)="onRemoveFile($event)"
-              class="w-full"
-            >
-              <ng-template pTemplate="content">
-                <div class="p-6 text-center">
-                  <i class="pi pi-cloud-upload text-4xl text-primary mb-4 block"></i>
-                  <p class="text-secondary mb-2">Arraste e solte os arquivos aqui ou clique para selecionar</p>
-                  <p class="text-xs text-secondary">PDF, JPG, PNG até 5MB cada</p>
-                </div>
-              </ng-template>
-            </p-fileUpload>
-          </div>
-
-          <div class="pt-6 border-t border-theme">
-            <p-button
-              type="submit"
-              label="Enviar para Validação"
-              icon="pi pi-send"
-              [loading]="loading"
-              [disabled]="validationForm.invalid || arquivosEnviados.length === 0"
-            ></p-button>
-            <p *ngIf="arquivosEnviados.length === 0" class="text-xs text-secondary mt-2">
-              Por favor, adicione pelo menos um documento antes de enviar
-            </p>
-          </div>
-        </form>
-      </div>
+<section
+  *ngIf="validacaoUsuario?.observation && !validacaoUsuario?.observation_read"
+  class="bg-card border border-theme rounded-lg p-6 animate-fade-in"
+  [ngClass]="{
+    'border-blue-200 dark:border-blue-800': getTipoObservacao() === 'info',
+    'border-yellow-200 dark:border-yellow-800': getTipoObservacao() === 'warning',
+    'border-red-200 dark:border-red-800': getTipoObservacao() === 'error',
+  }"
+>
+  <div class="flex items-start gap-4">
+    <div
+      class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+      [ngClass]="{
+        'bg-blue-100 dark:bg-blue-900/30': getTipoObservacao() === 'info',
+        'bg-yellow-100 dark:bg-yellow-900/30': getTipoObservacao() === 'warning',
+        'bg-red-100 dark:bg-red-900/30': getTipoObservacao() === 'error',
+      }"
+    >
+      <i *ngIf="getTipoObservacao() === 'info'" class="pi pi-info-circle text-lg text-blue-900 dark:text-blue-300"></i>
+      <i
+        *ngIf="getTipoObservacao() === 'warning'"
+        class="pi pi-exclamation-triangle text-lg text-yellow-900 dark:text-yellow-300"
+      ></i>
+      <i *ngIf="getTipoObservacao() === 'error'" class="pi pi-times-circle text-lg text-red-900 dark:text-red-300"></i>
     </div>
 
-    <div class="space-y-6">
-      <div class="bg-card border border-theme rounded-lg p-6">
-        <h4 class="font-semibold text-primary mb-4 flex items-center gap-2">
-          <i class="pi pi-list-check text-primary"></i>
-          Processo de Validação
-        </h4>
+    <div class="flex-1 min-w-0">
+      <h3
+        class="text-lg font-semibold mb-2"
+        [ngClass]="{
+          'text-blue-900 dark:text-blue-300': getTipoObservacao() === 'info',
+          'text-yellow-900 dark:text-yellow-300': getTipoObservacao() === 'warning',
+          'text-red-900 dark:text-red-300': getTipoObservacao() === 'error',
+        }"
+      >
+        <span *ngIf="getTipoObservacao() === 'info'">📋 Documentos Aprovados</span>
+        <span *ngIf="getTipoObservacao() === 'warning'">⚠️ Ação Necessária</span>
+        <span *ngIf="getTipoObservacao() === 'error'">❌ Documentos Rejeitados</span>
+      </h3>
 
-        <div class="space-y-4">
-          <div class="flex items-start gap-3">
-            <div class="w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mt-0.5">
-              <i class="pi pi-check text-green-900 dark:text-green-300 text-xs"></i>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-primary">Envio de Documentos</p>
-              <p class="text-xs text-secondary">Upload dos arquivos necessários</p>
-            </div>
-          </div>
+      <p
+        class="text-sm leading-relaxed mb-4"
+        [ngClass]="{
+          'text-blue-800 dark:text-blue-400': getTipoObservacao() === 'info',
+          'text-yellow-800 dark:text-yellow-400': getTipoObservacao() === 'warning',
+          'text-red-800 dark:text-red-400': getTipoObservacao() === 'error',
+        }"
+      >
+        {{ validacaoUsuario?.observation }}
+      </p>
 
-          <div class="flex items-start gap-3">
-            <div
-              class="w-6 h-6 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mt-0.5"
-            >
-              <span class="text-yellow-900 dark:text-yellow-300 text-xs font-bold">2</span>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-primary">Análise da Equipe</p>
-              <p class="text-xs text-secondary">Verificação em até 2 dias úteis</p>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-3">
-            <div class="w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mt-0.5">
-              <span class="text-gray-900 dark:text-gray-300 text-xs font-bold">3</span>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-primary">Aprovação</p>
-              <p class="text-xs text-secondary">Liberação para recebimentos</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-        <div class="flex items-start gap-3">
-          <i class="pi pi-info-circle text-blue-900 dark:text-blue-300 mt-1"></i>
-          <div>
-            <p class="text-sm font-medium text-blue-900 dark:text-blue-300 mb-1">Dicas importantes:</p>
-            <ul class="text-xs text-blue-800 dark:text-blue-400 space-y-1">
-              <li>• Todos os documentos devem estar atualizados e legíveis</li>
-              <li>• O CNPJ deve estar ativo na Receita Federal</li>
-              <li>• Comprovante de endereço não pode ter mais de 90 dias</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-lg p-6">
-        <h4 class="font-semibold text-primary mb-3 flex items-center gap-2">
-          <i class="pi pi-question-circle text-primary"></i>
-          Precisa de Ajuda?
-        </h4>
-        <p class="text-sm text-secondary mb-4">Nossa equipe está pronta para auxiliar no processo de validação</p>
+      <div class="flex justify-end gap-2">
         <p-button
+          *ngIf="getTipoObservacao() === 'error'"
           label="Falar com Suporte"
           icon="pi pi-comments"
           size="small"
-          class="w-full"
+          severity="danger"
+          [outlined]="true"
           (onClick)="openSupportDialog()"
         ></p-button>
       </div>
     </div>
   </div>
-</div>
+</section>
+
+<section class="flex gap-4">
+  <div class="lg:col-span-2 w-2/3">
+    <div class="bg-card border border-theme rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-primary mb-6 flex items-center gap-2">
+        <i class="pi pi-building text-primary"></i>
+        Dados da Empresa
+      </h3>
+
+      <form [formGroup]="validationForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="space-y-4">
+          <h4 class="text-md font-semibold text-primary flex items-center gap-2">
+            <i class="pi pi-building text-primary"></i>
+            Informações da Empresa
+          </h4>
+
+          <div class="space-y-2">
+            <label for="company_name" class="block text-sm font-medium text-primary">
+              Nome da Empresa <span class="text-red-500">*</span>
+            </label>
+            <input
+              pInputText
+              id="company_name"
+              formControlName="company_name"
+              placeholder="Digite o nome da sua empresa"
+              class="w-full"
+              [class.ng-invalid]="company_name?.invalid && company_name?.touched"
+            />
+            <small *ngIf="company_name?.invalid && company_name?.touched" class="text-red-500 text-xs">
+              Nome da empresa é obrigatório
+            </small>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h4 class="text-md font-semibold text-primary flex items-center gap-2">
+            <i class="pi pi-upload text-primary"></i>
+            Documentos Necessários
+          </h4>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="flex items-center gap-2 p-3 bg-surface border border-theme rounded-lg">
+              <i class="pi pi-file-pdf text-red-900 dark:text-red-400"></i>
+              <span class="text-sm text-secondary">Recibo Bancário</span>
+            </div>
+            <div class="flex items-center gap-2 p-3 bg-surface border border-theme rounded-lg">
+              <i class="pi pi-file-pdf text-red-900 dark:text-red-400"></i>
+              <span class="text-sm text-secondary">Contrato Social</span>
+            </div>
+            <div class="flex items-center gap-2 p-3 bg-surface border border-theme rounded-lg">
+              <i class="pi pi-file-pdf text-red-900 dark:text-red-400"></i>
+              <span class="text-sm text-secondary">Comprovante Endereço</span>
+            </div>
+          </div>
+
+          <!-- Documentos Já Enviados -->
+          <div
+            *ngIf="validacaoUsuario?.documents && (validacaoUsuario?.documents?.length ?? 0) > 0"
+            class="mt-6 p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg"
+          >
+            <h5 class="text-sm font-semibold text-green-900 dark:text-green-300 mb-3 flex items-center gap-2">
+              <i class="pi pi-check-circle"></i>
+              Documentos Enviados ({{ validacaoUsuario?.documents?.length ?? 0 }})
+            </h5>
+            <div class="space-y-2">
+              <div
+                *ngFor="let doc of validacaoUsuario?.documents; let i = index"
+                class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border border-green-200 dark:border-green-800 rounded-lg"
+              >
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                  <div
+                    class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                    [ngClass]="{
+                      'bg-red-100 dark:bg-red-900/30': doc.type === 'application/pdf',
+                      'bg-blue-100 dark:bg-blue-900/30':
+                        doc.type === 'image/jpeg' || doc.type === 'image/jpg' || doc.type === 'image/png',
+                    }"
+                  >
+                    <i *ngIf="doc.type === 'application/pdf'" class="pi pi-file-pdf text-red-600 dark:text-red-400"></i>
+                    <i
+                      *ngIf="doc.type === 'image/jpeg' || doc.type === 'image/jpg' || doc.type === 'image/png'"
+                      class="pi pi-image text-blue-600 dark:text-blue-400"
+                    ></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-primary truncate" [pTooltip]="doc.name" tooltipPosition="top">
+                      {{ doc.name }}
+                    </p>
+                    <p class="text-xs text-secondary">{{ getFileTypeLabel(doc.type) }}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <p-button
+                    icon="pi pi-eye"
+                    [text]="true"
+                    [rounded]="true"
+                    size="small"
+                    severity="success"
+                    pTooltip="Visualizar documento"
+                    tooltipPosition="top"
+                    (onClick)="viewDocument(doc.url)"
+                  ></p-button>
+                  <p-button
+                    icon="pi pi-download"
+                    [text]="true"
+                    [rounded]="true"
+                    size="small"
+                    severity="info"
+                    pTooltip="Baixar documento"
+                    tooltipPosition="top"
+                    (onClick)="downloadDocument(doc.url, doc.name)"
+                  ></p-button>
+                </div>
+              </div>
+            </div>
+            <p class="text-xs text-green-700 dark:text-green-400 mt-3 flex items-center gap-1">
+              <i class="pi pi-info-circle"></i>
+              Você pode enviar novos documentos para substituir os existentes.
+            </p>
+          </div>
+
+          <p-fileUpload
+            #fileUpload
+            id="upload"
+            mode="advanced"
+            [multiple]="true"
+            accept=".pdf,.jpg,.jpeg,.png"
+            [maxFileSize]="5000000"
+            chooseLabel="Escolher Arquivos"
+            cancelLabel="Cancelar"
+            [auto]="false"
+            [customUpload]="true"
+            [showUploadButton]="false"
+            [showCancelButton]="false"
+            (onSelect)="onUpload($event)"
+            (onRemove)="onRemoveFile($event)"
+            class="w-full"
+          >
+            <ng-template pTemplate="content">
+              <div class="p-6 text-center">
+                <i class="pi pi-cloud-upload text-4xl text-primary mb-4 block"></i>
+                <p class="text-secondary mb-2">Arraste e solte os arquivos aqui ou clique para selecionar</p>
+                <p class="text-xs text-secondary">PDF, JPG, PNG até 5MB cada</p>
+              </div>
+            </ng-template>
+          </p-fileUpload>
+        </div>
+
+        <div class="pt-6 border-t border-theme">
+          <p-button
+            type="submit"
+            label="Enviar para Validação"
+            icon="pi pi-send"
+            [loading]="loading"
+            [disabled]="validationForm.invalid || arquivosEnviados.length === 0"
+          ></p-button>
+          <p *ngIf="arquivosEnviados.length === 0" class="text-xs text-secondary mt-2">
+            Por favor, adicione pelo menos um documento antes de enviar
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <section class="w-1/3 flex flex-col gap-4">
+    <div class="bg-card border border-theme rounded-lg p-6">
+      <h4 class="font-semibold text-primary mb-4 flex items-center gap-2">
+        <i class="pi pi-list-check text-primary"></i>
+        Processo de Validação
+      </h4>
+
+      <div class="space-y-4">
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mt-0.5">
+            <i class="pi pi-check text-green-900 dark:text-green-300 text-xs"></i>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-primary">Envio de Documentos</p>
+            <p class="text-xs text-secondary">Upload dos arquivos necessários</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mt-0.5">
+            <span class="text-yellow-900 dark:text-yellow-300 text-xs font-bold">2</span>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-primary">Análise da Equipe</p>
+            <p class="text-xs text-secondary">Verificação em até 2 dias úteis</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mt-0.5">
+            <span class="text-gray-900 dark:text-gray-300 text-xs font-bold">3</span>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-primary">Aprovação</p>
+            <p class="text-xs text-secondary">Liberação para recebimentos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+      <div class="flex items-start gap-3">
+        <i class="pi pi-info-circle text-blue-900 dark:text-blue-300 mt-1"></i>
+        <div>
+          <p class="text-sm font-medium text-blue-900 dark:text-blue-300 mb-1">Dicas importantes:</p>
+          <ul class="text-xs text-blue-800 dark:text-blue-400 space-y-1">
+            <li>• Todos os documentos devem estar atualizados e legíveis</li>
+            <li>• O CNPJ deve estar ativo na Receita Federal</li>
+            <li>• Comprovante de endereço não pode ter mais de 90 dias</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-lg p-6">
+      <h4 class="font-semibold text-primary mb-3 flex items-center gap-2">
+        <i class="pi pi-question-circle text-primary"></i>
+        Precisa de Ajuda?
+      </h4>
+      <p class="text-sm text-secondary mb-4">Nossa equipe está pronta para auxiliar no processo de validação</p>
+      <p-button
+        label="Falar com Suporte"
+        icon="pi pi-comments"
+        size="small"
+        class="w-full"
+        (onClick)="openSupportDialog()"
+      ></p-button>
+    </div>
+  </section>
+</section>
 

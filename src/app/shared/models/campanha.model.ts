@@ -1,6 +1,8 @@
 import { StatusCampanha } from '../enums/StatusCampanha.enum';
 import { AuthUser } from './auth';
-import { UserDonatedModel } from './userDonated.model';
+import { Comentario } from './comentario.model';
+import { Denuncia } from './denuncia.model';
+import { UserDonatedModel } from './user-donated.model';
 
 export interface Campanha {
   campanha_id: string;
@@ -13,7 +15,6 @@ export interface Campanha {
   users_donated: UserDonatedModel[];
   value_required: number;
   value_donated: number;
-  request_emergency: boolean;
   emergency: boolean;
   user_responsable: AuthUser;
   created_at: Date | null;
@@ -22,6 +23,7 @@ export interface Campanha {
   reason_suspension?: string;
   address: Endereco;
   have_address: boolean;
+  comments: Comentario[];
 }
 
 export interface Imagem {
@@ -36,5 +38,17 @@ export interface Endereco {
   state: string;
   zipcode: string;
   neighborhood: string;
+}
+
+export interface DenunciaCampanhaGrouped {
+  campanha_id: string;
+  campanha_title: string;
+  is_suspended?: boolean;
+  total_denuncias: number;
+  denuncias_pendentes: number;
+  denuncias_analisadas: number;
+  denuncias_resolvidas: number;
+  denuncias: Denuncia[];
+  expanded?: boolean;
 }
 

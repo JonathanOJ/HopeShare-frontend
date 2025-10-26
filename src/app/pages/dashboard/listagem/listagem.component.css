@@ -17,12 +17,6 @@
   }
 }
 
-.bg-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
 :host ::ng-deep .p-button.p-button-outlined {
   border: 1px solid var(--surface-border);
   background: transparent;
@@ -43,6 +37,38 @@
   border-radius: 4px;
 }
 
-.bg-surface {
-  background-color: var(--surface-50);
+:host ::ng-deep .p-menu {
+  min-width: 200px;
 }
+
+:host ::ng-deep .p-menu .p-menuitem-link {
+  padding: 0.75rem 1rem;
+  transition: all 0.2s;
+}
+
+:host ::ng-deep .p-menu .p-menuitem-link:hover {
+  background: var(--surface-100);
+}
+
+:host ::ng-deep .p-menu .p-menuitem-icon {
+  color: var(--text-color-secondary);
+  margin-right: 0.75rem;
+}
+
+:host ::ng-deep .p-menu .text-green-600 .p-menuitem-link {
+  color: #16a34a;
+}
+
+:host ::ng-deep .p-menu .text-green-600 .p-menuitem-icon {
+  color: #16a34a;
+}
+
+/* Dark mode */
+:host-context(.dark) ::ng-deep .p-menu .text-green-600 .p-menuitem-link {
+  color: #22c55e;
+}
+
+:host-context(.dark) ::ng-deep .p-menu .text-green-600 .p-menuitem-icon {
+  color: #22c55e;
+}
+

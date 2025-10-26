@@ -1,8 +1,11 @@
-import { Component, OnDestroy, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnDestroy, Input, Output, EventEmitter, inject } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { MenuItem } from 'primeng/api';
 import { SolicitacaoDeposito } from '../../../../../shared/models/solicitacao-deposito.model';
-import { StatusSolicitacaoDeposito } from '../../../../../shared/enums/StatusSolicitacaoDeposito.enum';
+import {
+  StatusSolicitacaoDeposito,
+  StatusSolicitacaoDepositoList,
+} from '../../../../../shared/enums/StatusSolicitacaoDeposito.enum';
 import { StatusCampanha } from '../../../../../shared/enums/StatusCampanha.enum';
 import { CampanhaService } from '../../../../../shared/services/campanha.service';
 import { LoadingService } from '../../../../../shared/services/loading.service';
@@ -14,11 +17,12 @@ import { AuthUser } from '../../../../../shared/models/auth';
   templateUrl: './solicitacoes-deposito.component.html',
   styleUrl: './solicitacoes-deposito.component.css',
 })
-export class SolicitacoesDepositoComponent implements OnInit, OnDestroy, OnChanges {
+export class SolicitacoesDepositoComponent implements OnDestroy {
   @Input() userSession: AuthUser | null = null;
   @Input() solicitacoes: SolicitacaoDeposito[] = [];
   @Input() loading: boolean = false;
   @Output() refresh = new EventEmitter<void>();
+
   selectedSolicitacao: SolicitacaoDeposito | null = null;
   modalDetalhes = false;
   modalAprovar = false;
@@ -35,37 +39,15 @@ export class SolicitacoesDepositoComponent implements OnInit, OnDestroy, OnChang
     { label: 'Processadas', value: StatusSolicitacaoDeposito.PROCESSED },
   ];
 
-  selectedStatus = '';
+  statusDepositList = StatusSolicitacaoDepositoList;
 
-  constructor(
-    private campanhaService: CampanhaService,
-    private loadingService: LoadingService,
-    private messageService: MessageConfirmationService
-  ) {}
-
-  ngOnInit() {
-    // Dados são recebidos via @Input, não precisa carregar aqui
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    // Processa quando os dados são recebidos/alterados
-  }
+  private campanhaService = inject(CampanhaService);
+  private loadingService = inject(LoadingService);
+  private messageService = inject(MessageConfirmationService);
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  getFilteredSolicitacoes() {
-    if (!this.selectedStatus) {
-      return this.solicitacoes;
-    }
-    return this.solicitacoes.filter((s) => s.status === this.selectedStatus);
-  }
-
-  viewDetails(solicitacao: SolicitacaoDeposito) {
-    this.selectedSolicitacao = solicitacao;
-    this.modalDetalhes = true;
   }
 
   openAprovarModal(solicitacao: SolicitacaoDeposito) {
@@ -80,6 +62,32 @@ export class SolicitacoesDepositoComponent implements OnInit, OnDestroy, OnChang
     this.modalRejeitar = true;
   }
 
+  updateStatus(payload: any, msgSuccess: string) {
+    this.campanhaService
+      .updateSolicitacaoDeposito(payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.messageService.showMessage('Sucesso', msgSuccess);
+          this.selectedSolicitacao!.status = payload.new_status;
+          this.selectedSolicitacao!.justification_admin = payload.justification_admin;
+          this.selectedSolicitacao!.updated_at = new Date();
+          this.closeModals();
+        },
+        error: (error) => {
+          const errorMsg = error.error.error || 'Erro ao atualizar status da solicitação.';
+          this.messageService.showError('Erro', errorMsg);
+        },
+      });
+  }
+
+  closeModals() {
+    this.modalAprovar = false;
+    this.modalRejeitar = false;
+    this.selectedSolicitacao = null;
+    this.adminMessage = '';
+  }
+
   aprovarSolicitacao() {
     if (!this.selectedSolicitacao) return;
 
@@ -87,11 +95,14 @@ export class SolicitacoesDepositoComponent implements OnInit, OnDestroy, OnChang
       this.selectedSolicitacao.campanha.status = StatusCampanha.FINISHED;
     }
 
-    this.modalAprovar = false;
-    this.messageService.showMessage('Sucesso', 'Solicitação aprovada com sucesso!');
+    const payload = {
+      new_status: StatusSolicitacaoDeposito.APPROVED,
+      justification_admin: this.adminMessage,
+      request_id: this.selectedSolicitacao.request_id!,
+      user_id: this.userSession!.user_id,
+    };
 
-    // In real implementation, would call backend here:
-    // this.campanhaService.updateSolicitacaoDeposito(this.selectedSolicitacao.id!, StatusSolicitacaoDeposito.APPROVED, this.adminMessage)
+    this.updateStatus(payload, 'Solicitação aprovada com sucesso!');
   }
 
   rejeitarSolicitacao() {
@@ -100,25 +111,27 @@ export class SolicitacoesDepositoComponent implements OnInit, OnDestroy, OnChang
       return;
     }
 
-    // Update local state immediately
-    this.selectedSolicitacao.status = StatusSolicitacaoDeposito.REJECTED;
-    this.selectedSolicitacao.justification_admin = this.adminMessage;
-    this.selectedSolicitacao.updated_at = new Date();
+    const payload = {
+      new_status: StatusSolicitacaoDeposito.REJECTED,
+      justification_admin: this.adminMessage,
+      request_id: this.selectedSolicitacao.request_id!,
+      user_id: this.userSession!.user_id,
+    };
 
-    this.modalRejeitar = false;
-    this.messageService.showMessage('Sucesso', 'Solicitação rejeitada.');
-
-    // In real implementation, would call backend here:
-    // this.campanhaService.updateSolicitacaoDeposito(this.selectedSolicitacao.id!, StatusSolicitacaoDeposito.REJECTED, this.adminMessage)
+    this.updateStatus(payload, 'Solicitação rejeitada com sucesso!');
   }
 
   marcarComoProcessada(solicitacao: SolicitacaoDeposito) {
-    // Update local state immediately
-    solicitacao.status = StatusSolicitacaoDeposito.PROCESSED;
-    this.messageService.showMessage('Sucesso', 'Solicitação marcada como processada!');
+    this.loadingService.start();
 
-    // In real implementation, would call backend here:
-    // this.campanhaService.updateSolicitacaoDeposito(solicitacao.id!, StatusSolicitacaoDeposito.PROCESSED, 'Depósito realizado com sucesso')
+    const payload = {
+      new_status: StatusSolicitacaoDeposito.PROCESSED,
+      justification_admin: 'Depósito realizado com sucesso',
+      request_id: solicitacao.request_id!,
+      user_id: this.userSession!.user_id,
+    };
+
+    this.updateStatus(payload, 'Solicitação processada com sucesso!');
   }
 
   getStatusSeverity(status: StatusSolicitacaoDeposito): 'success' | 'warning' | 'danger' | 'info' {
@@ -137,13 +150,7 @@ export class SolicitacoesDepositoComponent implements OnInit, OnDestroy, OnChang
   }
 
   getActionItems(solicitacao: SolicitacaoDeposito): MenuItem[] {
-    const items: MenuItem[] = [
-      {
-        label: 'Ver Detalhes',
-        icon: 'pi pi-eye',
-        command: () => this.viewDetails(solicitacao),
-      },
-    ];
+    const items: MenuItem[] = [];
 
     if (solicitacao.status === StatusSolicitacaoDeposito.PENDING) {
       items.push(

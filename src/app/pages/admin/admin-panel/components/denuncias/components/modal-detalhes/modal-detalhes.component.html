@@ -1,0 +1,187 @@
+<p-dialog
+  [(visible)]="modalDetalhes"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '1000px' }"
+>
+  <ng-template pTemplate="header">
+    <div class="flex items-center gap-3">
+      <div class="bg-red-100 dark:bg-red-900/30 p-2 rounded-lg flex align-items-center">
+        <i class="pi pi-flag text-red-600 dark:text-red-400 text-xl"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-primary">Detalhes da Denúncia</h3>
+        <p class="text-xs text-secondary">Informações completas da denúncia reportada</p>
+      </div>
+    </div>
+  </ng-template>
+
+  <div *ngIf="selectedDenuncia" class="flex flex-col gap-4">
+    <div
+      class="flex items-center justify-between bg-surface p-3 rounded-lg border-l-4"
+      [ngClass]="{
+        'border-red-500': selectedDenuncia.status === 'PENDING',
+        'border-yellow-500': selectedDenuncia.status === 'ANALYZED',
+        'border-green-500': selectedDenuncia.status === 'RESOLVED',
+      }"
+    >
+      <div class="flex items-center gap-2">
+        <i class="pi pi-info-circle text-secondary"></i>
+        <span class="text-sm font-medium text-secondary">Status atual:</span>
+      </div>
+      <p-tag
+        [value]="selectedDenuncia.status"
+        [severity]="getStatusSeverity(selectedDenuncia.status!)"
+        [style]="{ fontSize: '0.875rem', padding: '0.5rem 1rem' }"
+      ></p-tag>
+    </div>
+
+    <section class="flex gap-2 w-full">
+      <section class="w-1/2 rounded-lg p-4 border border-theme">
+        <div class="flex items-start gap-3 mb-3">
+          <div class="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg flex align-items-center">
+            <i class="pi pi-megaphone text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold text-primary mb-1 flex items-center gap-2">Campanha Denunciada</h4>
+            <p class="text-sm text-secondary">Informações da campanha reportada</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3">
+          <div class="bg-white dark:bg-gray-800 rounded p-3">
+            <div class="flex items-center gap-2 mb-1">
+              <i class="pi pi-bookmark text-blue-600 dark:text-blue-400 text-sm"></i>
+              <span class="text-xs font-medium text-secondary">Título da Campanha</span>
+            </div>
+            <p class="font-semibold text-primary">{{ selectedDenuncia.campanha.title }}</p>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded p-3">
+            <div class="flex items-center gap-2 mb-1">
+              <i class="pi pi-id-card text-blue-600 dark:text-blue-400 text-sm"></i>
+              <span class="text-xs font-medium text-secondary">ID da Campanha</span>
+            </div>
+            <p class="font-mono text-sm text-primary">{{ selectedDenuncia.campanha.campanha_id }}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="w-1/2 rounded-lg p-4 border border-theme">
+        <div class="flex items-start gap-3 mb-3">
+          <div class="bg-purple-600 dark:bg-purple-500 text-white p-2 rounded-lg flex align-items-center">
+            <i class="pi pi-user text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold text-primary mb-1">Denunciante</h4>
+            <p class="text-sm text-secondary">Usuário que reportou a denúncia</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-white dark:bg-gray-800 rounded p-3">
+            <div class="flex items-center gap-2 mb-1">
+              <i class="pi pi-user text-purple-600 dark:text-purple-400 text-sm"></i>
+              <span class="text-xs font-medium text-secondary">Nome</span>
+            </div>
+            <p class="font-semibold text-primary">{{ selectedDenuncia.user.username }}</p>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded p-3">
+            <div class="flex items-center gap-2 mb-1">
+              <i class="pi pi-calendar text-purple-600 dark:text-purple-400 text-sm"></i>
+              <span class="text-xs font-medium text-secondary">Data</span>
+            </div>
+            <p class="font-semibold text-primary text-sm">
+              {{ selectedDenuncia.created_at | date: 'dd/MM/yyyy HH:mm' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded p-3 mt-3">
+          <div class="flex items-center gap-2 mb-1">
+            <i class="pi pi-envelope text-purple-600 dark:text-purple-400 text-sm"></i>
+            <span class="text-xs font-medium text-secondary">E-mail</span>
+          </div>
+          <p class="font-medium text-primary text-sm">{{ selectedDenuncia.user.email }}</p>
+        </div>
+      </section>
+    </section>
+
+    <div class="rounded-lg p-4 border border-theme">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="bg-orange-600 dark:bg-orange-500 text-white p-2 rounded-lg flex align-items-center">
+          <i class="pi pi-exclamation-triangle text-lg"></i>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-bold text-primary mb-1">Detalhes da Denúncia</h4>
+          <p class="text-sm text-secondary">Motivo e descrição fornecidos</p>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 rounded p-3 mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <i class="pi pi-tags text-orange-600 dark:text-orange-400 text-sm"></i>
+          <span class="text-xs font-medium text-secondary">Motivo da Denúncia</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span
+            class="px-3 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 rounded-full text-sm font-medium"
+          >
+            {{ getReasonLabel(selectedDenuncia.reason) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 rounded p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <i class="pi pi-align-left text-orange-600 dark:text-orange-400 text-sm"></i>
+          <span class="text-xs font-medium text-secondary">Descrição Detalhada</span>
+        </div>
+        <div class="bg-surface p-3 rounded border border-theme">
+          <p class="text-sm text-primary leading-relaxed whitespace-pre-wrap">{{ selectedDenuncia.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-surface rounded-lg p-4 border border-theme flex justify-between">
+      <p-button
+        label="Analisar"
+        icon="pi pi-search"
+        severity="warning"
+        size="small"
+        [outlined]="true"
+        (onClick)="updateStatusEvent.emit('ANALYZED'); modalDetalhes = false"
+        [disabled]="selectedDenuncia.status === 'ANALYZED'"
+        class="w-full"
+      ></p-button>
+
+      <p-button
+        label="Resolver"
+        icon="pi pi-check"
+        severity="success"
+        size="small"
+        [outlined]="true"
+        (onClick)="updateStatusEvent.emit('RESOLVED'); modalDetalhes = false"
+        [disabled]="selectedDenuncia.status === 'RESOLVED'"
+        class="w-full"
+      ></p-button>
+
+      <p-button
+        label="Pendente"
+        icon="pi pi-clock"
+        severity="secondary"
+        size="small"
+        [outlined]="true"
+        (onClick)="updateStatusEvent.emit('PENDING'); modalDetalhes = false"
+        [disabled]="selectedDenuncia.status === 'PENDING'"
+        class="w-full"
+      ></p-button>
+
+      <p-button label="Fechar" severity="secondary" [outlined]="true" (onClick)="modalDetalhes = false"></p-button>
+    </div>
+  </div>
+</p-dialog>
+

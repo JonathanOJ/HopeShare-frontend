@@ -3,19 +3,15 @@ import { AuthUser } from './auth';
 
 export interface Denuncia {
   report_id?: string;
-  campanha_id: string;
+  campanha: {
+    campanha_id: string;
+    title: string;
+  };
   reason: string;
   description: string;
   created_at?: Date;
   status?: StatusDenuncia;
   user: AuthUser;
-}
-
-export interface CreateDenunciaRequest {
-  reason: string;
-  description: string;
-  user: AuthUser;
-  campanha_id: string;
 }
 
 export const DenunciaReasons = [

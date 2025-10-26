@@ -24,7 +24,13 @@
     </div>
 
     <div *ngSwitchCase="'Histórico'">
-      <app-historico [userIsCompany]="userIsCompany"></app-historico>
+      <app-historico
+        [userIsCompany]="userIsCompany"
+        [doacoes]="doacoes"
+        [depositos]="depositos"
+        (getDepositosEvent)="getDepositos()"
+        (getDoacoesEvent)="getDoacoes()"
+      ></app-historico>
     </div>
 
     <div *ngSwitchDefault>

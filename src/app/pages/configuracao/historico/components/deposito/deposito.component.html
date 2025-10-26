@@ -1,24 +1,17 @@
 <div class="space-y-6">
-  <div class="flex justify-between items-center">
+  <div class="flex justify-between">
     <div>
       <h3 class="text-lg font-semibold text-primary">Minhas Solicitações de Depósito</h3>
       <p class="text-secondary text-sm">Acompanhe o status das suas solicitações de saque</p>
     </div>
 
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2">
-        <span class="text-sm font-medium text-secondary">Status:</span>
-        <p-dropdown
-          [(ngModel)]="selectedStatus"
-          [options]="statusOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Todas"
-          styleClass="w-40"
-          (onChange)="onStatusChange()"
-        ></p-dropdown>
-      </div>
-    </div>
+    <p-button
+      icon="pi pi-refresh"
+      (onClick)="refresh.emit()"
+      [loading]="loading"
+      [outlined]="true"
+      size="small"
+    ></p-button>
   </div>
 
   <div *ngIf="loading" class="flex justify-center py-8">
@@ -26,7 +19,7 @@
   </div>
 
   <div *ngIf="!loading" class="bg-card rounded-lg shadow overflow-hidden">
-    <div *ngIf="getFilteredDepositos().length === 0" class="p-8 text-center">
+    <div *ngIf="depositos.length === 0" class="p-8 text-center">
       <div class="flex flex-col items-center">
         <i class="pi pi-info-circle text-secondary text-4xl mb-4"></i>
         <p class="text-secondary text-lg mb-2">Nenhuma solicitação encontrada</p>
@@ -34,57 +27,171 @@
       </div>
     </div>
 
-    <div *ngIf="getFilteredDepositos().length > 0" class="overflow-x-auto">
-      <table class="min-w-full">
-        <thead class="bg-surface">
+    <div *ngIf="depositos.length > 0" class="overflow-x-auto">
+      <p-table
+        [value]="depositos"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        styleClass="p-datatable-sm"
+        [paginator]="depositos.length > 10"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} solicitações"
+      >
+        <ng-template pTemplate="header">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Campanha</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-              Valor Solicitado
+            <th pSortableColumn="campanha.title" style="width: 20%">
+              Campanha
+              <p-sortIcon field="campanha.title"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="campanha.title"
+                matchMode="contains"
+                display="menu"
+                [showApplyButton]="false"
+                [hideOnClear]="true"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+            <th pSortableColumn="campanha.value_donated" style="width: 20%">
+              Valor
+              <p-sortIcon field="campanha.value_donated"></p-sortIcon>
+              <p-columnFilter
+                type="numeric"
+                field="campanha.value_donated"
+                matchMode="contains"
+                display="menu"
+                [showApplyButton]="false"
+                [hideOnClear]="true"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
+            </th>
+            <th pSortableColumn="created_at" style="width: 18%">
               Data Solicitação
+              <p-sortIcon field="created_at"></p-sortIcon>
+              <p-columnFilter
+                type="date"
+                field="created_at"
+                display="menu"
+                [showApplyButton]="false"
+                [hideOnClear]="true"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
+            <th pSortableColumn="updated_at" style="width: 18%">
+              Data Atualização
+              <p-sortIcon field="updated_at"></p-sortIcon>
+              <p-columnFilter
+                type="date"
+                field="updated_at"
+                display="menu"
+                [showApplyButton]="false"
+                [hideOnClear]="true"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
+            </th>
+            <th pSortableColumn="status" style="width: 12%">
+              Status
+              <p-sortIcon field="status"></p-sortIcon>
+              <p-columnFilter
+                field="status"
+                matchMode="equals"
+                display="menu"
+                [showApplyButton]="false"
+                [hideOnClear]="true"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              >
+                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                  <p-dropdown
+                    [ngModel]="value"
+                    [options]="statusDepositList"
+                    (onChange)="filter($event.value)"
+                    placeholder="Todos"
+                  >
+                    <ng-template let-option pTemplate="item">
+                      <p-tag [value]="option.value" [severity]="getStatusSeverity(option.value)" />
+                    </ng-template>
+                  </p-dropdown>
+                </ng-template>
+              </p-columnFilter>
+            </th>
+            <th pSortableColumn="justification_admin" style="width: 30%">
               Resposta Admin
+              <p-sortIcon field="justification_admin"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="justification_admin"
+                matchMode="contains"
+                display="menu"
+                [showApplyButton]="false"
+                [hideOnClear]="true"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
             </th>
+            <th></th>
           </tr>
-        </thead>
-        <tbody class="bg-card divide-y border-theme">
-          <tr *ngFor="let deposito of getFilteredDepositos(); let i = index" class="hover:bg-hover">
-            <td class="px-6 py-4 font-medium text-primary">
-              {{ deposito.campanha?.title || deposito.nomeCampanha }}
+        </ng-template>
+
+        <ng-template pTemplate="body" let-deposito>
+          <tr>
+            <td>
+              <div class="font-medium text-primary">{{ deposito.campanha?.title }}</div>
+              <p class="text-sm text-secondary">ID: {{ deposito.campanha?.campanha_id }}</p>
             </td>
-            <td class="px-6 py-4 font-semibold text-green-600">
-              {{ deposito.value_requested || deposito.valor | currency: 'BRL' : 'symbol' : '1.2-2' }}
+            <td>
+              <div class="font-semibold text-green-600">
+                {{ deposito.campanha.value_donated || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
+              </div>
             </td>
-            <td class="px-6 py-4 text-sm text-primary">
-              {{ deposito.created_at || deposito.data | date: 'dd/MM/yyyy' }}
+            <td>
+              <div class="text-sm text-primary">{{ deposito.created_at | date: 'dd/MM/yyyy' }}</div>
             </td>
-            <td class="px-6 py-4">
+            <td>
+              <div class="text-sm text-primary">{{ deposito.updated_at | date: 'dd/MM/yyyy' }}</div>
+            </td>
+            <td>
               <p-tag [value]="deposito.status" [severity]="getStatusSeverity(deposito.status)"></p-tag>
             </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center justify-between">
-                <div class="text-sm text-secondary max-w-xs truncate">
-                  {{ deposito.admin_message || '-' }}
-                </div>
+            <td>
+              <div class="text-sm text-secondary max-w-xs truncate">{{ deposito.justification_admin || '--' }}</div>
+            </td>
+            <td>
+              <p-button
+                icon="pi pi-eye"
+                size="small"
+                severity="secondary"
+                [text]="true"
+                pTooltip="Ver detalhes completos"
+                (onClick)="viewDetails(deposito)"
+                class="ml-2"
+              ></p-button>
+            </td>
+          </tr>
+        </ng-template>
 
-                <p-button
-                  icon="pi pi-eye"
-                  size="small"
-                  severity="secondary"
-                  [text]="true"
-                  pTooltip="Ver detalhes completos"
-                  (onClick)="viewDetails(deposito)"
-                  class="ml-2"
-                ></p-button>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center py-8">
+              <div class="flex flex-col items-center">
+                <i class="pi pi-info-circle text-secondary text-3xl mb-2"></i>
+                <p class="text-secondary">Nenhuma solicitação encontrada</p>
               </div>
             </td>
           </tr>
-        </tbody>
-      </table>
+        </ng-template>
+      </p-table>
     </div>
   </div>
 </div>
@@ -104,7 +211,7 @@
         <div>
           <span class="text-secondary">Título:</span>
           <p class="font-medium text-primary">
-            {{ selectedDeposito.campanha?.title || selectedDeposito.nomeCampanha }}
+            {{ selectedDeposito.campanha?.title || selectedDeposito.campanha?.title }}
           </p>
         </div>
         <div>
@@ -132,13 +239,13 @@
         <div>
           <span class="text-secondary">Valor Solicitado:</span>
           <p class="font-medium text-green-600">
-            {{ selectedDeposito.value_requested || selectedDeposito.valor | currency: 'BRL' : 'symbol' : '1.2-2' }}
+            {{ selectedDeposito.campanha?.value_donated || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
           </p>
         </div>
         <div>
           <span class="text-secondary">Data da Solicitação:</span>
           <p class="font-medium text-primary">
-            {{ selectedDeposito.created_at || selectedDeposito.data | date: 'dd/MM/yyyy' }}
+            {{ selectedDeposito.created_at | date: 'dd/MM/yyyy' }}
           </p>
         </div>
         <div>
@@ -147,16 +254,10 @@
             <p-tag [value]="selectedDeposito.status" [severity]="getStatusSeverity(selectedDeposito.status)"></p-tag>
           </div>
         </div>
-        <div *ngIf="selectedDeposito.request_message || selectedDeposito.observacao">
-          <span class="text-secondary">Mensagem da Solicitação:</span>
-          <p class="mt-1 p-3 bg-card border border-theme rounded text-primary">
-            {{ selectedDeposito.request_message || selectedDeposito.observacao }}
-          </p>
-        </div>
-        <div *ngIf="selectedDeposito.admin_message">
+        <div *ngIf="selectedDeposito.justification_admin">
           <span class="text-secondary">Resposta do Administrador:</span>
           <p class="mt-1 p-3 bg-card border border-theme rounded text-primary">
-            {{ selectedDeposito.admin_message }}
+            {{ selectedDeposito.justification_admin }}
           </p>
         </div>
       </div>

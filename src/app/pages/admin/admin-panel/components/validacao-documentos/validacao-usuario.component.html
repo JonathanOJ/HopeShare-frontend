@@ -1,9 +1,10 @@
 <section class="bg-card border border-theme rounded-lg p-6">
   <div class="flex items-center justify-between mb-6">
     <h3 class="text-lg font-semibold text-primary">Validações Pendentes</h3>
+
     <p-button
       icon="pi pi-refresh"
-      (onClick)="refreshListEmit()"
+      (onClick)="refresh.emit()"
       [loading]="loading"
       [outlined]="true"
       size="small"

@@ -5,20 +5,13 @@
       <p class="text-secondary text-sm">Acompanhe o histórico das suas contribuições</p>
     </div>
 
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2">
-        <span class="text-sm font-medium text-secondary">Status:</span>
-        <p-dropdown
-          [(ngModel)]="selectedStatus"
-          [options]="statusOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Todas"
-          styleClass="w-40"
-          (onChange)="onStatusChange()"
-        ></p-dropdown>
-      </div>
-    </div>
+    <p-button
+      icon="pi pi-refresh"
+      (onClick)="refresh.emit()"
+      [loading]="loading"
+      [outlined]="true"
+      size="small"
+    ></p-button>
   </div>
 
   <div *ngIf="loading" class="flex justify-center py-8">

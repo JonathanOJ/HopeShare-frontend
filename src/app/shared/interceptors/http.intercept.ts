@@ -38,17 +38,6 @@ export class HttpIntercept implements HttpInterceptor {
   }
 
   private handleAuthError(err: HttpErrorResponse): Observable<any> {
-    if (err.status === 403 || err.status === 401) {
-      this.confirmationService.confirm({
-        header: 'Atenção',
-        message: 'Usuário e/ou senha inválidos',
-        icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'OK',
-        rejectVisible: false,
-      });
-      return of();
-    }
-
     if (err.status === 422) {
       this.confirmationService.confirm({
         header: 'Atenção',

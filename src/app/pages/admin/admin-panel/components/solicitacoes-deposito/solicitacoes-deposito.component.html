@@ -5,19 +5,13 @@
       <p class="text-secondary">Gerencie solicitações de saque das campanhas finalizadas</p>
     </div>
 
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2">
-        <span class="text-sm font-medium text-secondary">Status:</span>
-        <p-dropdown
-          [(ngModel)]="selectedStatus"
-          [options]="statusOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Todas"
-          styleClass="w-40"
-        ></p-dropdown>
-      </div>
-    </div>
+    <p-button
+      icon="pi pi-refresh"
+      (onClick)="refresh.emit()"
+      [loading]="loading"
+      [outlined]="true"
+      size="small"
+    ></p-button>
   </div>
 
   <div *ngIf="loading" class="flex justify-center py-8">
@@ -25,7 +19,7 @@
   </div>
 
   <div *ngIf="!loading" class="bg-card rounded-lg shadow overflow-hidden">
-    <div *ngIf="getFilteredSolicitacoes().length === 0" class="p-8 text-center">
+    <div *ngIf="solicitacoes.length === 0" class="p-8 text-center">
       <div class="flex flex-col items-center">
         <i class="pi pi-info-circle text-secondary text-4xl mb-4"></i>
         <p class="text-secondary text-lg mb-2">Nenhuma solicitação encontrada</p>
@@ -33,60 +27,59 @@
       </div>
     </div>
 
-    <div *ngIf="getFilteredSolicitacoes().length > 0" class="overflow-x-auto">
-      <table class="min-w-full">
-        <thead class="bg-surface">
+    <div *ngIf="solicitacoes.length > 0" class="overflow-x-auto">
+      <p-table [value]="solicitacoes" [paginator]="true" [rows]="10" [sortField]="'status'" [sortOrder]="1">
+        <ng-template pTemplate="header">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Campanha</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Solicitante</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-              Valor Solicitado
+            <th pSortableColumn="campanha">Campanha <p-sortIcon field="campanha"></p-sortIcon></th>
+            <th pSortableColumn="solicitante">Solicitante <p-sortIcon field="solicitante"></p-sortIcon></th>
+            <th pSortableColumn="valorSolicitado">
+              Valor Solicitado <p-sortIcon field="valorSolicitado"></p-sortIcon>
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">
-              Data Solicitação
+            <th pSortableColumn="dataSolicitacao">
+              Data Solicitação <p-sortIcon field="dataSolicitacao"></p-sortIcon>
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Ações</th>
+            <th>
+              Status
+              <p-columnFilter
+                field="status"
+                matchMode="equals"
+                display="menu"
+                [showApplyButton]="false"
+                [hideOnClear]="true"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              >
+                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                  <p-dropdown
+                    [ngModel]="value"
+                    [options]="statusDepositList"
+                    (onChange)="filter($event.value)"
+                    placeholder="Todos"
+                  >
+                    <ng-template let-option pTemplate="item">
+                      <p-tag [value]="option.value" [severity]="getStatusSeverity(option.value)" />
+                    </ng-template>
+                  </p-dropdown>
+                </ng-template>
+              </p-columnFilter>
+            </th>
+            <th>Ações</th>
           </tr>
-        </thead>
-        <tbody class="bg-card divide-y border-theme">
-          <tr *ngFor="let solicitacao of getFilteredSolicitacoes(); let i = index" class="hover-surface">
-            <td class="px-6 py-4">
-              <div>
-                <div class="font-medium text-primary">{{ solicitacao.campanha?.title }}</div>
-                <div class="text-xs text-secondary mt-1 opacity-80">
-                  Meta: {{ solicitacao.campanha?.value_required || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }} |
-                  Arrecadado:
-                  {{ solicitacao.campanha?.value_donated || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div>
-                <div class="font-medium text-primary">{{ solicitacao.user?.username }}</div>
-                <div class="text-sm text-secondary">{{ solicitacao.user?.email }}</div>
-              </div>
-            </td>
-            <td class="px-6 py-4 font-semibold text-green-600">
-              {{ solicitacao.campanha?.value_donated | currency: 'BRL' : 'symbol' : '1.2-2' }}
-            </td>
-            <td class="px-6 py-4 text-sm text-primary">
-              {{ solicitacao.created_at | date: 'dd/MM/yyyy' }}
-            </td>
-            <td class="px-6 py-4">
+        </ng-template>
+
+        <ng-template pTemplate="body" let-solicitacao>
+          <tr>
+            <td>{{ solicitacao.campanha?.campanha_id }} - {{ solicitacao.campanha?.title }}</td>
+            <td>{{ solicitacao.user?.username }}</td>
+            <td>{{ solicitacao.campanha?.value_donated | currency: 'BRL' : 'symbol' : '1.2-2' }}</td>
+            <td>{{ solicitacao.created_at | date: 'dd/MM/yyyy' }}</td>
+            <td>
               <p-tag [value]="solicitacao.status" [severity]="getStatusSeverity(solicitacao.status)"></p-tag>
             </td>
-            <td class="px-6 py-4">
+            <td>
               <div class="flex gap-2">
-                <p-button
-                  icon="pi pi-eye"
-                  size="small"
-                  severity="info"
-                  [text]="true"
-                  pTooltip="Ver detalhes"
-                  (onClick)="viewDetails(solicitacao)"
-                ></p-button>
-
                 <p-button
                   *ngIf="solicitacao.status === 'PENDING'"
                   icon="pi pi-check"
@@ -119,94 +112,11 @@
               </div>
             </td>
           </tr>
-        </tbody>
-      </table>
+        </ng-template>
+      </p-table>
     </div>
   </div>
 </section>
-
-<p-dialog
-  [(visible)]="modalDetalhes"
-  [modal]="true"
-  [closable]="true"
-  [draggable]="false"
-  [resizable]="false"
-  header="Detalhes da Solicitação"
-  styleClass="w-full max-w-2xl"
->
-  <div *ngIf="selectedSolicitacao" class="space-y-4">
-    <div class="bg-surface border border-theme rounded-lg p-4">
-      <h4 class="font-semibold text-primary mb-2">Informações da Campanha</h4>
-      <div class="grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <span class="text-secondary">Título:</span>
-          <p class="font-medium text-primary">{{ selectedSolicitacao.campanha?.title }}</p>
-        </div>
-        <div>
-          <span class="text-secondary">Status da Campanha:</span>
-          <p class="font-medium text-primary">{{ selectedSolicitacao.campanha?.status }}</p>
-        </div>
-        <div>
-          <span class="text-secondary">Meta:</span>
-          <p class="font-medium text-primary">
-            {{ selectedSolicitacao.campanha?.value_required || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
-          </p>
-        </div>
-        <div>
-          <span class="text-secondary">Arrecadado:</span>
-          <p class="font-medium text-primary">
-            {{ selectedSolicitacao.campanha?.value_donated || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-surface border border-theme rounded-lg p-4">
-      <h4 class="font-semibold text-primary mb-2">Detalhes da Solicitação</h4>
-      <div class="space-y-3 text-sm">
-        <div>
-          <span class="text-secondary">Solicitante:</span>
-          <p class="font-medium text-primary">{{ selectedSolicitacao.user?.username }}</p>
-        </div>
-        <div>
-          <span class="text-secondary">Valor Solicitado:</span>
-          <p class="font-medium text-green-600">
-            {{ selectedSolicitacao.campanha?.value_donated | currency: 'BRL' : 'symbol' : '1.2-2' }}
-          </p>
-        </div>
-        <div>
-          <span class="text-secondary">Data da Solicitação:</span>
-          <p class="font-medium text-primary">{{ selectedSolicitacao.created_at | date: 'dd/MM/yyyy' }}</p>
-        </div>
-        <div>
-          <span class="text-secondary">Status:</span>
-          <div class="mt-1">
-            <p-tag
-              [value]="selectedSolicitacao.status"
-              [severity]="getStatusSeverity(selectedSolicitacao.status)"
-            ></p-tag>
-          </div>
-        </div>
-        <div *ngIf="selectedSolicitacao.request_message">
-          <span class="text-secondary">Mensagem do Solicitante:</span>
-          <p class="mt-1 p-3 bg-card border border-theme rounded text-primary">
-            {{ selectedSolicitacao.request_message }}
-          </p>
-        </div>
-        <div *ngIf="selectedSolicitacao.justification_admin">
-          <span class="text-secondary">Resposta do Administrador:</span>
-          <p class="mt-1 p-3 bg-card border border-theme rounded text-primary">
-            {{ selectedSolicitacao.justification_admin }}
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex justify-end gap-3 pt-4 border-t border-theme">
-      <p-button label="Fechar" severity="secondary" [text]="true" (onClick)="modalDetalhes = false"></p-button>
-    </div>
-  </div>
-</p-dialog>
 
 <p-dialog
   [(visible)]="modalAprovar"

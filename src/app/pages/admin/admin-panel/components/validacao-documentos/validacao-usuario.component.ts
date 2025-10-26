@@ -35,10 +35,6 @@ export class ValidacaoUsuarioComponent implements OnInit {
     });
   }
 
-  refreshListEmit(): void {
-    this.refresh.emit();
-  }
-
   getBancoDisplay(banco: Banco): string {
     if (!banco) return '';
     return banco.code ? `${banco.code} - ${banco.name}` : banco.name;
@@ -82,7 +78,7 @@ export class ValidacaoUsuarioComponent implements OnInit {
             'Validação Processada',
             `Documentos ${this.decisao?.value === 'APPROVED' ? 'aprovados' : 'rejeitados'} com sucesso!`
           );
-          this.refreshListEmit();
+          this.refresh.emit();
           this.selectedValidation = null;
         },
         error: () => {

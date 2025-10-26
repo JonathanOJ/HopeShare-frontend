@@ -67,7 +67,7 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
         [Validators.required, Validators.minLength(10), Validators.maxLength(500)],
       ],
       new_file_image: [null],
-      request_emergency: [campanha?.request_emergency || false],
+      emergency: [campanha?.emergency || false],
       have_address: [campanha?.have_address || false],
       image: [campanha?.image || null],
 
@@ -109,13 +109,14 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
       .saveCampanha(payload)
       .pipe(takeUntil(this.destroy$), take(1))
       .subscribe({
-        next: (resp: any) => {
+        next: () => {
           this.campanha = null;
           this.router.navigate(['hopeshare/campanha/listagem']);
           this.messageConfirmationService.showMessage('Sucesso', 'Campanha salva com sucesso!');
         },
-        error: () => {
-          this.messageConfirmationService.showError('Erro', 'Erro ao salvar campanha!');
+        error: (error) => {
+          const msgError = error?.error.error || 'Erro ao salvar campanha!';
+          this.messageConfirmationService.showError('Erro', msgError);
         },
       })
       .add(() => {
@@ -130,7 +131,7 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
     formData.append('campanha_id', this.campanha?.campanha_id || '');
     formData.append('title', this.title?.value || '');
     formData.append('description', this.description?.value || '');
-    formData.append('request_emergency', this.request_emergency?.getRawValue());
+    formData.append('emergency', this.emergency?.getRawValue());
     formData.append('have_address', this.have_address?.getRawValue());
     formData.append('value_required', this.value_required?.value || '0');
     formData.append('status', this.campanha?.status || StatusCampanha.ACTIVE);
@@ -222,8 +223,8 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
     return this.campanhaForm?.get('description');
   }
 
-  get request_emergency() {
-    return this.campanhaForm?.get('request_emergency');
+  get emergency() {
+    return this.campanhaForm?.get('emergency');
   }
 
   get have_address() {

@@ -3,9 +3,8 @@ import { AuthUser } from './auth';
 import { StatusSolicitacaoDeposito } from '../enums/StatusSolicitacaoDeposito.enum';
 
 export interface SolicitacaoDeposito {
-  request_id?: string;
+  request_id: string;
   status: StatusSolicitacaoDeposito;
-  request_message?: string;
   justification_admin?: string;
   created_at?: Date;
   updated_at?: Date;
@@ -16,7 +15,6 @@ export interface SolicitacaoDeposito {
 export interface CreateSolicitacaoDepositoRequest {
   campanha: Campanha;
   user: AuthUser;
-  request_message?: string;
 }
 
 export interface UpdateSolicitacaoDepositoRequest {

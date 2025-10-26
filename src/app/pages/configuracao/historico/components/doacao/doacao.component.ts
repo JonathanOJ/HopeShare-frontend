@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { getStatusClass } from '../../../../../shared/utils/get-status-class.utils';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import {
@@ -16,6 +16,8 @@ import { Doacao } from '../../../../../shared/models/doacao.model';
 })
 export class DoacaoComponent implements OnChanges {
   @Input() doacoes: Doacao[] = [];
+
+  @Output() refresh = new EventEmitter<void>();
 
   loading = false;
   selectedDoacao: Doacao | null = null;

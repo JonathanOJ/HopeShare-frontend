@@ -40,13 +40,7 @@
             (click)="getCampanhas()"
             pTooltip="Atualizar Lista"
           />
-          <p-button
-            size="small"
-            label="Clear Filtros"
-            [outlined]="true"
-            icon="pi pi-filter-slash"
-            (click)="clear(dt2)"
-          />
+          <p-button size="small" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
           <p-button size="small" label="Nova Campanha" icon="pi pi-plus" (click)="handleCreateMode()" />
         </div>
       </div>
@@ -184,8 +178,15 @@
           </td>
           <td class="px-6 py-4">
             <div class="flex items-center gap-2">
-              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span class="text-xs font-medium text-green-600">Ativa</span>
+              <div
+                class="w-3 h-3 bg-green-500 rounded-full"
+                [ngClass]="{ 'bg-red-500': campanha.status !== 'ACTIVE' }"
+              ></div>
+              <span
+                class="text-xs font-medium text-green-600"
+                [ngClass]="{ 'text-red-600': campanha.status !== 'ACTIVE' }"
+                >{{ campanha.status }}</span
+              >
             </div>
           </td>
           <td class="px-6 py-4 text-right">

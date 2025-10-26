@@ -108,8 +108,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       case '/hopeshare/relatorio/listagem':
       case '/hopeshare/relatorio/solicitar':
         return 3;
+      case '/hopeshare/configuracao':
+        return 4;
       case '/hopeshare/admin':
-        return this.userSession?.admin ? 4 : 0;
+        return this.userSession?.admin ? 5 : 0;
       default:
         return 0;
     }
@@ -130,6 +132,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.router.navigate([`hopeshare/relatorio/listagem`]);
         break;
       case 4:
+        this.router.navigate([`hopeshare/configuracao`]);
+        break;
+      case 5:
         if (this.userSession?.admin) {
           this.router.navigate([`hopeshare/admin`]);
         }

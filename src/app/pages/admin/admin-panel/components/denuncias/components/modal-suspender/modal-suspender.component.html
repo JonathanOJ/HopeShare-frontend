@@ -1,0 +1,158 @@
+<p-dialog
+  [(visible)]="modalSuspender"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '1000px' }"
+>
+  <ng-template pTemplate="header">
+    <div class="flex items-center gap-3">
+      <div class="bg-red-100 dark:bg-red-900/30 p-2 rounded-lg flex align-items-center">
+        <i class="pi pi-ban text-red-600 dark:text-red-400 text-xl"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-primary">Suspender Campanha</h3>
+        <p class="text-xs text-secondary">Esta ação bloqueará temporariamente a campanha</p>
+      </div>
+    </div>
+  </ng-template>
+
+  <div *ngIf="selectedCampanha" class="flex flex-col gap-4">
+    <div class="border border-theme rounded-lg p-4">
+      <div class="flex items-start gap-3">
+        <div class="bg-yellow-100 dark:bg-yellow-900/40 p-2 rounded-lg flex align-items-center">
+          <i class="pi pi-exclamation-triangle text-yellow-600 dark:text-yellow-400 text-lg"></i>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-semibold text-yellow-800 dark:text-yellow-300 mb-2">Atenção!</h4>
+          <p class="text-sm text-yellow-700 dark:text-yellow-400 mb-3">
+            Você está prestes a suspender a seguinte campanha:
+          </p>
+
+          <div class="bg-white dark:bg-gray-800 rounded-lg p-3 border border-yellow-200 dark:border-yellow-700">
+            <div class="flex items-center gap-2 mb-2">
+              <i class="pi pi-bookmark text-yellow-600 dark:text-yellow-400 text-sm"></i>
+              <span class="text-xs font-medium text-secondary">Título</span>
+            </div>
+            <p class="font-bold text-primary">{{ selectedCampanha.campanha_title }}</p>
+
+            <div class="flex items-center gap-2 mt-3 pt-3 border-t border-yellow-200 dark:border-yellow-700">
+              <i class="pi pi-id-card text-yellow-600 dark:text-yellow-400 text-sm"></i>
+              <span class="text-xs font-medium text-secondary">ID:</span>
+              <span class="font-mono text-xs text-primary">{{ selectedCampanha.campanha_id }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-surface rounded-lg p-4 border border-theme">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="bg-red-100 dark:bg-red-900/30 p-2 rounded-lg flex align-items-center">
+          <i class="pi pi-file-edit text-red-600 dark:text-red-400"></i>
+        </div>
+        <div>
+          <h5 class="text-sm font-semibold text-primary">Motivo da Suspensão</h5>
+          <p class="text-xs text-secondary">Campo obrigatório</p>
+        </div>
+      </div>
+
+      <textarea
+        id="suspensaoReason"
+        [(ngModel)]="suspensaoReason"
+        pInputTextarea
+        rows="5"
+        placeholder="Descreva detalhadamente o motivo da suspensão desta campanha..."
+        class="w-full text-sm"
+        [ngClass]="{
+          'border-red-300 dark:border-red-700': suspensaoReason.trim() === '',
+          'border-green-300 dark:border-green-700': suspensaoReason.trim() !== '',
+        }"
+      ></textarea>
+
+      <div class="flex items-center gap-2 mt-2">
+        <i class="pi pi-info-circle text-blue-500 dark:text-blue-400 text-xs"></i>
+        <small class="text-secondary">
+          Este motivo será registrado no histórico e enviado ao criador da campanha.
+        </small>
+      </div>
+    </div>
+
+    <div class="border border-theme rounded-lg p-4">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="bg-red-100 dark:bg-red-900/40 p-2 rounded-lg flex align-items-center">
+          <i class="pi pi-info-circle text-red-600 dark:text-red-400"></i>
+        </div>
+        <div>
+          <h5 class="text-sm font-bold text-red-800 dark:text-red-300 mb-1">Consequências da Suspensão</h5>
+          <p class="text-xs text-red-700 dark:text-red-400">As seguintes ações serão aplicadas imediatamente:</p>
+        </div>
+      </div>
+
+      <div class="space-y-2 ml-12">
+        <div class="flex items-start gap-2">
+          <i class="pi pi-check-circle text-red-600 dark:text-red-400 text-sm mt-0.5"></i>
+          <p class="text-sm text-red-700 dark:text-red-300">
+            A campanha ficará <strong>invisível</strong> para novos usuários
+          </p>
+        </div>
+        <div class="flex items-start gap-2">
+          <i class="pi pi-check-circle text-red-600 dark:text-red-400 text-sm mt-0.5"></i>
+          <p class="text-sm text-red-700 dark:text-red-300">
+            Doações serão <strong>bloqueadas temporariamente</strong>
+          </p>
+        </div>
+        <div class="flex items-start gap-2">
+          <i class="pi pi-check-circle text-red-600 dark:text-red-400 text-sm mt-0.5"></i>
+          <p class="text-sm text-red-700 dark:text-red-300">
+            O criador da campanha será <strong>notificado por e-mail</strong>
+          </p>
+        </div>
+        <div class="flex items-start gap-2">
+          <i class="pi pi-check-circle text-red-600 dark:text-red-400 text-sm mt-0.5"></i>
+          <p class="text-sm text-red-700 dark:text-red-300">
+            A campanha pode ser <strong>reativada</strong> posteriormente pelo administrador
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center px-2">
+      <span class="text-xs text-secondary">
+        <i class="pi pi-pencil text-xs mr-1"></i>
+        {{ suspensaoReason.length }} caracteres
+      </span>
+      <span
+        class="text-xs font-medium"
+        [ngClass]="{
+          'text-red-500': suspensaoReason.trim() === '',
+          'text-green-500': suspensaoReason.trim() !== '',
+        }"
+      >
+        {{ suspensaoReason.trim() === '' ? 'Motivo obrigatório' : 'Motivo preenchido ✓' }}
+      </span>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-between items-center w-full">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="modalSuspender = false"
+      ></p-button>
+
+      <p-button
+        label="Suspender Campanha"
+        icon="pi pi-ban"
+        severity="danger"
+        (onClick)="suspendCampanha()"
+        [disabled]="!suspensaoReason.trim()"
+        [pTooltip]="!suspensaoReason.trim() ? 'Preencha o motivo da suspensão' : ''"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

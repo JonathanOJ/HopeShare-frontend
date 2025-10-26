@@ -4,7 +4,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div
-        class="bg-blue-50 dark:bg-blue-900/20 rounded-lg shadow-sm p-6 border border-blue-200 dark:border-blue-800 fade-in cursor-pointer hover:shadow-md transition-shadow"
+        class="bg-blue-50 dark:bg-blue-900/40 rounded-lg shadow-sm p-6 border border-blue-200 dark:border-blue-800 fade-in hover:shadow-md transition-shadow"
       >
         <div class="flex items-center justify-between">
           <div>
@@ -19,7 +19,7 @@
       </div>
 
       <div
-        class="bg-green-50 dark:bg-green-900/20 rounded-lg shadow-sm p-6 border border-green-200 dark:border-green-800 fade-in cursor-pointer hover:shadow-md transition-shadow"
+        class="bg-green-50 dark:bg-green-900/40 rounded-lg shadow-sm p-6 border border-green-200 dark:border-green-800 fade-in hover:shadow-md transition-shadow"
       >
         <div class="flex items-center justify-between">
           <div>
@@ -38,7 +38,7 @@
       </div>
 
       <div
-        class="bg-purple-50 dark:bg-purple-900/20 rounded-lg shadow-sm p-6 border border-purple-200 dark:border-purple-800 fade-in cursor-pointer hover:shadow-md transition-shadow"
+        class="bg-purple-50 dark:bg-purple-900/40 rounded-lg shadow-sm p-6 border border-purple-200 dark:border-purple-800 fade-in hover:shadow-md transition-shadow"
       >
         <div class="flex items-center justify-between">
           <div>
@@ -55,7 +55,7 @@
       </div>
 
       <div
-        class="bg-orange-50 dark:bg-orange-900/20 rounded-lg shadow-sm p-6 border border-orange-200 dark:border-orange-800 fade-in cursor-pointer hover:shadow-md transition-shadow"
+        class="bg-orange-50 dark:bg-orange-900/40 rounded-lg shadow-sm p-6 border border-orange-200 dark:border-orange-800 fade-in hover:shadow-md transition-shadow"
       >
         <div class="flex items-center justify-between">
           <div>
@@ -75,10 +75,20 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6" *ngIf="campanhas.length > 0; else noCampanhas">
     <div
-      *ngFor="let campanha of campanhas"
-      class="bg-card rounded-2xl shadow-sm border border-theme p-6 flex flex-col justify-between hover-surface transition-all duration-200"
+      *ngFor="let campanha of campanhas; let i = index"
+      class="bg-card rounded-2xl shadow-sm border border-theme p-6 flex flex-col justify-between hover-surface transition-all duration-200 relative"
     >
-      <div class="flex justify-between items-start mb-4">
+      <button
+        type="button"
+        class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface transition-colors z-10"
+        (click)="selectedCampanha = campanha; menu.toggle($event)"
+      >
+        <i class="pi pi-ellipsis-v text-secondary"></i>
+      </button>
+
+      <p-menu #menu [model]="actionsMenuItems" [popup]="true" appendTo="body"></p-menu>
+
+      <div class="flex justify-between items-start mb-4 pr-8">
         <h3 class="text-lg font-semibold text-primary flex-1 pr-4">{{ campanha.title }}</h3>
         <div class="flex flex-col items-end">
           <span class="text-2xl font-bold text-primary">{{ campanha.progress_percentage | number: '1.0-0' }}%</span>
@@ -104,7 +114,7 @@
       >
       </p-progressBar>
 
-      <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+      <div class="grid grid-cols-2 gap-4 text-sm">
         <div class="text-center p-3 bg-surface rounded-lg border border-theme">
           <p class="text-secondary text-xs mb-1">Meta</p>
           <p class="font-bold text-primary">{{ campanha.value_required | currency: 'BRL' : 'symbol' : '1.0-0' }}</p>
@@ -115,48 +125,6 @@
             {{ campanha?.value_donated ?? 0 | currency: 'BRL' : 'symbol' : '1.0-0' }}
           </p>
         </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 mt-auto">
-        <p-button
-          [outlined]="true"
-          size="small"
-          label="Editar"
-          icon="pi pi-pencil"
-          (click)="onEdit(campanha.campanha_id)"
-          class="w-full"
-        >
-        </p-button>
-
-        <p-button
-          [outlined]="true"
-          size="small"
-          label="Relatório"
-          icon="pi pi-file"
-          (click)="openDialog('relatorio', campanha)"
-          class="w-full"
-        >
-        </p-button>
-
-        <p-button
-          [outlined]="true"
-          size="small"
-          label="Comentários"
-          icon="pi pi-comment"
-          (click)="openDialog('comentarios', campanha)"
-          class="w-full"
-        >
-        </p-button>
-
-        <p-button
-          size="small"
-          label="Solicitar Depósito"
-          severity="success"
-          icon="pi pi-wallet"
-          (click)="openDialog('deposito', campanha)"
-          class="w-full"
-        >
-        </p-button>
       </div>
     </div>
   </div>
@@ -181,25 +149,174 @@
   [closable]="true"
   [dismissableMask]="true"
   [header]="getDialogHeader()"
-  [style]="{ width: '40vw' }"
+  [style]="{ width: '40vw', minWidth: isMobile ? '400px' : '800px' }"
 >
   <ng-container [ngSwitch]="dialog">
-    <div *ngSwitchCase="'relatorio'">
-      <p>
-        📊 Relatório da campanha <strong>{{ selectedCampanha?.title }}</strong>
-      </p>
+    <div *ngSwitchCase="'comentarios'" class="flex flex-col gap-4">
+      <div
+        class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20 border-l-4 border-blue-600 dark:border-blue-400 p-4 rounded-lg shadow-sm"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <mat-icon class="text-blue-600 dark:text-blue-400 text-xl" svgIcon="chat-outline"></mat-icon>
+              <h4 class="font-bold text-lg text-primary">{{ selectedCampanha?.title }}</h4>
+            </div>
+            <p class="text-xs text-secondary line-clamp-2 mb-3">{{ selectedCampanha?.description }}</p>
+
+            <div class="flex items-center gap-4 text-xs">
+              <span
+                class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full font-medium"
+              >
+                <mat-icon class="text-base" svgIcon="message-text-outline"></mat-icon>
+                {{ selectedCampanha?.comments?.length || 0 }} comentário{{
+                  (selectedCampanha?.comments?.length || 0) !== 1 ? 's' : ''
+                }}
+              </span>
+
+              <span class="flex items-center gap-1.5 text-secondary">
+                <mat-icon class="text-base" svgIcon="calendar-outline"></mat-icon>
+                Criada {{ formatCommentDate(selectedCampanha?.created_at!) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3 overflow-y-auto max-h-[50vh]">
+        <div *ngIf="!selectedCampanha?.comments || selectedCampanha?.comments?.length === 0" class="text-center py-8">
+          <mat-icon class="text-secondary text-4xl mb-2" svgIcon="chat-outline"></mat-icon>
+          <p class="text-secondary">Nenhum comentário ainda</p>
+          <p class="text-sm text-secondary">Esta campanha ainda não recebeu comentários.</p>
+        </div>
+
+        <div *ngIf="selectedCampanha && selectedCampanha.comments.length > 0" class="space-y-3">
+          <div
+            *ngFor="let comment of selectedCampanha.comments"
+            class="bg-card border border-theme rounded-lg p-4 hover:shadow-sm transition-shadow"
+          >
+            <div class="flex justify-between items-start mb-3">
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                  @if (comment.user.image) {
+                    <img
+                      [src]="comment.user.image"
+                      [alt]="comment.user.username"
+                      class="w-10 h-10 rounded-full object-cover border-2 border-theme"
+                    />
+                  } @else {
+                    <span
+                      class="w-10 h-10 flex justify-center items-center bg-blue-600 dark:bg-blue-500 text-white rounded-full font-semibold"
+                    >
+                      {{ comment.user.username[0].toUpperCase() || '?' }}
+                    </span>
+                  }
+                </div>
+                <div>
+                  <p class="font-semibold text-sm text-primary">{{ comment.user.username || 'Anônimo' }}</p>
+                  <span class="text-xs text-secondary">{{ formatCommentDate(comment.created_at) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-sm text-secondary whitespace-pre-wrap leading-relaxed">{{ comment.content }}</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div *ngSwitchCase="'comentarios'">
-      <p>
-        💬 Comentários da campanha <strong>{{ selectedCampanha?.title }}</strong>
-      </p>
-    </div>
+    <div *ngSwitchCase="'deposito'" class="flex flex-col gap-4">
+      <div
+        class="bg-gradient-to-r from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/20 border-l-4 border-green-600 dark:border-green-400 p-4 rounded-lg"
+      >
+        <div class="flex items-start gap-3">
+          <div class="bg-green-600 dark:bg-green-500 text-white p-2 rounded-lg">
+            <mat-icon class="text-2xl" svgIcon="cash-multiple"></mat-icon>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold text-base text-primary mb-1">Solicitação de Depósito</h4>
+            <p class="text-sm text-secondary">
+              Você está prestes a solicitar o depósito dos valores arrecadados desta campanha.
+            </p>
+          </div>
+        </div>
+      </div>
 
-    <div *ngSwitchCase="'deposito'">
-      <p>
-        💸 Solicitar depósito da campanha <strong>{{ selectedCampanha?.title }}</strong>
-      </p>
+      <div class="bg-card border border-theme rounded-lg p-4">
+        <h5 class="font-semibold text-sm text-primary mb-3 flex items-center gap-2">
+          <mat-icon class="text-lg" svgIcon="information-outline"></mat-icon>
+          Detalhes da Campanha
+        </h5>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-start pb-3 border-b border-theme">
+            <span class="text-xs text-secondary font-medium">Campanha</span>
+            <span class="text-sm text-primary font-semibold text-right max-w-[60%]">{{ selectedCampanha?.title }}</span>
+          </div>
+
+          <div class="flex justify-between items-center pb-3 border-b border-theme">
+            <span class="text-xs text-secondary font-medium">Meta</span>
+            <span class="text-sm text-primary font-semibold">
+              {{ selectedCampanha?.value_required | currency: 'BRL' : 'symbol' : '1.2-2' }}
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center pb-3 border-b border-theme">
+            <span class="text-xs text-secondary font-medium">Valor Arrecadado</span>
+            <span class="text-sm text-green-600 dark:text-green-400 font-bold">
+              {{ selectedCampanha?.value_donated || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-gradient-to-br from-green-600 to-emerald-600 dark:from-green-700 dark:to-emerald-700 text-white rounded-lg p-4 shadow-md"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium opacity-90 mb-1">Valor a ser depositado</p>
+            <p class="text-2xl font-bold">
+              {{ selectedCampanha?.value_donated || 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
+            </p>
+          </div>
+          <div class="bg-white/20 rounded-full p-3">
+            <mat-icon class="text-3xl" svgIcon="currency-usd"></mat-icon>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+        <div class="flex items-start gap-3">
+          <mat-icon class="text-yellow-600 dark:text-yellow-400 text-xl" svgIcon="alert-circle-outline"></mat-icon>
+          <div class="flex-1">
+            <h6 class="font-semibold text-sm text-yellow-800 dark:text-yellow-300 mb-1">Atenção</h6>
+            <ul class="text-xs text-yellow-700 dark:text-yellow-400 space-y-1 list-disc list-inside">
+              <li>O depósito será processado em até 5 dias úteis</li>
+              <li>Certifique-se de que seus dados bancários estão atualizados</li>
+              <li>Você receberá uma notificação quando o depósito for efetuado</li>
+              <li>Esta ação não pode ser desfeita após confirmação</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between pt-2">
+        <p-button
+          label="Cancelar"
+          [outlined]="true"
+          severity="secondary"
+          icon="pi pi-times"
+          (onClick)="dialogVisible = false"
+        ></p-button>
+
+        <p-button
+          label="Confirmar Solicitação"
+          severity="success"
+          icon="pi pi-check"
+          (onClick)="createSolicitacaoDeposito()"
+        ></p-button>
+      </div>
     </div>
 
     <div *ngSwitchDefault>

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CampanhaService } from '../../../../../../shared/services/campanha.service';
-import { DenunciaReasons, CreateDenunciaRequest } from '../../../../../../shared/models/denuncia.model';
+import { DenunciaReasons } from '../../../../../../shared/models/denuncia.model';
 import { Campanha } from '../../../../../../shared/models/campanha.model';
 import { MessageConfirmationService } from '../../../../../../shared/services/message-confirmation.service';
 import { AuthUser } from '../../../../../../shared/models/auth';
@@ -40,10 +40,13 @@ export class ReportModalComponent implements OnInit {
       reason: this.reason?.value,
       description: this.description?.value,
       user: this.userSession,
-      campanha_id: this.campanha.campanha_id,
-    } as CreateDenunciaRequest;
+      campanha: {
+        campanha_id: this.campanha.campanha_id,
+        title: this.campanha.title,
+      },
+    };
 
-    this.campanhaService.reportCampanha(this.campanha.campanha_id, reportData).subscribe({
+    this.campanhaService.reportCampanha(reportData).subscribe({
       next: () => {
         this.messageService.showMessage('Denúncia', 'Denúncia enviada com sucesso!');
         this.closeModal();

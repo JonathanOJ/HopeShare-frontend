@@ -60,18 +60,18 @@
   <section class="h-fit md:h-[482px] w-full gap-6 flex flex-col-reverse md:flex-row">
     <section class="md:w-[60%] flex flex-col gap-5">
       <div class="flex flex-col gap-1.5">
-        <span class="text-sm text-[#4F4F4F]">Titulo:</span>
-        <span class="w-full p-2 h-fit rounded-lg border-[#E7E7E7] border">{{ campanhaSelected?.title }}</span>
+        <span class="text-sm text-primary">Titulo:</span>
+        <span class="w-full p-2 h-fit rounded-lg border-theme border">{{ campanhaSelected?.title }}</span>
       </div>
       <div class="flex flex-col gap-1.5">
-        <span class="text-sm text-[#4F4F4F]">Categorias:</span>
-        <span class="w-full p-2 h-fit rounded-lg border-[#E7E7E7] border">{{ categoriesFormatted }}</span>
+        <span class="text-sm text-primary">Categorias:</span>
+        <span class="w-full p-2 h-fit rounded-lg border-theme border">{{ categoriesFormatted }}</span>
       </div>
 
       <!-- Localização da campanha -->
       @if (campanhaSelected?.have_address && hasValidAddress()) {
         <div class="flex flex-col gap-1.5">
-          <span class="text-sm text-[#4F4F4F] flex items-center justify-between">
+          <span class="text-sm text-primary flex items-center justify-between">
             <span class="flex items-center">
               <mat-icon class="text-sm mr-1" svgIcon="map-marker-outline"></mat-icon>
               Localização:
@@ -85,7 +85,7 @@
               Ver no Maps
             </button>
           </span>
-          <div class="w-full p-3 rounded-lg border-[#E7E7E7] border bg-blue-50">
+          <div class="w-full p-3 rounded-lg border-theme border bg-blue-50">
             <div class="flex flex-col gap-1 text-sm">
               <span class="font-medium text-blue-800">{{ getFormattedAddress() }}</span>
               <span class="text-blue-600">{{ getCityStateFormatted() }}</span>
@@ -96,32 +96,36 @@
 
       <section class="flex gap-3">
         <div class="flex flex-col gap-1.5 w-1/2">
-          <span class="text-sm text-[#4F4F4F]">Valor solicitador</span>
+          <span class="text-sm text-primary">Valor solicitador</span>
           <span
-            class="w-full font-bold text-[#ec4899] flex items-center justify-center h-[80px] rounded-lg border-[#E7E7E7] border"
+            class="w-full font-bold text-[#ec4899] flex items-center justify-center h-[80px] rounded-lg border-theme border"
           >
             {{ campanhaSelected?.value_required | currency: 'BRL' : 'symbol' : '1.2-2' }}
           </span>
         </div>
         <div class="flex flex-col gap-1.5 w-1/2">
-          <span class="text-sm text-[#4F4F4F]">Valor arrecadado</span>
+          <span class="text-sm text-primary">Valor arrecadado</span>
           <span
-            class="w-full font-bold text-[#ec4899] flex items-center justify-center h-[80px] rounded-lg border-[#E7E7E7] border"
+            class="w-full font-bold text-[#ec4899] flex items-center justify-center h-[80px] rounded-lg border-theme border"
           >
             {{ campanhaSelected?.value_donated ?? 0 | currency: 'BRL' : 'symbol' : '1.2-2' }}
           </span>
         </div>
       </section>
       <div class="flex flex-col gap-1.5 h-full">
-        <span class="text-sm text-[#4F4F4F]">Descrição:</span>
-        <span class="w-full h-full md:max-h-[155px] p-2 h-fit rounded-lg border-[#E7E7E7] border overflow-y-auto">{{
+        <span class="text-sm text-primary">Descrição:</span>
+        <span class="w-full h-full md:max-h-[155px] p-2 h-fit rounded-lg border-theme border overflow-y-auto">{{
           campanhaSelected?.description
         }}</span>
       </div>
     </section>
     <div class="md:w-[40%] h-[200px] md:h-[482px] relative">
-      @if (campanhaSelected?.image) {
-        <img class="h-[200px] md:h-full w-full rounded-3xl" [src]="campanhaSelected?.image" alt="Imagem da campanha" />
+      @if (campanhaSelected?.image?.url) {
+        <img
+          class="h-[200px] md:h-full w-full rounded-3xl"
+          [src]="campanhaSelected?.image?.url"
+          alt="Imagem da campanha"
+        />
       } @else {
         <div class="h-[200px] md:h-full w-full flex items-center justify-center rounded-3xl bg-[#c8c8c8]">
           <mat-icon style="color: gray" svgIcon="camera-off"></mat-icon>

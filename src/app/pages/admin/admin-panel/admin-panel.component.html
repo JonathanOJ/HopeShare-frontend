@@ -1,5 +1,5 @@
 <section class="pt-[88px] px-[5.5dvw] max-w-[1920px] mx-auto gap-4">
-  <div class="bg-card border border-theme rounded-lg p-6">
+  <div class="bg-card border border-theme rounded-lg p-6 mb-3">
     <div class="flex items-center gap-4 mb-4">
       <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
         <i class="pi pi-shield text-primary text-xl"></i>
@@ -54,8 +54,6 @@
     </div>
   </div>
 
-  <!-- Conteúdo das Abas -->
-
   <!-- Aba Validação de Documentos -->
   <div *ngIf="activeTab === 'validacoes'" class="space-y-4">
     <app-validacao-usuario
@@ -70,7 +68,7 @@
   <!-- Aba Denúncias -->
   <div *ngIf="activeTab === 'denuncias'" class="space-y-4">
     <app-denuncias
-      [denuncias]="denuncias"
+      [denunciasGrouped]="denunciasGrouped"
       [loading]="denunciasLoading"
       (refresh)="loadDenuncias()"
       [userSession]="userSession"
