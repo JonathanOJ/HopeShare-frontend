@@ -58,8 +58,9 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private breakpointObserver = inject(BreakpointObserver);
   private messageConfirmationService = inject(MessageConfirmationService);
-  private destroy$ = new Subject();
   private loadingService = inject(LoadingService);
+
+  private destroy$ = new Subject();
 
   ngOnInit(): void {
     this.searchItens();
@@ -96,7 +97,7 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
     this.timeout = setTimeout(() => {
       this.page = 1;
       this.searchItens(true);
-    }, 150);
+    }, 350);
   }
 
   searchItens(bySearch: boolean = false) {

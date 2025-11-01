@@ -16,7 +16,7 @@ export class CampanhaService {
   constructor(private httpClient: HttpClient) {}
 
   searchCampanha(body: any) {
-    return this.httpClient.post(`${this.URL_API}/search`, body);
+    return this.httpClient.post<any>(`${this.URL_API}/search`, body);
   }
 
   findCampanhaById(id: string) {

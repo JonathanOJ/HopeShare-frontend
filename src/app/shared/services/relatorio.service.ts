@@ -15,5 +15,13 @@ export class RelatorioService {
   getRelatoriosByUser(user_id: string): Observable<Relatorio[]> {
     return this.httpClient.get<Relatorio[]>(`${this.URL_API}/${user_id}`);
   }
+
+  gerarRelatorio(campanha_id: string, type: 'CONTABIL' | 'FINANCEIRO'): Observable<Relatorio> {
+    const body = {
+      campanha_id,
+      type,
+    };
+    return this.httpClient.post<Relatorio>(`${this.URL_API}/gerar`, body);
+  }
 }
 

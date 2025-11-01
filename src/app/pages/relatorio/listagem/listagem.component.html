@@ -1,7 +1,48 @@
 <section class="pt-[88px] rounded-2xl px-[5.5dvw] max-w-[1920px] mx-auto">
   <p-card>
     <section class="flex flex-col">
-      <p-button class="self-end" size="small" label="Solicitar Relatório" [outlined]="true"></p-button>
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold text-primary">Listagem de Relatórios</h1>
+        <div class="flex gap-3 item-baseline">
+          <div class="p-fluid">
+            <label for="campanha" class="block text-sm font-medium text-secondary"> Campanha * </label>
+            <p-autoComplete
+              id="campanha"
+              [(ngModel)]="campanhaSelecionada"
+              [suggestions]="campanhas"
+              (completeMethod)="filterCampanhas($event)"
+              optionLabel="title"
+              dataKey="campanha_id"
+              placeholder="Digite o nome ou código da campanha"
+              [dropdown]="true"
+              [delay]="300"
+              [showEmptyMessage]="true"
+              emptyMessage="Nenhuma campanha encontrada"
+            >
+              <ng-template let-campanha pTemplate="item">
+                <div class="font-medium text-primary">{{ campanha.title }}</div>
+                <p class="text-sm text-secondary">ID: {{ campanha.campanha_id }}</p>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+          <p-button
+            label="Gerar Financeiro"
+            icon="pi pi-chart-line"
+            (onClick)="gerarRelatorio('FINANCEIRO')"
+            severity="success"
+            [disabled]="!campanhaSelecionada"
+          ></p-button>
+
+          <p-button
+            label="Gerar Contábil"
+            icon="pi pi-book"
+            (onClick)="gerarRelatorio('CONTABIL')"
+            severity="info"
+            [disabled]="!campanhaSelecionada"
+          ></p-button>
+        </div>
+      </div>
+
       <p-tabView>
         <p-tabPanel header="Financeiro">
           <div *ngIf="relatoriosFinanceiros?.length; else semRelatorioFinanceiro" class="grid gap-6">
