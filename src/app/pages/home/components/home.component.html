@@ -4,7 +4,7 @@
     [ngClass]="[isMobile ? 'h-[680px]' : 'h-[100dvh]', userSession?.user_id ? 'pt-[8%]' : '']"
   >
     <section
-      class="flex flex-col md:flex-row flex-col justify-between md:justify-center md:mb-[100px] mb-0 max-w-[1920px] w-full"
+      class="flex flex-col md:flex-row flex-col justify-between md:justify-center md:mb-[100px] mt-[50px] mb-0 max-w-[1920px] w-full"
       [class]="userSession?.user_id ? 'h-[400px]' : 'h-[700px]'"
     >
       @if (!userSession) {

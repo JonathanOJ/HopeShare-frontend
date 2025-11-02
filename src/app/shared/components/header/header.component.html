@@ -25,8 +25,17 @@
         <p-tabPanel header="Painel Admin"> </p-tabPanel>
       }
     </p-tabView>
-    @if (!userSession) {
-      <div class="flex gap-3">
+
+    <section class="flex items-center gap-2 cursor-pointer">
+      <p-button
+        size="small"
+        [rounded]="true"
+        [outlined]="true"
+        [text]="true"
+        icon="pi pi-palette"
+        (click)="toggleTheme()"
+      />
+      @if (!userSession) {
         <p-button
           size="small"
           [rounded]="true"
@@ -35,17 +44,7 @@
           (click)="redirectTo('login/register')"
         />
         <p-button size="small" [rounded]="true" label="Login" (click)="redirectTo('login')" />
-      </div>
-    } @else {
-      <p-button
-        size="small"
-        [rounded]="true"
-        [outlined]="true"
-        icon="pi pi-palette"
-        (click)="toggleTheme()"
-        [label]="currentTheme === 'light' ? 'Dark' : 'Light'"
-      />
-      <section class="flex items-center gap-2 cursor-pointer">
+      } @else {
         @if (userSession.image) {
           <img
             (click)="menu.toggle($event)"
@@ -63,8 +62,8 @@
         }
 
         <p-menu #menu [model]="settings" [popup]="true" />
-      </section>
-    }
+      }
+    </section>
   </section>
 </header>
 
