@@ -38,10 +38,6 @@ export class CampanhaService {
     return this.httpClient.delete(`${this.URL_API}/${id}`);
   }
 
-  donateCampanha(body: any) {
-    return this.httpClient.post(`${this.URL_API}/donate`, body);
-  }
-
   reportCampanha(reportData: any): Observable<any> {
     return this.httpClient.post(`${this.URL_API}/report`, reportData);
   }

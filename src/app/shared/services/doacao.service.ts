@@ -12,8 +12,8 @@ export class DoacaoService {
 
   constructor(private httpClient: HttpClient) {}
 
-  create(doacao: Doacao): Observable<string> {
-    return this.httpClient.post<string>(`${this.URL_API}/create`, doacao);
+  create(body: any): Observable<string> {
+    return this.httpClient.post<string>(`${this.URL_API}/create`, body);
   }
 
   getUserDonations(user_id: string): Observable<Doacao[]> {
@@ -28,3 +28,4 @@ export class DoacaoService {
     return this.httpClient.post<any>(`${this.URL_API}/refund/${payment_id}`, {});
   }
 }
+

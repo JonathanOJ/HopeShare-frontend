@@ -17,6 +17,10 @@ const routes: Routes = [
     path: 'hopeshare',
     loadChildren: () => import('./pages/pages.module').then((module) => module.PagesModule),
   },
+  {
+    path: 'donation',
+    loadChildren: () => import('./pages/donation/donation.module').then((module) => module.DonationModule),
+  },
 ];
 
 @NgModule({

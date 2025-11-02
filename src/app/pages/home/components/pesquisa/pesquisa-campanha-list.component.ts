@@ -9,6 +9,7 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { MessageConfirmationService } from '../../../../shared/services/message-confirmation.service';
 import { LoadingService } from '../../../../shared/services/loading.service';
 import { StatusCampanha } from '../../../../shared/enums/StatusCampanha.enum';
+import { DoacaoService } from '../../../../shared/services/doacao.service';
 
 @Component({
   selector: 'app-pesquisa-campanha-list',
@@ -18,7 +19,6 @@ import { StatusCampanha } from '../../../../shared/enums/StatusCampanha.enum';
 })
 export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
   @Input() campanhaSelected: Campanha | null = null;
-  @Output() donated: EventEmitter<any> = new EventEmitter();
 
   userSession: AuthUser | null = null;
   showMoreCampanhas: boolean = false;
@@ -59,6 +59,7 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
   private breakpointObserver = inject(BreakpointObserver);
   private messageConfirmationService = inject(MessageConfirmationService);
   private loadingService = inject(LoadingService);
+  private doacaoService = inject(DoacaoService);
 
   private destroy$ = new Subject();
 
@@ -299,18 +300,16 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
 
     const body = {
       campanha_id: this.campanhaSelected!.campanha_id,
-      value: this.valueDonation,
+      user_id: this.userSession!.user_id,
+      amount: this.valueDonation,
     };
 
-    this.camapanhaService
-      .donateCampanha(body)
+    this.doacaoService
+      .create(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          this.campanhaSelected!.value_donated += this.valueDonation;
-          this.searchItens(true);
-          this.donated.emit();
-          this.messageConfirmationService.showMessage('Doação', 'Doação realizada com sucesso!');
+        next: (response: any) => {
+          window.open(response.data.init_point, '_blank');
         },
         error: () => {
           this.messageConfirmationService.showError('Doação', 'Erro ao realizar doação!');

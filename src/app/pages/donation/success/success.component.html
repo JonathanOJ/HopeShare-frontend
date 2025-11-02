@@ -1,0 +1,39 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100 p-4">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 text-center">
+    <div class="mb-6 flex justify-center">
+      <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center animate-bounce">
+        <svg class="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+    </div>
+
+    <h1 class="text-3xl font-bold text-green-600 mb-4">Doação Realizada com Sucesso!</h1>
+
+    <p class="text-gray-600 mb-6 text-lg">Sua doação foi processada com sucesso. Obrigado por fazer a diferença! 💚</p>
+
+    <div class="bg-green-50 rounded-lg p-4 mb-6">
+      <p class="text-sm text-gray-700">Um recibo foi enviado para o seu e-mail com os detalhes da transação.</p>
+    </div>
+
+    <div class="mb-6">
+      <p class="text-sm text-gray-500">
+        Redirecionando em <span class="font-bold text-green-600">{{ countdown }}</span> segundos...
+      </p>
+      <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+        <div
+          class="bg-green-500 h-2 rounded-full transition-all duration-1000"
+          [style.width.%]="(5 - countdown) * 20"
+        ></div>
+      </div>
+    </div>
+
+    <button
+      (click)="goToHome()"
+      class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+    >
+      Voltar para a Página Inicial
+    </button>
+  </div>
+</div>
+
