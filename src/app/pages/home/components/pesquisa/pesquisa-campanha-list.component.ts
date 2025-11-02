@@ -166,15 +166,6 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
   }
 
   onCommentCampanha(campanha: Campanha) {
-    if (!this.userSession) {
-      this.messageConfirmationService.confirmWarning({
-        message: 'Realize o login para continuar com a doação',
-        accept: () => {
-          this.authService.logout();
-        },
-      });
-      return;
-    }
     this.campanhaSelected = campanha;
     this.modalComments = true;
   }
