@@ -97,6 +97,8 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
       value_required: [campanha?.value_required || null, Validators.required],
       custom_value: [null, [Validators.min(1)]],
     });
+
+    this.haveAddressChange();
   }
 
   onSave() {
@@ -210,6 +212,7 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
   }
 
   haveAddressChange() {
+    this.totalSteps = this.have_address?.value ? 5 : 4;
     this.reload = true;
     this.cdr.detectChanges();
     this.reload = false;

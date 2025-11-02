@@ -63,6 +63,8 @@ export class SolicitacoesDepositoComponent implements OnDestroy {
   }
 
   updateStatus(payload: any, msgSuccess: string) {
+    this.loadingService.start();
+
     this.campanhaService
       .updateSolicitacaoDeposito(payload)
       .pipe(takeUntil(this.destroy$))
@@ -78,6 +80,9 @@ export class SolicitacoesDepositoComponent implements OnDestroy {
           const errorMsg = error.error.error || 'Erro ao atualizar status da solicitação.';
           this.messageService.showError('Erro', errorMsg);
         },
+      })
+      .add(() => {
+        this.loadingService.done();
       });
   }
 
@@ -122,11 +127,9 @@ export class SolicitacoesDepositoComponent implements OnDestroy {
   }
 
   marcarComoProcessada(solicitacao: SolicitacaoDeposito) {
-    this.loadingService.start();
-
     const payload = {
       new_status: StatusSolicitacaoDeposito.PROCESSED,
-      justification_admin: 'Depósito realizado com sucesso',
+      justification_admin: 'Depósito realizado com sucesso.',
       request_id: solicitacao.request_id!,
       user_id: this.userSession!.user_id,
     };

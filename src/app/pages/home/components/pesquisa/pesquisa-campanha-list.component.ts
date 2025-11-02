@@ -170,8 +170,6 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
   }
 
   onCommentCampanha(campanha: Campanha) {
-    console.log(campanha);
-    console;
     if (!this.userSession) {
       this.modalLogin = true;
       return;

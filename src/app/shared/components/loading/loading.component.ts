@@ -16,11 +16,9 @@ export class LoadingComponent implements OnInit, OnDestroy {
   constructor(private loadingService: LoadingService) {}
 
   ngOnInit(): void {
-    // Usar subscription para evitar memory leaks
     this.subscriptions.add(
       this.loadingService.getEnableObservable().subscribe((enable: boolean) => {
         this.visible = enable;
-        console.log('Loading visibility changed:', enable); // Debug log
       })
     );
   }

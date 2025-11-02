@@ -25,7 +25,7 @@ export class DoacaoService {
   }
 
   refundDonation(payment_id: string): Observable<any> {
-    return this.httpClient.post<any>(`${this.URL_API}/refund/${payment_id}`, {});
+    return this.httpClient.post<any>(`${this.URL_API}/${payment_id}/refund`, {});
   }
 }
 

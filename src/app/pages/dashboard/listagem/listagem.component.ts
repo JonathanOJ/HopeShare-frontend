@@ -24,6 +24,9 @@ export class ListagemComponent implements OnInit {
   dialogVisible = false;
   selectedCampanha: Campanha | null = null;
 
+  metaGeral: number = 0;
+  metaTotal: number = 0;
+
   isMobile: boolean = window.innerWidth < 768;
 
   actionsMenuItems: MenuItem[] = [
@@ -92,6 +95,9 @@ export class ListagemComponent implements OnInit {
           });
 
           this.animateCounter();
+
+          this.getPercentualTotal();
+          this.getMetaTotal();
         },
         error: () => {
           this.messageConfirmationService.showError('Erro', 'Erro ao carregar campanhas!');
@@ -145,19 +151,18 @@ export class ListagemComponent implements OnInit {
     }, 0);
   }
 
-  getPercentualTotal(): number {
+  getPercentualTotal() {
     const totalArrecadado = this.getTotalArrecadado();
     const metaTotal = this.getMetaTotal();
 
     if (metaTotal > 0) {
-      return parseFloat(((totalArrecadado / metaTotal) * 100).toFixed(1));
+      this.metaGeral = parseFloat(((totalArrecadado / metaTotal) * 100).toFixed(2));
     }
-    return 0;
   }
 
   getCampanhasFinalizadas(): number {
     return this.campanhas.filter((campanha) => {
-      return (campanha.progress_percentage || 0) >= 100;
+      return campanha.status !== StatusCampanha.ACTIVE;
     }).length;
   }
 
@@ -259,7 +264,7 @@ export class ListagemComponent implements OnInit {
   }
 
   redirectToRelatorios(): void {
-    this.router.navigate([`hopeshare/dashboard/relatorios/${this.selectedCampanha?.campanha_id}`]);
+    this.router.navigate([`hopeshare/relatorio/listagem/${this.selectedCampanha?.campanha_id}`]);
   }
 }
 

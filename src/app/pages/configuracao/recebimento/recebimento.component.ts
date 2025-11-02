@@ -61,6 +61,7 @@ export class RecebimentoComponent implements OnChanges, OnDestroy {
       agency: [recebimentoConfig?.agency || '', [Validators.required, Validators.minLength(4)]],
       account_number: [recebimentoConfig?.account_number || '', [Validators.required, Validators.minLength(4)]],
       account_type: [recebimentoConfig?.account_type || 'CORRENTE', Validators.required],
+      pix_key: [recebimentoConfig?.pix_key || ''], // Campo opcional
       cnpj: [{ value: this.user?.cnpj || '', disabled: true }, Validators.required],
       user_id: [this.user?.user_id || '', Validators.required],
     });
@@ -199,6 +200,10 @@ export class RecebimentoComponent implements OnChanges, OnDestroy {
 
   get account_type() {
     return this.recebimentoForm?.get('account_type');
+  }
+
+  get pix_key() {
+    return this.recebimentoForm?.get('pix_key');
   }
 
   get cnpj() {

@@ -7,6 +7,7 @@ export interface Recebimento {
   agency: string;
   account_number: string;
   account_type: 'CORRENTE' | 'POUPANCA' | 'INVESTIMENTO';
+  pix_key?: string; // Campo opcional
   cnpj: string;
   cnpj_verified: boolean;
   created_at?: Date;

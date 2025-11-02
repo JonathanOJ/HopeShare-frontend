@@ -20,16 +20,13 @@ export class SupportDialogComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    console.log('SupportDialogComponent initialized'); // Debug log
     this.supportForm = this.fb.group({
       name: ['', Validators.required],
       subject: ['', Validators.required],
       message: ['', Validators.required],
     });
 
-    // Escuta mudanças de visibilidade
     this.supportDialogService.visible$.pipe(takeUntil(this.destroy$)).subscribe((visible) => {
-      console.log('Support dialog visibility changed:', visible); // Debug log
       this.visible = visible;
       if (visible) {
         this.supportForm.reset();

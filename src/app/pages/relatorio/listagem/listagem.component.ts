@@ -23,6 +23,7 @@ export class ListagemComponent implements OnInit, OnDestroy {
 
   userSession: AuthUser | null = null;
   loading: boolean = false;
+  campanhaIdFromRoute: string | null = null;
 
   private relatorioService = inject(RelatorioService);
   private authService = inject(AuthService);
@@ -36,6 +37,13 @@ export class ListagemComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userSession = this.authService.getAuthResponse();
     this.getRelatorios();
+
+    const urlSegments = this.router.url.split('/');
+    this.campanhaIdFromRoute = urlSegments.length > 4 ? urlSegments[4] : null;
+
+    if (this.campanhaIdFromRoute) {
+      this.filterCampanhas({ query: this.campanhaIdFromRoute });
+    }
   }
 
   ngOnDestroy(): void {
@@ -73,10 +81,13 @@ export class ListagemComponent implements OnInit, OnDestroy {
 
     this.loadingService.start();
     this.relatorioService
-      .gerarRelatorio(this.campanhaSelecionada.campanha_id, type)
+      .gerarRelatorioFinanceiro(this.campanhaSelecionada.campanha_id, type)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (response) => {
+          type === 'CONTABIL' ? this.relatoriosContabeis.push(response) : this.relatoriosFinanceiros.push(response);
+
+          window.open(response.file_url, '_blank');
           this.messageConfirmationService.showMessage('Sucesso', 'Relatório gerado com sucesso!');
         },
         error: (error) => {
@@ -89,14 +100,24 @@ export class ListagemComponent implements OnInit, OnDestroy {
       });
   }
 
-  exportAllReports(format: string) {
-    if (!this.relatoriosFinanceiros.length && !this.relatoriosContabeis.length) {
-      this.messageConfirmationService.showError('Erro', 'Nenhum relatório disponível para exportação.');
-      return;
-    }
-
-    alert(`Exportando todos os relatórios no formato ${format.toUpperCase()}.`);
-    // Implementar a lógica de exportação real aqui
+  deleteRelatorio(relatorio: Relatorio) {
+    this.loadingService.start();
+    this.relatorioService
+      .deleteRelatorio(relatorio.financial_report_id!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.getRelatorios();
+          this.messageConfirmationService.showMessage('Sucesso', 'Relatório deletado com sucesso!');
+        },
+        error: (error) => {
+          const errorMessage = error?.error.error || 'Erro ao deletar relatório.';
+          this.messageConfirmationService.showError('Erro', errorMessage);
+        },
+      })
+      .add(() => {
+        this.loadingService.done();
+      });
   }
 
   filterCampanhas(event: any) {
@@ -116,6 +137,9 @@ export class ListagemComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.campanhas = response.Items;
+          if (this.campanhaIdFromRoute) {
+            this.campanhaSelecionada = this.campanhas.find((c) => c.campanha_id === this.campanhaIdFromRoute) || null;
+          }
         },
         error: (error) => {
           const errorMessage = error?.error.error || 'Erro ao buscar campanhas.';

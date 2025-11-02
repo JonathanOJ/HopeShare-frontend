@@ -5,6 +5,7 @@ import { ListagemComponent } from './listagem/listagem.component';
 const routes: Routes = [
   { path: '', redirectTo: 'listagem', pathMatch: 'full' },
   { path: 'listagem', component: ListagemComponent },
+  { path: 'listagem/:campanha_id', component: ListagemComponent },
 ];
 
 @NgModule({

@@ -2,22 +2,29 @@
   <ng-template pTemplate="header">
     <tr>
       <th>ID</th>
-      <th>Descrição</th>
-      <th>Autor</th>
+      <th>Campanha</th>
       <th>Tipo</th>
-      <th>Data de criação</th>
-      <th></th>
+      <th>Data de Criação</th>
+      <th class="text-center">Ações</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-relatorio>
     <tr>
-      <td>{{ relatorio.relatorioId }}</td>
-      <td>{{ relatorio.description || '-' }}</td>
-      <td>{{ relatorio.autor }}</td>
+      <td>{{ relatorio.financial_report_id }}</td>
+      <td>
+        <div class="font-medium text-primary">{{ relatorio.campanha?.title }}</div>
+        <span class="text-sm text-secondary">ID: {{ relatorio.campanha?.campanha_id }}</span>
+      </td>
       <td>{{ relatorio.type }}</td>
-      <td>{{ relatorio.data | date: 'dd/MM/yyyy' }}</td>
-      <td class="text-right">
+      <td>{{ relatorio.created_at | date: 'dd/MM/yyyy' }}</td>
+      <td class="flex gap-2 justify-center">
         <p-button icon="pi pi-eye" pTooltip="Visualizar relatório" (click)="visualizarRelatorio(relatorio)"></p-button>
+        <p-button
+          icon="pi pi-trash"
+          pTooltip="Deletar relatório"
+          severity="danger"
+          (click)="deletarRelatorio(relatorio)"
+        ></p-button>
       </td>
     </tr>
   </ng-template>

@@ -40,7 +40,7 @@
         </ng-template>
       </p-stepperPanel>
 
-      @if (have_address || campanha?.have_address) {
+      @if (have_address?.value) {
         <p-stepperPanel header="Endereço">
           <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
             <ng-container

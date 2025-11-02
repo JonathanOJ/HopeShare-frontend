@@ -94,6 +94,25 @@
               ></p-dropdown>
             </div>
           </div>
+
+          <div>
+            <label for="pix_key" class="block text-sm font-medium text-secondary flex items-center gap-2">
+              <i class="pi pi-qrcode text-primary"></i>
+              Chave PIX (Opcional)
+            </label>
+            <input
+              id="pix_key"
+              type="text"
+              pInputText
+              formControlName="pix_key"
+              placeholder="Digite sua chave PIX (CPF, CNPJ, E-mail, Telefone ou Chave Aleatória)"
+              class="w-full"
+            />
+            <small class="text-secondary block mt-1">
+              <i class="pi pi-info-circle"></i>
+              Adicione uma chave PIX para facilitar o recebimento de doações
+            </small>
+          </div>
         </div>
 
         <div class="space-y-4 pt-6 border-t border-theme">
@@ -243,6 +262,13 @@
         <div class="flex justify-between">
           <span class="text-secondary">Tipo:</span>
           <span class="font-medium text-primary">{{ getSelectedAccountType() }}</span>
+        </div>
+        <div class="flex justify-between" *ngIf="pix_key?.value">
+          <span class="text-secondary flex items-center gap-1">
+            <i class="pi pi-qrcode"></i>
+            Chave PIX:
+          </span>
+          <span class="font-medium text-primary">{{ pix_key?.value }}</span>
         </div>
         <div class="flex justify-between">
           <span class="text-secondary">CNPJ:</span>

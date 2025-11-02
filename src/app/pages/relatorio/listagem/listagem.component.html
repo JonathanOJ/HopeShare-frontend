@@ -3,28 +3,25 @@
     <section class="flex flex-col">
       <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl font-bold text-primary">Listagem de Relatórios</h1>
-        <div class="flex gap-3 item-baseline">
-          <div class="p-fluid">
-            <label for="campanha" class="block text-sm font-medium text-secondary"> Campanha * </label>
-            <p-autoComplete
-              id="campanha"
-              [(ngModel)]="campanhaSelecionada"
-              [suggestions]="campanhas"
-              (completeMethod)="filterCampanhas($event)"
-              optionLabel="title"
-              dataKey="campanha_id"
-              placeholder="Digite o nome ou código da campanha"
-              [dropdown]="true"
-              [delay]="300"
-              [showEmptyMessage]="true"
-              emptyMessage="Nenhuma campanha encontrada"
-            >
-              <ng-template let-campanha pTemplate="item">
-                <div class="font-medium text-primary">{{ campanha.title }}</div>
-                <p class="text-sm text-secondary">ID: {{ campanha.campanha_id }}</p>
-              </ng-template>
-            </p-autoComplete>
-          </div>
+        <div class="flex gap-3 items-center">
+          <p-autoComplete
+            id="campanha"
+            [(ngModel)]="campanhaSelecionada"
+            [suggestions]="campanhas"
+            (completeMethod)="filterCampanhas($event)"
+            optionLabel="title"
+            dataKey="campanha_id"
+            placeholder="Digite o nome ou código da campanha"
+            [dropdown]="true"
+            [delay]="300"
+            [showEmptyMessage]="true"
+            emptyMessage="Nenhuma campanha encontrada"
+          >
+            <ng-template let-campanha pTemplate="item">
+              <div class="font-medium text-primary">{{ campanha.title }}</div>
+              <p class="text-sm text-secondary">ID: {{ campanha.campanha_id }}</p>
+            </ng-template>
+          </p-autoComplete>
           <p-button
             label="Gerar Financeiro"
             icon="pi pi-chart-line"
@@ -46,7 +43,10 @@
       <p-tabView>
         <p-tabPanel header="Financeiro">
           <div *ngIf="relatoriosFinanceiros?.length; else semRelatorioFinanceiro" class="grid gap-6">
-            <app-financeiro [relatorios]="relatoriosFinanceiros"></app-financeiro>
+            <app-financeiro
+              [relatorios]="relatoriosFinanceiros"
+              (deleteRelatorio)="deleteRelatorio($event)"
+            ></app-financeiro>
           </div>
           <ng-template #semRelatorioFinanceiro>
             <p class="text-center text-gray-500 italic mt-4">Nenhum Relatório Financeiro encontrado.</p>
@@ -55,7 +55,7 @@
 
         <p-tabPanel header="Contábil">
           <div *ngIf="relatoriosContabeis?.length; else semRelatorioContabil" class="grid gap-6">
-            <app-contabil [relatorios]="relatoriosContabeis"></app-contabil>
+            <app-contabil [relatorios]="relatoriosContabeis" (deleteRelatorio)="deleteRelatorio($event)"></app-contabil>
           </div>
           <ng-template #semRelatorioContabil>
             <p class="text-center text-gray-500 italic mt-4">Nenhuma Relatório Contábil encontrada.</p>

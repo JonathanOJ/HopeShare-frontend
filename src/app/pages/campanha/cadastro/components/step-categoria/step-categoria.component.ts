@@ -42,9 +42,8 @@ export class StepCategoriaComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['campanhaForm'] && this.campanhaForm) {
-      console.log('Campanha Form mudou:', this.campanhaForm?.get('category')?.value);
       this.categorysList.forEach((category) => {
-        category.selected = (this.campanhaForm?.get('category')?.value || []).includes(category.value);
+        category.selected = (this.category?.value || []).includes(category.value);
       });
     }
   }
