@@ -169,8 +169,6 @@ export class CommentsModalComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getCommentRestrictionMessage(): string {
-    if (!this.userSession || !this.campanha) return '';
-
     if (!this.canComment()) {
       return 'Você precisa fazer uma doação para esta campanha para poder comentar.';
     }

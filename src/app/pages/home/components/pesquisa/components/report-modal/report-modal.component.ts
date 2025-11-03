@@ -35,6 +35,11 @@ export class ReportModalComponent implements OnInit {
   onSubmit() {
     if (this.reportForm.invalid || !this.campanha) return;
 
+    if (!this.userSession) {
+      this.messageService.showError('Erro', 'Você precisa estar logado para enviar uma denúncia.');
+      return;
+    }
+
     this.loading = true;
     const reportData = {
       reason: this.reason?.value,

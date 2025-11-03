@@ -11,8 +11,8 @@ import { MessageConfirmationService } from '../../services/message-confirmation.
 })
 export class SupportDialogComponent implements OnInit, OnDestroy {
   visible = false;
-  supportForm!: FormGroup;
   loading = false;
+  supportForm!: FormGroup;
 
   private fb = inject(FormBuilder);
   private supportDialogService = inject(SupportDialogService);
@@ -48,16 +48,26 @@ export class SupportDialogComponent implements OnInit, OnDestroy {
       );
       return;
     }
-
     this.loading = true;
-    setTimeout(() => {
-      this.messageConfirmationService.showMessage(
-        'Mensagem Enviada',
-        'Sua mensagem foi enviada com sucesso! Nossa equipe entrará em contato em breve.'
-      );
-      this.loading = false;
-      this.closeDialog();
-    }, 1500);
+    const { name, subject, message } = this.supportForm.value;
+
+    const emailTo = 'jonathan.ojacobovsk@gmail.com';
+    const emailSubject = encodeURIComponent(subject);
+    const emailBody = encodeURIComponent(
+      `Nome: ${name}\n\n${message}\n\n---\nMensagem enviada através do formulário de suporte do HopeShare`
+    );
+
+    const mailtoLink = `mailto:${emailTo}?subject=${emailSubject}&body=${emailBody}`;
+
+    window.location.href = mailtoLink;
+
+    this.messageConfirmationService.showMessage(
+      'Abrindo Cliente de Email',
+      'Seu cliente de email será aberto para enviar a mensagem de suporte.'
+    );
+
+    this.loading = false;
+    this.closeDialog();
   }
 
   closeDialog(): void {

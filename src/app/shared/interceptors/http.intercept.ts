@@ -20,7 +20,7 @@ export class HttpIntercept implements HttpInterceptor {
       headers = headers.set('Content-Type', 'application/json');
     }
 
-    const urlPermittedWithoutLogin = ['/user/save', '/save/login', '/campanha/search', '/assets/mdi.svg'];
+    const urlPermittedWithoutLogin = ['/user/save', '/save/login', '/campanha/search', '/assets/mdi.svg', '/comments'];
 
     const authResponse = this.authService.getAuthResponse();
 

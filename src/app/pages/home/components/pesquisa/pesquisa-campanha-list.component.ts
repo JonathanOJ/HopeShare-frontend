@@ -155,7 +155,7 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
     this.messageConfirmationService.confirmWarning({
       message: 'Realize o login para continuar com a doação',
       accept: () => {
-        this.authService.logout();
+        window.location.replace('/login');
       },
     });
   }
