@@ -53,7 +53,8 @@ export class CampanhaListagemComponent implements OnInit, OnDestroy, AfterViewIn
   private messageConfirmationService = inject(MessageConfirmationService);
 
   ngAfterViewInit(): void {
-    this.isMobile ? this.router.navigate(['hopeshare/home']) : '';
+    if (this.isMobile) {
+    }
   }
 
   ngOnInit(): void {

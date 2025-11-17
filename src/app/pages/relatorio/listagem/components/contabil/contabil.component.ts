@@ -10,6 +10,8 @@ export class ContabilComponent {
   @Input() relatorios: Relatorio[] = [];
   @Output() deleteRelatorio = new EventEmitter<Relatorio>();
 
+  isMobile: boolean = window.innerWidth < 768;
+
   visualizarRelatorio(relatorio: Relatorio) {
     window.open(relatorio.file_url, '_blank');
   }

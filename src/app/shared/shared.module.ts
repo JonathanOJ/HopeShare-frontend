@@ -47,6 +47,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SupportDialogComponent } from './components/support-dialog/support-dialog.component';
 import { TooltipModule } from 'primeng/tooltip';
+import { SidebarModule } from 'primeng/sidebar';
 
 @NgModule({
   declarations: [
@@ -98,6 +99,7 @@ import { TooltipModule } from 'primeng/tooltip';
     AutoCompleteModule,
     RadioButtonModule,
     TooltipModule,
+    SidebarModule,
   ],
   exports: [
     CommonModule,
@@ -147,6 +149,7 @@ import { TooltipModule } from 'primeng/tooltip';
     AutoCompleteModule,
     RadioButtonModule,
     TooltipModule,
+    SidebarModule,
   ],
 })
 export class SharedModule {

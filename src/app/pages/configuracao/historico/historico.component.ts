@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { StatusDoacao } from '../../../shared/enums/StatusDoacao.enum';
 import { Doacao } from '../../../shared/models/doacao.model';
 import { SolicitacaoDeposito } from '../../../shared/models/solicitacao-deposito.model';
 
@@ -12,6 +11,8 @@ export class HistoricoComponent {
   @Input() userIsCompany: boolean = false;
   @Input() depositos: SolicitacaoDeposito[] = [];
   @Input() doacoes: Doacao[] = [];
+
+  isMobile: boolean = window.innerWidth < 768;
 
   @Output() getDepositosEvent = new EventEmitter<void>();
   @Output() getDoacoesEvent = new EventEmitter<void>();

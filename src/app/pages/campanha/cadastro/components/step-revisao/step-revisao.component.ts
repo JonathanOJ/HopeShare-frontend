@@ -40,7 +40,11 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['activeStep'] && this.activeStep === 4) {
+    if (
+      changes['activeStep'] &&
+      ((this.campanhaForm?.get('have_address')?.value && this.activeStep === 4) ||
+        (!this.campanhaForm?.get('have_address')?.value && this.activeStep === 3))
+    ) {
       this.initializeTabs();
       this.getGoogleMapsUrl();
       this.updateImagePreview();

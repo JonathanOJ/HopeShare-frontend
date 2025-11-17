@@ -1,11 +1,12 @@
 <section class="pt-[88px] rounded-2xl px-[5.5dvw] max-w-[1920px] mx-auto">
   <p-card>
     <section class="flex flex-col">
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-2 md:gap-0">
         <h1 class="text-2xl font-bold text-primary">Listagem de Relatórios</h1>
-        <div class="flex gap-3 items-center">
+        <div class="flex gap-3 items-center flex-col md:flex-row w-full">
           <p-autoComplete
             id="campanha"
+            class="w-full"
             [(ngModel)]="campanhaSelecionada"
             [suggestions]="campanhas"
             (completeMethod)="filterCampanhas($event)"
@@ -15,6 +16,7 @@
             [dropdown]="true"
             [delay]="300"
             [showEmptyMessage]="true"
+            styleClass="w-full"
             emptyMessage="Nenhuma campanha encontrada"
           >
             <ng-template let-campanha pTemplate="item">
@@ -22,27 +24,30 @@
               <p class="text-sm text-secondary">ID: {{ campanha.campanha_id }}</p>
             </ng-template>
           </p-autoComplete>
-          <p-button
-            label="Gerar Financeiro"
-            icon="pi pi-chart-line"
-            (onClick)="gerarRelatorio('FINANCEIRO')"
-            severity="success"
-            [disabled]="!campanhaSelecionada"
-          ></p-button>
 
-          <p-button
-            label="Gerar Contábil"
-            icon="pi pi-book"
-            (onClick)="gerarRelatorio('CONTABIL')"
-            severity="info"
-            [disabled]="!campanhaSelecionada"
-          ></p-button>
+          <div class="flex gap-3 items-center justify-center flex-row md:flex-col w-full">
+            <p-button
+              label="Gerar Financeiro"
+              icon="pi pi-chart-line"
+              (onClick)="gerarRelatorio('FINANCEIRO')"
+              severity="success"
+              [disabled]="!campanhaSelecionada"
+            ></p-button>
+
+            <p-button
+              label="Gerar Contábil"
+              icon="pi pi-book"
+              (onClick)="gerarRelatorio('CONTABIL')"
+              severity="info"
+              [disabled]="!campanhaSelecionada"
+            ></p-button>
+          </div>
         </div>
       </div>
 
       <p-tabView>
         <p-tabPanel header="Financeiro">
-          <div *ngIf="relatoriosFinanceiros?.length; else semRelatorioFinanceiro" class="grid gap-6">
+          <div *ngIf="relatoriosFinanceiros.length; else semRelatorioFinanceiro">
             <app-financeiro
               [relatorios]="relatoriosFinanceiros"
               (deleteRelatorio)="deleteRelatorio($event)"
@@ -54,7 +59,7 @@
         </p-tabPanel>
 
         <p-tabPanel header="Contábil">
-          <div *ngIf="relatoriosContabeis?.length; else semRelatorioContabil" class="grid gap-6">
+          <div *ngIf="relatoriosContabeis.length; else semRelatorioContabil">
             <app-contabil [relatorios]="relatoriosContabeis" (deleteRelatorio)="deleteRelatorio($event)"></app-contabil>
           </div>
           <ng-template #semRelatorioContabil>

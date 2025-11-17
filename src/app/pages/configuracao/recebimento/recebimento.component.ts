@@ -45,6 +45,8 @@ export class RecebimentoComponent implements OnChanges, OnDestroy {
     if (changes['recebimentoConfig'] && this.recebimentoConfig) {
       this.initializeForm(this.recebimentoConfig);
       this.updateConfigurationStatus();
+    } else {
+      this.initializeForm();
     }
   }
 
@@ -54,8 +56,6 @@ export class RecebimentoComponent implements OnChanges, OnDestroy {
   }
 
   private initializeForm(recebimentoConfig: Recebimento | null = null): void {
-    if (this.recebimentoForm) return;
-
     this.recebimentoForm = this.fb.group({
       bank: [recebimentoConfig?.bank || null, Validators.required],
       agency: [recebimentoConfig?.agency || '', [Validators.required, Validators.minLength(4)]],
@@ -91,7 +91,7 @@ export class RecebimentoComponent implements OnChanges, OnDestroy {
   }
 
   getSelectedAccountType(): string {
-    const selectedValue = this.recebimentoForm.get('account_type')?.value;
+    const selectedValue = this.account_type?.value;
     const selectedOption = this.tiposConta.find((tipo) => tipo.value === selectedValue);
     return selectedOption?.label || '';
   }

@@ -16,7 +16,8 @@ export class AuthService {
   setAuthResponse(authResponse: AuthUser): void {
     const value = JSON.stringify(authResponse);
     const encrypted = this.encrypt(value);
-    this.cookieService.set(this.cookieName, encrypted);
+
+    this.cookieService.set(this.cookieName, encrypted, { path: '/' });
   }
 
   getAuthResponse(): AuthUser | null {
@@ -45,9 +46,9 @@ export class AuthService {
   }
 
   delete() {
-    this.cookieService.deleteAll(this.cookieName);
+    this.cookieService.delete(this.cookieName, '/');
 
-    window.location.replace('hopeshare/home');
+    window.location.replace('/hopeshare/home');
   }
 
   logout(): void {

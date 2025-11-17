@@ -40,6 +40,8 @@ export class HomeComponent implements OnInit {
     this.handleWindowSize();
 
     this.userSession = this.authService.getAuthResponse() || null;
+
+    console.log('User Session:', this.userSession);
   }
 
   handleWindowSize() {

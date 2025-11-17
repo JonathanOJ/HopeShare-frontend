@@ -1,27 +1,19 @@
-<section class="bg-card border border-theme rounded-lg p-6">
-  <div class="flex justify-between items-center mb-6">
+<section class="bg-card border border-theme rounded-lg p-4 md:p-6">
+  <div class="flex flex-col gap-4 mb-6">
     <div>
-      <h1 class="text-2xl font-bold text-primary">Gerenciar Denúncias</h1>
-      <p class="text-secondary">Gerencie denúncias de campanhas da plataforma</p>
+      <h1 class="text-xl md:text-2xl font-bold text-primary">Gerenciar Denúncias</h1>
+      <p class="text-sm md:text-base text-secondary">Gerencie denúncias de campanhas da plataforma</p>
     </div>
 
-    <div class="flex items-center gap-4">
-      <p-button
-        icon="pi pi-refresh"
-        (onClick)="refresh.emit()"
-        [loading]="loading"
-        [outlined]="true"
-        size="small"
-      ></p-button>
-
-      <div class="relative">
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-content-end">
+      <div class="relative flex-1">
         <i class="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"></i>
         <input
           pInputText
           type="text"
           [(ngModel)]="searchValue"
           placeholder="Pesquisar campanhas..."
-          class="pl-10 pr-4 py-2 bg-card border-theme text-primary w-full sm:w-80"
+          class="pl-10 pr-4 py-2 bg-card border-theme text-primary w-full"
         />
       </div>
 
@@ -31,8 +23,16 @@
         optionLabel="label"
         optionValue="value"
         placeholder="Todas"
-        styleClass="w-44"
+        styleClass="w-full sm:w-44"
       ></p-dropdown>
+
+      <p-button
+        icon="pi pi-refresh"
+        (onClick)="refresh.emit()"
+        [loading]="loading"
+        [outlined]="true"
+        size="small"
+      ></p-button>
     </div>
   </div>
 
@@ -53,207 +53,212 @@
       *ngFor="let campanha of getFilteredCampanhas()"
       class="campanha-card bg-card-highlight rounded-lg shadow overflow-hidden fade-in"
     >
-      <div
-        class="p-6 border-b border-theme flex items-center justify-between cursor-pointer"
-        (click)="toggleCampanhaExpanded(campanha)"
-      >
-        <div class="flex items-center gap-4">
-          <button
-            (click)="toggleCampanhaExpanded(campanha); $event.stopPropagation()"
-            class="p-2 rounded-lg hover-surface transition-colors"
-          >
-            <i [class]="campanha.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" class="text-secondary"></i>
-          </button>
+      <div class="p-4 md:p-6 border-b border-theme cursor-pointer" (click)="toggleCampanhaExpanded(campanha)">
+        <div class="flex flex-col gap-4">
+          <div class="flex items-start gap-3">
+            <button
+              (click)="toggleCampanhaExpanded(campanha); $event.stopPropagation()"
+              class="p-2 rounded-lg hover-surface transition-colors flex-shrink-0"
+            >
+              <i [class]="campanha.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" class="text-secondary"></i>
+            </button>
 
-          <div>
-            <h3 class="text-lg font-semibold text-primary mb-1">{{ campanha.campanha_title }}</h3>
-            <p class="text-sm text-secondary">ID: {{ campanha.campanha_id }}</p>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base md:text-lg font-semibold text-primary mb-1 truncate">
+                {{ campanha.campanha_title }}
+              </h3>
+              <p class="text-xs md:text-sm text-secondary">ID: {{ campanha.campanha_id }}</p>
+            </div>
+
+            <div class="flex-shrink-0">
+              <p-tag
+                [value]="campanha.is_suspended ? 'SUSPENSA' : 'ATIVA'"
+                [severity]="campanha.is_suspended ? 'danger' : 'success'"
+              ></p-tag>
+            </div>
           </div>
 
-          <div class="flex items-center gap-2">
-            <p-tag
-              [value]="campanha.is_suspended ? 'SUSPENSA' : 'ATIVA'"
-              [severity]="campanha.is_suspended ? 'danger' : 'success'"
-            ></p-tag>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+            <div class="grid grid-cols-2 sm:flex sm:items-center gap-3 sm:gap-4 text-sm">
+              <div class="text-center">
+                <div class="font-bold text-base md:text-lg text-primary">{{ campanha.total_denuncias }}</div>
+                <div class="text-xs md:text-sm text-secondary">Total</div>
+              </div>
+              <div class="text-center">
+                <div class="font-bold text-base md:text-lg text-red-600">{{ campanha.denuncias_pendentes }}</div>
+                <div class="text-xs md:text-sm text-secondary">Pendentes</div>
+              </div>
+              <div class="text-center">
+                <div class="font-bold text-base md:text-lg text-yellow-600">{{ campanha.denuncias_analisadas }}</div>
+                <div class="text-xs md:text-sm text-secondary">Analisadas</div>
+              </div>
+              <div class="text-center">
+                <div class="font-bold text-base md:text-lg text-green-600">{{ campanha.denuncias_resolvidas }}</div>
+                <div class="text-xs md:text-sm text-secondary">Resolvidas</div>
+              </div>
+            </div>
+
+            <div class="flex gap-2 justify-center sm:justify-end">
+              <p-button
+                [icon]="campanha.is_suspended ? 'pi pi-play' : 'pi pi-ban'"
+                size="small"
+                [severity]="campanha.is_suspended ? 'success' : 'danger'"
+                [text]="true"
+                [pTooltip]="campanha.is_suspended ? 'Reativar Campanha' : 'Suspender Campanha'"
+                (onClick)="
+                  campanha.is_suspended ? reactivateCampanha(campanha) : openSuspendModal(campanha);
+                  $event.stopPropagation()
+                "
+              ></p-button>
+
+              <p-button
+                icon="pi pi-external-link"
+                size="small"
+                severity="info"
+                [text]="true"
+                pTooltip="Ver Campanha"
+                (onClick)="viewCampanha(campanha); $event.stopPropagation()"
+              ></p-button>
+            </div>
           </div>
         </div>
-
-        <section class="flex items-center gap-3">
-          <div class="flex items-center gap-4 text-sm">
-            <div class="text-center">
-              <div class="font-bold text-lg text-primary">{{ campanha.total_denuncias }}</div>
-              <div class="text-secondary">Total</div>
-            </div>
-            <div class="text-center">
-              <div class="font-bold text-lg text-red-600">{{ campanha.denuncias_pendentes }}</div>
-              <div class="text-secondary">Pendentes</div>
-            </div>
-            <div class="text-center">
-              <div class="font-bold text-lg text-yellow-600">{{ campanha.denuncias_analisadas }}</div>
-              <div class="text-secondary">Analisadas</div>
-            </div>
-            <div class="text-center">
-              <div class="font-bold text-lg text-green-600">{{ campanha.denuncias_resolvidas }}</div>
-              <div class="text-secondary">Resolvidas</div>
-            </div>
-          </div>
-
-          <div class="flex gap-2">
-            <p-button
-              [icon]="campanha.is_suspended ? 'pi pi-play' : 'pi pi-ban'"
-              size="small"
-              [severity]="campanha.is_suspended ? 'success' : 'danger'"
-              [text]="true"
-              [pTooltip]="campanha.is_suspended ? 'Reativar Campanha' : 'Suspender Campanha'"
-              (onClick)="
-                campanha.is_suspended ? reactivateCampanha(campanha) : openSuspendModal(campanha);
-                $event.stopPropagation()
-              "
-            ></p-button>
-
-            <p-button
-              icon="pi pi-external-link"
-              size="small"
-              severity="info"
-              [text]="true"
-              pTooltip="Ver Campanha"
-              (onClick)="viewCampanha(campanha); $event.stopPropagation()"
-            ></p-button>
-          </div>
-        </section>
       </div>
 
-      <div *ngIf="campanha.expanded" class="p-6">
-        <h4 class="text-md font-semibold text-primary mb-4">Denúncias ({{ campanha.denuncias.length }})</h4>
+      <div *ngIf="campanha.expanded" class="p-4 md:p-6">
+        <h4 class="text-sm md:text-md font-semibold text-primary mb-4">Denúncias ({{ campanha.denuncias.length }})</h4>
 
-        <p-table
-          [value]="campanha.denuncias"
-          [tableStyle]="{ 'min-width': '50rem' }"
-          styleClass="p-datatable-sm"
-          [paginator]="campanha.denuncias.length > 10"
-          [rows]="10"
-          [rowsPerPageOptions]="[10, 25, 50]"
-          [showCurrentPageReport]="true"
-          currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} denúncias"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="created_at" style="width: 15%">
-                Data
-                <p-sortIcon field="created_at"></p-sortIcon>
-              </th>
-              <th pSortableColumn="user.username" style="width: 25%">
-                Denunciante
-                <p-sortIcon field="user.username"></p-sortIcon>
-              </th>
-              <th pSortableColumn="reason" style="width: 25%">
-                Motivo
-                <p-sortIcon field="reason"></p-sortIcon>
-              </th>
-              <th pSortableColumn="status" style="width: 15%">
-                Status
-                <p-sortIcon field="status"></p-sortIcon>
-                <p-columnFilter
-                  field="status"
-                  matchMode="equals"
-                  display="menu"
-                  [showApplyButton]="false"
-                  [hideOnClear]="true"
-                  [showMatchModes]="false"
-                  [showOperator]="false"
-                  [showAddButton]="false"
-                >
-                  <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                    <p-dropdown
-                      [ngModel]="value"
-                      [options]="statusDenunciaList"
-                      (onChange)="filter($event.value)"
-                      placeholder="Todos"
-                    >
-                      <ng-template let-option pTemplate="item">
-                        <p-tag [value]="option.value" [severity]="getStatusSeverity(option.value)" />
-                      </ng-template>
-                    </p-dropdown>
-                  </ng-template>
-                </p-columnFilter>
-              </th>
-              <th style="width: 20%" class="text-center">Ações</th>
-            </tr>
-          </ng-template>
+        <div class="overflow-x-auto">
+          <p-table
+            [value]="campanha.denuncias"
+            [tableStyle]="{ 'min-width': '50rem' }"
+            styleClass="p-datatable-sm"
+            [paginator]="campanha.denuncias.length > 10"
+            [rows]="10"
+            [rowsPerPageOptions]="[10, 25, 50]"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} denúncias"
+            [scrollable]="true"
+            scrollDirection="horizontal"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="created_at" style="width: 15%">
+                  Data
+                  <p-sortIcon field="created_at"></p-sortIcon>
+                </th>
+                <th pSortableColumn="user.username" style="width: 25%">
+                  Denunciante
+                  <p-sortIcon field="user.username"></p-sortIcon>
+                </th>
+                <th pSortableColumn="reason" style="width: 25%">
+                  Motivo
+                  <p-sortIcon field="reason"></p-sortIcon>
+                </th>
+                <th pSortableColumn="status" style="width: 15%">
+                  Status
+                  <p-sortIcon field="status"></p-sortIcon>
+                  <p-columnFilter
+                    field="status"
+                    matchMode="equals"
+                    display="menu"
+                    [showApplyButton]="false"
+                    [hideOnClear]="true"
+                    [showMatchModes]="false"
+                    [showOperator]="false"
+                    [showAddButton]="false"
+                  >
+                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                      <p-dropdown
+                        [ngModel]="value"
+                        [options]="statusDenunciaList"
+                        (onChange)="filter($event.value)"
+                        placeholder="Todos"
+                      >
+                        <ng-template let-option pTemplate="item">
+                          <p-tag [value]="option.value" [severity]="getStatusSeverity(option.value)" />
+                        </ng-template>
+                      </p-dropdown>
+                    </ng-template>
+                  </p-columnFilter>
+                </th>
+                <th style="width: 20%" class="text-center">Ações</th>
+              </tr>
+            </ng-template>
 
-          <ng-template pTemplate="body" let-denuncia>
-            <tr>
-              <td>
-                <span class="text-sm text-primary">{{ denuncia.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
-              </td>
-              <td>
-                <div>
-                  <div class="font-medium text-primary">{{ denuncia.user.username }}</div>
-                  <div class="text-sm text-secondary">{{ denuncia.user.email }}</div>
-                </div>
-              </td>
-              <td>
-                <span class="text-sm text-secondary">{{ getReasonLabel(denuncia.reason) }}</span>
-              </td>
-              <td>
-                <p-tag [value]="denuncia.status" [severity]="getStatusSeverity(denuncia.status!)"></p-tag>
-              </td>
-              <td>
-                <div class="flex gap-2 justify-center">
-                  <p-button
-                    icon="pi pi-eye"
-                    size="small"
-                    severity="info"
-                    [text]="true"
-                    pTooltip="Ver detalhes"
-                    (onClick)="viewDetails(denuncia)"
-                  ></p-button>
+            <ng-template pTemplate="body" let-denuncia>
+              <tr>
+                <td>
+                  <span class="text-sm text-primary">{{ denuncia.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </td>
+                <td>
+                  <div>
+                    <div class="font-medium text-primary">{{ denuncia.user.username }}</div>
+                    <div class="text-sm text-secondary">{{ denuncia.user.email }}</div>
+                  </div>
+                </td>
+                <td>
+                  <span class="text-sm text-secondary">{{ getReasonLabel(denuncia.reason) }}</span>
+                </td>
+                <td>
+                  <p-tag [value]="denuncia.status" [severity]="getStatusSeverity(denuncia.status!)"></p-tag>
+                </td>
+                <td>
+                  <div class="flex gap-2 justify-center">
+                    <p-button
+                      icon="pi pi-eye"
+                      size="small"
+                      severity="info"
+                      [text]="true"
+                      pTooltip="Ver detalhes"
+                      (onClick)="viewDetails(denuncia)"
+                    ></p-button>
 
-                  <p-button
-                    icon="pi pi-search"
-                    size="small"
-                    severity="warning"
-                    [text]="true"
-                    pTooltip="Marcar como Analisada"
-                    (onClick)="updateStatus(denuncia, 'ANALYZED')"
-                    [disabled]="denuncia.status === 'ANALYZED'"
-                  ></p-button>
+                    <p-button
+                      icon="pi pi-search"
+                      size="small"
+                      severity="warning"
+                      [text]="true"
+                      pTooltip="Marcar como Analisada"
+                      (onClick)="updateStatus(denuncia, 'ANALYZED')"
+                      [disabled]="denuncia.status === 'ANALYZED'"
+                    ></p-button>
 
-                  <p-button
-                    icon="pi pi-check"
-                    size="small"
-                    severity="success"
-                    [text]="true"
-                    pTooltip="Marcar como Resolvida"
-                    (onClick)="updateStatus(denuncia, 'RESOLVED')"
-                    [disabled]="denuncia.status === 'RESOLVED'"
-                  ></p-button>
+                    <p-button
+                      icon="pi pi-check"
+                      size="small"
+                      severity="success"
+                      [text]="true"
+                      pTooltip="Marcar como Resolvida"
+                      (onClick)="updateStatus(denuncia, 'RESOLVED')"
+                      [disabled]="denuncia.status === 'RESOLVED'"
+                    ></p-button>
 
-                  <p-button
-                    icon="pi pi-clock"
-                    size="small"
-                    severity="secondary"
-                    [text]="true"
-                    pTooltip="Marcar como Pendente"
-                    (onClick)="updateStatus(denuncia, 'PENDING')"
-                    [disabled]="denuncia.status === 'PENDING'"
-                  ></p-button>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
+                    <p-button
+                      icon="pi pi-clock"
+                      size="small"
+                      severity="secondary"
+                      [text]="true"
+                      pTooltip="Marcar como Pendente"
+                      (onClick)="updateStatus(denuncia, 'PENDING')"
+                      [disabled]="denuncia.status === 'PENDING'"
+                    ></p-button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
 
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="5" class="text-center py-8">
-                <div class="flex flex-col items-center">
-                  <i class="pi pi-info-circle text-secondary text-3xl mb-2"></i>
-                  <p class="text-secondary">Nenhuma denúncia encontrada</p>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="text-center py-8">
+                  <div class="flex flex-col items-center">
+                    <i class="pi pi-info-circle text-secondary text-3xl mb-2"></i>
+                    <p class="text-secondary">Nenhuma denúncia encontrada</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </div>
     </section>
   </section>

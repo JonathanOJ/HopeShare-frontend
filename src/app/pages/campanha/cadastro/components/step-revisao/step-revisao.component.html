@@ -23,15 +23,15 @@
     <p-tabMenu [model]="tabItems" [(activeItem)]="activeTab"> </p-tabMenu>
     <div class="pt-6">
       <ng-container *ngIf="activeTab?.label === 'Resumo'">
-        <div class="flex flex-col min-h-[600px] p-6 gap-6">
+        <div class="overflow-y-auto flex-col min-h-[600px] p-4 md:p-6 gap-6">
           <div class="flex flex-col gap-2">
             <h1 class="text-xl text-primary font-bold">Falta pouco...</h1>
             <span class="text-secondary max-w-[400px]"
               >Revise sua campanha, veja se está como você gostaria antes de publicá-la para todos.</span
             >
           </div>
-          <section class="h-[482px] w-full gap-6 flex flex-row">
-            <section class="w-[60%] flex flex-col gap-5">
+          <section class="h-[482px] w-full gap-6 flex flex-col md:flex-row">
+            <section class="w-full md:w-[60%] flex flex-col gap-5">
               <section class="flex gap-2 items-end justify-between">
                 <div class="flex flex-col gap-1.5 w-full">
                   <span class="text-sm text-secondary font-medium">Título</span>
@@ -83,7 +83,7 @@
                 ></textarea>
               </div>
             </section>
-            <div class="w-[40%] h-[482px]">
+            <div class="w-full md:w-[40%] h-[482px]">
               @if (imagePreviewUrl) {
                 <img
                   class="h-full w-full rounded-3xl border border-theme object-cover"
@@ -100,13 +100,13 @@
         </div>
       </ng-container>
       <ng-container *ngIf="activeTab?.label === 'Endereço'">
-        <div class="flex flex-col min-h-[600px] p-6 gap-6">
+        <div class="overflow-y-auto flex flex-col min-h-[600px] p-4 md:p-6 gap-6">
           <div class="flex flex-col gap-2">
             <h1 class="text-xl text-primary font-bold">Endereço</h1>
             <span class="text-secondary max-w-[400px]">Confira os dados do endereço da campanha.</span>
           </div>
-          <section class="h-[482px] gap-6 flex flex-row">
-            <section class="w-1/2 gap-2 flex flex-col">
+          <section class="h-[482px] gap-6 flex flex-col md:flex-row">
+            <section class="w-full md:w-1/2 gap-2 flex flex-col">
               <section class="flex gap-2 justify-between">
                 <div class="flex flex-col gap-1.5 w-full">
                   <span class="text-sm text-secondary font-medium">Rua</span>
@@ -145,7 +145,7 @@
               </section>
             </section>
 
-            <section class="w-1/2 flex flex-col gap-2">
+            <section class="w-full md:w-1/2 flex flex-col gap-2">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-secondary font-medium">Localização no Mapa</span>
                 <a
@@ -185,7 +185,7 @@
           </section>
         </div>
       </ng-container>
-      <section class="flex justify-between items-center pt-4 border-t border-theme">
+      <section class="flex justify-between items-center pt-4 border-t border-theme mb-3">
         <p-button label="Cancelar" severity="secondary" [outlined]="true" iconPos="right" (onClick)="onCancel.emit()" />
         <div class="flex justify-end gap-2">
           <p-button

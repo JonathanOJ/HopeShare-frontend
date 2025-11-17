@@ -1,7 +1,7 @@
 <section class="rounded-2xl shadow-lg w-full rounded-t-none bg-card border border-theme">
   <p-tabView>
     <p-tabPanel header="Depósitos" *ngIf="userIsCompany">
-      <div *ngIf="depositos?.length; else semDepositos" class="grid gap-6">
+      <div *ngIf="depositos.length; else semDepositos">
         <app-deposito [depositos]="depositos" (refresh)="getDepositosEvent.emit()"></app-deposito>
       </div>
       <ng-template #semDepositos>
@@ -10,7 +10,7 @@
     </p-tabPanel>
 
     <p-tabPanel header="Doações">
-      <div *ngIf="doacoes?.length; else semDoacoes" class="grid gap-6">
+      <div *ngIf="doacoes.length; else semDoacoes">
         <app-doacao [doacoes]="doacoes" (refresh)="getDoacoesEvent.emit()"></app-doacao>
       </div>
       <ng-template #semDoacoes>

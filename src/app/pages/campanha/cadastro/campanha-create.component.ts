@@ -21,6 +21,7 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
   totalSteps: number = 5;
   loading: boolean = false;
   reload: boolean = false;
+  isMobile: boolean = window.innerWidth < 768;
 
   campanhaForm!: FormGroup;
 
@@ -72,22 +73,22 @@ export class CampanhaCreateComponent implements OnDestroy, OnInit {
       image: [campanha?.image || null],
 
       // Endereço
-      zipcode: [campanha?.address.zipcode || '', [Validators.required, Validators.pattern(/^\d{5}-\d{3}$/)]],
+      zipcode: [campanha?.address?.zipcode || '', [Validators.required, Validators.pattern(/^\d{5}-\d{3}$/)]],
       street: [
-        campanha?.address.street || '',
+        campanha?.address?.street || '',
         [Validators.required, Validators.minLength(3), Validators.maxLength(100)],
       ],
       number: [
-        campanha?.address.number || '',
+        campanha?.address?.number || '',
         [Validators.required, Validators.minLength(1), Validators.maxLength(10)],
       ],
-      complement: [campanha?.address.complement || '', [Validators.maxLength(50)]],
+      complement: [campanha?.address?.complement || '', [Validators.maxLength(50)]],
       neighborhood: [
-        campanha?.address.neighborhood || '',
+        campanha?.address?.neighborhood || '',
         [Validators.required, Validators.minLength(2), Validators.maxLength(50)],
       ],
-      city: [campanha?.address.city || '', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      state: [campanha?.address.state || '', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      city: [campanha?.address?.city || '', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      state: [campanha?.address?.state || '', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
 
       // Categoria
       category: [campanha?.category || [], [Validators.required]],

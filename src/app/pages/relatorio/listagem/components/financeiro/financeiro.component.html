@@ -1,4 +1,8 @@
-<p-table [value]="relatorios" class="shadow-lg rounded-lg overflow-hidden">
+<p-table
+  [value]="relatorios"
+  class="shadow-lg rounded-lg overflow-hidden"
+  [styleClass]="isMobile ? 'p-datatable-sm' : ''"
+>
   <ng-template pTemplate="header">
     <tr>
       <th>ID</th>
@@ -12,7 +16,9 @@
     <tr>
       <td>{{ relatorio.financial_report_id }}</td>
       <td>
-        <div class="font-medium text-primary">{{ relatorio.campanha?.title }}</div>
+        <div class="font-medium text-primary max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+          {{ relatorio.campanha?.title }}
+        </div>
         <span class="text-sm text-secondary">ID: {{ relatorio.campanha?.campanha_id }}</span>
       </td>
       <td>{{ relatorio.type }}</td>

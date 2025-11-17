@@ -16,8 +16,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   activeIndex: number = 0;
   userSession: AuthUser | null = null;
   currentTheme: Theme = 'light';
+  sidebarVisible: boolean = false;
 
   settings: MenuItem[] | undefined;
+  menuItems: MenuItem[] = [];
 
   private auth = inject(AuthService);
   private router = inject(Router);
@@ -81,6 +83,75 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ];
   }
 
+  buildMenuItems(): void {
+    this.menuItems = [
+      {
+        label: 'Home',
+        icon: 'pi pi-home',
+        command: () => {
+          this.navigateToTab(0);
+        },
+      },
+    ];
+
+    if (this.userSession?.type_user === 1 || this.userSession?.admin) {
+      this.menuItems.push({
+        label: 'Meus posts',
+        icon: 'pi pi-list',
+        command: () => {
+          this.navigateToTab(1);
+        },
+      });
+      this.menuItems.push({
+        label: 'Dashboard',
+        icon: 'pi pi-chart-line',
+        command: () => {
+          this.navigateToTab(2);
+        },
+      });
+      this.menuItems.push({
+        label: 'Relatórios',
+        icon: 'pi pi-file',
+        command: () => {
+          this.navigateToTab(3);
+        },
+      });
+      this.menuItems.push({
+        label: 'Configurações',
+        icon: 'pi pi-cog',
+        command: () => {
+          this.navigateToTab(4);
+        },
+      });
+    }
+
+    if (this.userSession?.admin) {
+      this.menuItems.push({
+        label: 'Painel Admin',
+        icon: 'pi pi-shield',
+        command: () => {
+          this.navigateToTab(5);
+        },
+      });
+    }
+  }
+
+  toggleSidebar(): void {
+    this.sidebarVisible = !this.sidebarVisible;
+  }
+
+  navigateToTab(index: number): void {
+    this.activeIndex = index;
+    this.tabChange();
+    this.sidebarVisible = false;
+  }
+
+  executeMenuCommand(item: MenuItem): void {
+    if (item.command) {
+      item.command({} as any);
+    }
+  }
+
   private getUserSessionAndSetupRouter(): void {
     this.userSession = this.auth.getAuthResponse() || null;
 
@@ -89,6 +160,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe((event) => {
         this.activeIndex = this.getActiveIndex(event.urlAfterRedirects);
       });
+
+    this.buildMenuItems();
   }
 
   ngOnDestroy(): void {

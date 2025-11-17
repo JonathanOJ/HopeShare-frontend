@@ -5,7 +5,11 @@
   </div>
 
   <div class="bg-card rounded-2xl shadow-sm border border-theme overflow-hidden">
-    <p-stepper [(activeStep)]="activeStep" styleClass="bg-transparent">
+    <p-stepper
+      [(activeStep)]="activeStep"
+      styleClass="bg-transparent"
+      [orientation]="isMobile ? 'vertical' : 'horizontal'"
+    >
       <p-stepperPanel header="Categoria da campanha">
         <ng-template pTemplate="header" let-onClick="onClick" let-index="index">
           <ng-container

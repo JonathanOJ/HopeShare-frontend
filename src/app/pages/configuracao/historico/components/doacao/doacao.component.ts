@@ -25,6 +25,7 @@ export class DoacaoComponent implements OnChanges, OnDestroy {
   selectedDoacao: Doacao | null = null;
   modalDetalhes = false;
   doacoesFiltered: Doacao[] = [];
+  statusDoacaoList = StatusDoacaoList;
 
   statusOptions = [{ label: 'Todas', value: '' }, ...StatusDoacaoList];
 

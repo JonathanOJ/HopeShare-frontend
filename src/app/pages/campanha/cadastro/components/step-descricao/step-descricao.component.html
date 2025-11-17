@@ -24,7 +24,7 @@
   let-nextCallback="nextCallback"
   let-index="index"
 >
-  <form *ngIf="campanhaForm" [formGroup]="campanhaForm" class="flex flex-col min-h-[600px] p-6 gap-6 bg-card">
+  <form *ngIf="campanhaForm" [formGroup]="campanhaForm" class="flex flex-col min-h-[600px] p-4 md:p-6 gap-6 bg-card">
     <div class="flex flex-col gap-2">
       <h1 class="text-xl text-primary font-bold">Fale um pouco mais</h1>
       <span class="text-secondary max-w-[400px]"
@@ -32,8 +32,8 @@
       >
     </div>
     <section class="flex-1 gap-6 flex flex-col">
-      <section class="flex gap-2 justify-between">
-        <div class="flex flex-col gap-1.5 w-[88%]">
+      <section class="flex gap-2 md:flex-row flex-col justify-between">
+        <div class="flex flex-col gap-1.5 w-full md:w-[88%]">
           <label for="title" class="text-sm text-secondary font-medium">Título da campanha</label>
           <input
             type="text"
@@ -112,7 +112,7 @@
           class="w-full"
         >
           <ng-template pTemplate="content">
-            <div class="p-6 text-center">
+            <div class="md:p-6 p-4 text-center">
               <i class="pi pi-cloud-upload text-4xl text-primary mb-4 block"></i>
               <p class="text-secondary mb-2">
                 <strong class="text-blue-600 font-semibold">Selecione</strong> uma foto para representar sua campanha

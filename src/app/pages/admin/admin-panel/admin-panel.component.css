@@ -1,5 +1,3 @@
-/* Estilos personalizados para o painel admin */
-
 .admin-card {
   transition: all 0.3s ease;
 }
@@ -58,7 +56,6 @@
   border-color: #4b5563;
 }
 
-/* Animações */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -74,7 +71,6 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Estilos específicos para a estrutura de denúncias */
 .campanha-card {
   transition: all 0.3s ease;
   border: 1px solid var(--border-color, #e5e7eb);
@@ -92,7 +88,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Tabelas (denúncias e solicitações) */
 .min-w-full thead th {
   background: var(--surface-color, #f9fafb);
   color: var(--text-color-secondary, #6b7280);
@@ -128,12 +123,10 @@
   vertical-align: top;
 }
 
-/* Estilos específicos para valores monetários */
 .text-green-600 {
   font-weight: 600;
 }
 
-/* Badges e indicadores com melhor suporte ao dark mode */
 .badge-red {
   background-color: #fef2f2;
   color: #dc2626;
@@ -144,7 +137,6 @@
   color: #fca5a5;
 }
 
-/* Melhorias para estados de loading e transições */
 .loading-spinner {
   color: var(--primary-color, #3b82f6);
 }
@@ -153,7 +145,6 @@
   color: var(--primary-color, #60a5fa);
 }
 
-/* Melhorias para botões em dark mode */
 .button-hover {
   transition: all 0.2s ease;
 }
@@ -162,14 +153,10 @@
   background-color: rgba(75, 85, 99, 0.1);
 }
 
-/* Melhorias nos botões de ação */
 .flex.gap-2 p-button {
   margin: 0 1px;
 }
 
-/* Enhanced dark-mode support for tables and PrimeNG components */
-
-/* Standard table styling */
 table {
   background: var(--surface-0, #ffffff);
   color: var(--text-color, #212529);
@@ -180,7 +167,6 @@ table {
   color: var(--text-color, #ffffff);
 }
 
-/* Table headers */
 table thead th,
 .min-w-full thead th {
   background: var(--surface-100, #f8f9fa) !important;
@@ -195,7 +181,6 @@ table thead th,
   border-color: var(--surface-border, #383c44) !important;
 }
 
-/* Table rows */
 table tbody tr,
 .min-w-full tbody tr {
   background: var(--surface-0, #ffffff) !important;
@@ -218,7 +203,6 @@ table tbody tr:hover,
   background: var(--surface-hover, #1c1f26) !important;
 }
 
-/* Table cells */
 table td,
 table th,
 .min-w-full td,
@@ -235,7 +219,6 @@ table th,
   border-color: var(--surface-border, #383c44) !important;
 }
 
-/* PrimeNG table components */
 .p-datatable .p-datatable-table {
   background: var(--surface-0, #ffffff) !important;
 }
@@ -284,7 +267,6 @@ table th,
   border-color: var(--surface-border, #383c44) !important;
 }
 
-/* Enhanced dropdowns */
 .p-dropdown {
   background: var(--surface-0, #ffffff) !important;
   border-color: var(--surface-border, #dee2e6) !important;
@@ -323,7 +305,6 @@ table th,
   background: var(--surface-hover, #1c1f26) !important;
 }
 
-/* Enhanced buttons */
 .p-button.p-button-text {
   color: var(--primary-color, #007bff) !important;
 }
@@ -340,7 +321,6 @@ table th,
   background: var(--surface-hover, #1c1f26) !important;
 }
 
-/* Enhanced tags */
 .p-tag.p-tag-success {
   background: var(--green-500, #28a745) !important;
   color: white !important;
@@ -361,7 +341,6 @@ table th,
   color: white !important;
 }
 
-/* Enhanced dialogs */
 .p-dialog .p-dialog-header {
   background: var(--surface-0, #ffffff) !important;
   color: var(--text-color, #212529) !important;
@@ -384,7 +363,6 @@ table th,
   color: var(--text-color, #ffffff) !important;
 }
 
-/* Enhanced form controls */
 .p-inputtext,
 .p-inputtextarea {
   background: var(--surface-0, #ffffff) !important;
@@ -399,7 +377,6 @@ table th,
   color: var(--text-color, #ffffff) !important;
 }
 
-/* Enhanced progress spinner */
 .p-progress-spinner-circle {
   stroke: var(--primary-color, #007bff) !important;
 }
@@ -408,7 +385,6 @@ table th,
   stroke: var(--primary-color, #4dabf7) !important;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .admin-tabs {
     flex-direction: column;
@@ -424,7 +400,6 @@ table th,
   }
 
   .flex.items-center.gap-4 {
-    flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
