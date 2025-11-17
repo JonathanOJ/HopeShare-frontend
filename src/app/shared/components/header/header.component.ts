@@ -23,7 +23,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private auth = inject(AuthService);
   private router = inject(Router);
-  private supportDialogService = inject(SupportDialogService);
+  public supportDialogService = inject(SupportDialogService);
   public themeService = inject(ThemeService);
 
   private destroy$ = new Subject();

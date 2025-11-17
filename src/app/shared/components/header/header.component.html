@@ -49,14 +49,26 @@
         @if (userSession.image) {
           <img
             (click)="menu.toggle($event)"
-            class="w-10 h-10"
+            class="hidden md:block w-10 h-10 cursor-pointer"
+            [src]="userSession.image"
+            alt="User profile image of {{ userSession.username }}"
+          />
+          <img
+            (click)="toggleSidebar()"
+            class="md:hidden w-10 h-10 cursor-pointer"
             [src]="userSession.image"
             alt="User profile image of {{ userSession.username }}"
           />
         } @else {
           <span
             (click)="menu.toggle($event)"
-            class="w-10 h-10 flex justify-center items-center rounded-full"
+            class="hidden md:flex w-10 h-10 justify-center items-center rounded-full cursor-pointer"
+            style="background-color: var(--primary-color); color: var(--primary-color-text)"
+            >{{ userSession ? userSession.username[0].toUpperCase() : 'U' }}</span
+          >
+          <span
+            (click)="toggleSidebar()"
+            class="md:hidden w-10 h-10 flex justify-center items-center rounded-full cursor-pointer"
             style="background-color: var(--primary-color); color: var(--primary-color-text)"
             >{{ userSession ? userSession.username[0].toUpperCase() : 'U' }}</span
           >
@@ -76,6 +88,7 @@
   </ng-template>
 
   <div class="flex flex-col gap-2">
+    <!-- Menu de navegação -->
     @for (item of menuItems; track item.label) {
       <button
         pButton
@@ -83,6 +96,58 @@
         [icon]="item.icon || ''"
         class="p-button-text justify-start"
         (click)="executeMenuCommand(item)"
+      ></button>
+    }
+
+    <!-- Separador -->
+    @if (userSession) {
+      <p-divider></p-divider>
+
+      <!-- Informações do usuário -->
+      <div class="flex items-center gap-3 px-3 py-2">
+        @if (userSession.image) {
+          <img
+            class="w-10 h-10 rounded-full"
+            [src]="userSession.image"
+            alt="User profile image of {{ userSession.username }}"
+          />
+        } @else {
+          <span
+            class="w-10 h-10 flex justify-center items-center rounded-full"
+            style="background-color: var(--primary-color); color: var(--primary-color-text)"
+            >{{ userSession.username[0].toUpperCase() }}</span
+          >
+        }
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-primary truncate">{{ userSession.username }}</p>
+          <p class="text-xs text-secondary truncate">{{ userSession.email }}</p>
+        </div>
+      </div>
+
+      <!-- Opções do usuário -->
+      <button
+        pButton
+        label="Histórico"
+        icon="pi pi-history"
+        class="p-button-text justify-start"
+        (click)="redirectTo('hopeshare/configuracao/historico'); sidebarVisible = false"
+      ></button>
+
+      <button
+        pButton
+        label="Suporte"
+        icon="pi pi-envelope"
+        class="p-button-text justify-start"
+        (click)="supportDialogService.open(); sidebarVisible = false"
+      ></button>
+
+      <button
+        pButton
+        label="Logout"
+        icon="pi pi-sign-out"
+        class="p-button-text justify-start"
+        severity="danger"
+        (click)="logout(); sidebarVisible = false"
       ></button>
     }
   </div>
