@@ -2,11 +2,11 @@
   <p-card>
     <section class="flex flex-col">
       <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-2 md:gap-0">
-        <h1 class="text-2xl font-bold text-primary">Listagem de Relatórios</h1>
-        <div class="flex gap-3 items-center flex-col md:flex-row w-full">
+        <h1 class="text-2xl font-bold text-primary whitespace-nowrap">Listagem de Relatórios</h1>
+        <div class="flex gap-3 items-center justify-end flex-col md:flex-row w-full">
           <p-autoComplete
             id="campanha"
-            class="w-full"
+            class="w-full md:w-[350px]"
             [(ngModel)]="campanhaSelecionada"
             [suggestions]="campanhas"
             (completeMethod)="filterCampanhas($event)"
@@ -16,7 +16,7 @@
             [dropdown]="true"
             [delay]="300"
             [showEmptyMessage]="true"
-            styleClass="w-full"
+            styleClass="w-full md:w-[350px]"
             emptyMessage="Nenhuma campanha encontrada"
           >
             <ng-template let-campanha pTemplate="item">
@@ -25,7 +25,7 @@
             </ng-template>
           </p-autoComplete>
 
-          <div class="flex gap-3 items-center justify-center flex-row md:flex-col w-full">
+          <div class="flex gap-3 items-center justify-center flex-row w-full md:w-fit">
             <p-button
               label="Gerar Financeiro"
               icon="pi pi-chart-line"
