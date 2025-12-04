@@ -46,8 +46,8 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
         (!this.campanhaForm?.get('have_address')?.value && this.activeStep === 3))
     ) {
       this.initializeTabs();
-      this.getGoogleMapsUrl();
       this.updateImagePreview();
+      this.getGoogleMapsUrl();
     }
   }
 
@@ -80,17 +80,9 @@ export class StepRevisaoComponent implements OnInit, OnChanges {
   }
 
   getGoogleMapsUrl() {
-    const address = [
-      this.street?.value,
-      this.number?.value,
-      this.neighborhood?.value,
-      this.city?.value,
-      this.state?.value,
-      this.zipcode?.value,
-    ]
+    const address = [this.street, this.number, this.neighborhood, this.city, this.state, this.zipcode]
       .filter(Boolean)
       .join(', ');
-
     if (!address.trim()) return;
 
     const url = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
