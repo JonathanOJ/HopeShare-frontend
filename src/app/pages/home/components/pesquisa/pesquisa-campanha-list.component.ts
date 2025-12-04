@@ -128,6 +128,12 @@ export class PesquisaCampanhaListComponent implements OnInit, OnDestroy {
             } else {
               body.page == 1 ? (this.campanhaSearchResults = []) : '';
             }
+
+            this.campanhaSearchResults.forEach((campanha) => {
+              if (!campanha.progress_percentage) {
+                campanha.progress_percentage = this.getProgress(campanha);
+              }
+            });
           }
         },
         error: () => {
